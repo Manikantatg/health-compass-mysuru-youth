@@ -9,18 +9,24 @@ import { toast } from '@/hooks/use-toast';
 interface PhoneVerificationProps {
   onVerified: () => void;
   isVerified: boolean;
+  fatherContact?: string;
+  motherContact?: string;
 }
 
-const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified, isVerified }) => {
+const PhoneVerification: React.FC<PhoneVerificationProps> = ({ 
+  onVerified, 
+  isVerified, 
+  fatherContact = '',
+  motherContact = ''
+}) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
-  const [showAnimation, setShowAnimation] = useState(false);
 
   const handleVerification = () => {
     if (!phoneNumber) {
       toast({
         title: "Phone number required",
-        description: "Please enter your phone number to unlock detailed insights",
+        description: "Please enter a phone number to unlock detailed insights",
         variant: "destructive"
       });
       return;
@@ -35,15 +41,28 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified, isVer
       return;
     }
 
+    // Check if entered number matches father's or mother's contact
+    const normalizedInput = phoneNumber.replace(/\D/g, '').slice(-10);
+    const normalizedFather = fatherContact.replace(/\D/g, '').slice(-10);
+    const normalizedMother = motherContact.replace(/\D/g, '').slice(-10);
+
+    if (normalizedInput !== normalizedFather && normalizedInput !== normalizedMother) {
+      toast({
+        title: "Verification failed",
+        description: "Phone number doesn't match parent contact information",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsVerifying(true);
-    setShowAnimation(true);
 
     // Simulate verification process
     setTimeout(() => {
       setIsVerifying(false);
       onVerified();
       toast({
-        title: "Verification successful! 🎉",
+        title: "Verification successful!",
         description: "You now have access to detailed pros and cons analysis",
       });
     }, 2000);
@@ -51,14 +70,14 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified, isVer
 
   if (isVerified) {
     return (
-      <div className="flex items-center justify-center p-6 bg-gradient-to-r from-green-100 to-emerald-100 rounded-2xl border-2 border-green-200 animate-pulse">
+      <div className="flex items-center justify-center p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200">
         <div className="flex items-center space-x-3 text-green-700">
-          <div className="p-2 bg-green-200 rounded-full animate-bounce">
+          <div className="p-2 bg-green-200 rounded-full">
             <Check className="h-6 w-6" />
           </div>
           <div>
-            <p className="font-bold text-lg">Phone Verified ✅</p>
-            <p className="text-sm opacity-75">Access to detailed insights unlocked!</p>
+            <p className="font-bold text-lg">Phone Verified ✓</p>
+            <p className="text-sm opacity-75">Access to detailed insights unlocked</p>
           </div>
         </div>
       </div>
@@ -66,28 +85,28 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified, isVer
   }
 
   return (
-    <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-200 shadow-lg hover:shadow-xl transition-all duration-300">
+    <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300">
       <CardHeader className="text-center">
-        <div className="mx-auto p-4 bg-orange-100 rounded-full w-fit animate-pulse">
-          <Lock className="h-8 w-8 text-orange-600" />
+        <div className="mx-auto p-4 bg-blue-100 rounded-full w-fit">
+          <Lock className="h-8 w-8 text-blue-600" />
         </div>
-        <CardTitle className="text-xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-          🔒 Unlock Detailed Insights
+        <CardTitle className="text-xl font-bold text-blue-900">
+          🔒 Unlock Detailed Analysis
         </CardTitle>
         <CardDescription className="text-gray-600">
-          Enter your phone number to access detailed pros & cons analysis of your health assessment
+          Enter your parent's phone number to access detailed pros & cons analysis
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">
           <div className="relative">
-            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-orange-500" />
+            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-blue-500" />
             <Input
               type="tel"
-              placeholder="Enter your phone number"
+              placeholder="Enter parent's phone number"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-              className="pl-12 text-lg font-medium border-2 border-orange-200 focus:border-orange-400 rounded-xl"
+              className="pl-12 text-lg font-medium border-2 border-blue-200 focus:border-blue-400 rounded-xl"
               disabled={isVerifying}
             />
           </div>
@@ -95,7 +114,7 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified, isVer
           <Button
             onClick={handleVerification}
             disabled={isVerifying}
-            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-3 rounded-xl transform hover:scale-105 transition-all duration-200"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transform hover:scale-105 transition-all duration-200"
           >
             {isVerifying ? (
               <div className="flex items-center space-x-2">
@@ -103,24 +122,14 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified, isVer
                 <span>Verifying...</span>
               </div>
             ) : (
-              <span>🚀 Unlock Insights</span>
+              <span>🔓 Unlock Analysis</span>
             )}
           </Button>
         </div>
 
-        {showAnimation && (
-          <div className="text-center py-4">
-            <div className="inline-flex items-center space-x-2 text-orange-600 animate-bounce">
-              <div className="w-2 h-2 bg-orange-500 rounded-full animate-ping"></div>
-              <div className="w-2 h-2 bg-orange-500 rounded-full animate-ping" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-orange-500 rounded-full animate-ping" style={{ animationDelay: '0.2s' }}></div>
-            </div>
-          </div>
-        )}
-
-        <div className="text-center p-4 bg-orange-100/50 rounded-xl">
-          <p className="text-sm text-orange-700">
-            🔐 Your phone number is used only for verification and kept secure
+        <div className="text-center p-4 bg-blue-100/50 rounded-xl">
+          <p className="text-sm text-blue-700">
+            🔐 Enter the phone number from your assessment (Father's or Mother's contact)
           </p>
         </div>
       </CardContent>
