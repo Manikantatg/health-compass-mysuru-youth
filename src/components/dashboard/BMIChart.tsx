@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 
 interface BMIChartProps {
   bmi: number;
@@ -9,133 +8,113 @@ interface BMIChartProps {
 }
 
 const BMIChart: React.FC<BMIChartProps> = ({ bmi, age }) => {
-  // BMI percentile data for children (simplified)
-  const getBMICategory = (bmi: number, age: number) => {
-    // Simplified BMI categories for children
-    if (age < 18) {
-      if (bmi < 18.5) return { category: 'Underweight', color: '#3b82f6' };
-      if (bmi < 25) return { category: 'Normal', color: '#10b981' };
-      if (bmi < 30) return { category: 'Overweight', color: '#f59e0b' };
-      return { category: 'Obese', color: '#ef4444' };
-    }
-    
-    // Adult BMI categories
-    if (bmi < 18.5) return { category: 'Underweight', color: '#3b82f6' };
-    if (bmi < 25) return { category: 'Normal', color: '#10b981' };
-    if (bmi < 30) return { category: 'Overweight', color: '#f59e0b' };
-    return { category: 'Obese', color: '#ef4444' };
+  const getBMICategory = (bmi: number) => {
+    if (bmi < 18.5) return { category: 'Underweight', color: 'bg-blue-500', textColor: 'text-blue-700', bgColor: 'bg-blue-50', borderColor: 'border-blue-200' };
+    if (bmi < 25) return { category: 'Normal', color: 'bg-green-500', textColor: 'text-green-700', bgColor: 'bg-green-50', borderColor: 'border-green-200' };
+    if (bmi < 30) return { category: 'Overweight', color: 'bg-yellow-500', textColor: 'text-yellow-700', bgColor: 'bg-yellow-50', borderColor: 'border-yellow-200' };
+    return { category: 'Obese', color: 'bg-red-500', textColor: 'text-red-700', bgColor: 'bg-red-50', borderColor: 'border-red-200' };
   };
 
-  const category = getBMICategory(bmi, age);
+  const bmiInfo = getBMICategory(bmi);
 
-  // Sample data for BMI tracking over time
-  const data = [
-    { month: 'Jan', bmi: bmi - 2 },
-    { month: 'Feb', bmi: bmi - 1.5 },
-    { month: 'Mar', bmi: bmi - 1 },
-    { month: 'Apr', bmi: bmi - 0.5 },
-    { month: 'May', bmi: bmi },
-  ];
+  const getBMIRange = (age: number) => {
+    // Simplified BMI ranges for children and adolescents
+    if (age < 18) {
+      return {
+        underweight: { min: 0, max: 18.5 },
+        normal: { min: 18.5, max: 25 },
+        overweight: { min: 25, max: 30 },
+        obese: { min: 30, max: 40 }
+      };
+    }
+    return {
+      underweight: { min: 0, max: 18.5 },
+      normal: { min: 18.5, max: 25 },
+      overweight: { min: 25, max: 30 },
+      obese: { min: 30, max: 40 }
+    };
+  };
+
+  const bmiRange = getBMIRange(age);
+  const maxBMI = 40;
+  const bmiPosition = (bmi / maxBMI) * 100;
 
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-      <div className="mb-6">
-        <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-          BMI Analysis ✨
-        </h3>
-        <p className="text-gray-600 text-sm">
-          Current BMI: {bmi} - {category.category}
-        </p>
-      </div>
-      
-      <div className="space-y-6">
-        {/* BMI Category Indicator */}
-        <div className="flex items-center justify-between p-6 rounded-2xl border-2 border-dashed animate-pulse" style={{ borderColor: category.color }}>
-          <div>
-            <p className="text-sm text-gray-600 font-medium">BMI Category</p>
-            <p className="text-2xl font-bold animate-bounce" style={{ color: category.color }}>
-              {category.category}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-600 font-medium">BMI Value</p>
-            <p className="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              {bmi}
-            </p>
-          </div>
-        </div>
+    <Card className="bg-white border-2 border-gray-200 shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold text-gray-900">BMI Analysis</CardTitle>
+        <CardDescription className="text-gray-600 font-medium">
+          Your current Body Mass Index status
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* BMI Scale */}
+          <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden">
+            {/* BMI Range Markers */}
+            <div className="absolute inset-0 flex">
+              <div className="w-1/4 bg-blue-100"></div>
+              <div className="w-1/4 bg-green-100"></div>
+              <div className="w-1/4 bg-yellow-100"></div>
+              <div className="w-1/4 bg-red-100"></div>
+            </div>
 
-        {/* BMI Chart */}
-        <div className="h-64 bg-white/50 backdrop-blur-sm rounded-2xl p-4">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e0e7ff" />
-              <XAxis dataKey="month" stroke="#6366f1" />
-              <YAxis domain={['dataMin - 2', 'dataMax + 2']} stroke="#6366f1" />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: '#1e1b4b',
-                  border: 'none',
-                  borderRadius: '12px',
-                  color: 'white'
-                }}
-              />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="bmi" 
-                stroke={category.color} 
-                strokeWidth={3}
-                dot={{ fill: category.color, strokeWidth: 2, r: 6 }}
-                activeDot={{ r: 8, stroke: category.color, strokeWidth: 2 }}
-              />
-              {/* Normal BMI range reference lines */}
-              <ReferenceLine 
-                y={18.5} 
-                stroke="#94a3b8" 
-                strokeDasharray="5 5" 
-                label={{ value: "Underweight", position: "top" }}
-              />
-              <ReferenceLine 
-                y={25} 
-                stroke="#94a3b8" 
-                strokeDasharray="5 5" 
-                label={{ value: "Normal", position: "top" }}
-              />
-              <ReferenceLine 
-                y={30} 
-                stroke="#94a3b8" 
-                strokeDasharray="5 5" 
-                label={{ value: "Overweight", position: "top" }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+            {/* BMI Indicator */}
+            <motion.div
+              initial={{ left: 0 }}
+              animate={{ left: `${bmiPosition}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="absolute top-0 bottom-0 w-1 bg-black transform -translate-x-1/2"
+            />
+          </div>
 
-        {/* BMI Scale */}
-        <div className="space-y-3">
-          <h4 className="font-bold text-lg text-gray-800">BMI Categories 📊</h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-            <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 text-blue-800 transform hover:scale-105 transition-transform duration-200">
-              <div className="font-bold">Underweight</div>
-              <div className="text-xs opacity-75">{'< 18.5'}</div>
+          {/* BMI Categories */}
+          <div className="flex justify-between text-sm text-gray-600">
+            <span>Underweight</span>
+            <span>Normal</span>
+            <span>Overweight</span>
+            <span>Obese</span>
+          </div>
+
+          {/* Current BMI Status */}
+          <div className={`p-4 rounded-xl border-2 ${bmiInfo.bgColor} ${bmiInfo.borderColor}`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Current BMI</h3>
+                <p className={`text-2xl font-bold ${bmiInfo.textColor}`}>
+                  {bmi.toFixed(1)}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-600">Category</p>
+                <p className={`text-lg font-bold ${bmiInfo.textColor}`}>
+                  {bmiInfo.category}
+                </p>
+              </div>
             </div>
-            <div className="text-center p-3 rounded-xl bg-gradient-to-br from-green-100 to-green-200 text-green-800 transform hover:scale-105 transition-transform duration-200">
-              <div className="font-bold">Normal</div>
-              <div className="text-xs opacity-75">18.5 - 24.9</div>
-            </div>
-            <div className="text-center p-3 rounded-xl bg-gradient-to-br from-yellow-100 to-yellow-200 text-yellow-800 transform hover:scale-105 transition-transform duration-200">
-              <div className="font-bold">Overweight</div>
-              <div className="text-xs opacity-75">25 - 29.9</div>
-            </div>
-            <div className="text-center p-3 rounded-xl bg-gradient-to-br from-red-100 to-red-200 text-red-800 transform hover:scale-105 transition-transform duration-200">
-              <div className="font-bold">Obese</div>
-              <div className="text-xs opacity-75">{'≥ 30'}</div>
+          </div>
+
+          {/* BMI Range Information */}
+          <div className="text-sm text-gray-600">
+            <p className="mb-2">BMI Ranges for Age {age}:</p>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="p-2 bg-blue-50 rounded">
+                <span className="font-medium">Underweight:</span> &lt; 18.5
+              </div>
+              <div className="p-2 bg-green-50 rounded">
+                <span className="font-medium">Normal:</span> 18.5 - 24.9
+              </div>
+              <div className="p-2 bg-yellow-50 rounded">
+                <span className="font-medium">Overweight:</span> 25 - 29.9
+              </div>
+              <div className="p-2 bg-red-50 rounded">
+                <span className="font-medium">Obese:</span> ≥ 30
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

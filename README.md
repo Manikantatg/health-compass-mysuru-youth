@@ -1,73 +1,117 @@
-# Welcome to your Lovable project
+# HealthPredict - AI-Powered Health Assessment
 
-## Project info
+A comprehensive health risk assessment platform designed specifically for children and adolescents in Mysuru and Chamarajanagar districts. This platform uses advanced AI technology to predict and analyze health risks, providing personalized recommendations for better health outcomes.
 
-**URL**: https://lovable.dev/projects/e040c3dc-6a9b-40ec-8784-24aa2abd5d8e
+## 🚀 Features
 
-## How can I edit this code?
+- **AI-Powered Analysis**: Advanced machine learning algorithms for accurate health risk predictions
+- **Comprehensive Assessment**: Multi-dimensional evaluation covering lifestyle, nutrition, and mental health
+- **Personalized Insights**: Tailored recommendations based on individual health profiles
+- **Privacy Protected**: Enterprise-grade security for data protection
+- **Evidence-Based**: Built on scientific research for children and adolescents
+- **Regional Focus**: Specifically designed for Mysuru and Chamarajanagar districts
 
-There are several ways of editing your application.
+## 👨‍💻 Developer
 
-**Use Lovable**
+Developed by **T.G.Manikanta** - A passionate developer focused on creating impactful healthcare solutions.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e040c3dc-6a9b-40ec-8784-24aa2abd5d8e) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React.js with TypeScript
+- **UI Framework**: Tailwind CSS
+- **State Management**: React Query
+- **Authentication**: Custom Auth System
+- **Styling**: Modern UI components with shadcn/ui
+- **Icons**: Lucide Icons
+- **Routing**: React Router
 
-**Use your preferred IDE**
+## 📋 Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Before you begin, ensure you have the following installed:
+- Node.js (v16 or higher)
+- npm or yarn
+- Git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Getting Started
 
-Follow these steps:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/health-predict.git
+   cd health-predict
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. **Set up environment variables**
+   Create a `.env` file in the root directory and add the following:
+   ```env
+   VITE_API_URL=your_api_url
+   VITE_AUTH_SECRET=your_auth_secret
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+4. **Start the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+5. **Build for production**
+   ```bash
+   npm run build
+   # or
+   yarn build
+   ```
+
+## 📁 Project Structure
+
+```
+health-predict/
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── contexts/       # React contexts
+│   ├── pages/         # Page components
+│   ├── styles/        # Global styles
+│   └── utils/         # Utility functions
+├── public/            # Static assets
+└── ...config files
 ```
 
-**Edit a file directly in GitHub**
+## 🔒 Security
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- All user data is encrypted
+- Secure authentication system
+- Regular security audits
+- GDPR compliant
+- HIPAA compliant
 
-**Use GitHub Codespaces**
+## 🤝 Contributing
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## What technologies are used for this project?
+## 📝 License
 
-This project is built with:
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🙏 Acknowledgments
 
-## How can I deploy this project?
+- Developed by Doutly
+- Special thanks to the healthcare professionals who provided insights
+- Thanks to the open-source community for their invaluable tools and libraries
 
-Simply open [Lovable](https://lovable.dev/projects/e040c3dc-6a9b-40ec-8784-24aa2abd5d8e) and click on Share -> Publish.
+## 📞 Support
 
-## Can I connect a custom domain to my Lovable project?
+For support, email support@doutly.com or create an issue in the repository.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Made with ❤️ by T.G.Manikanta for Doutly

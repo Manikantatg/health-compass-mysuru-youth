@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,6 +29,25 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   
   if (!currentUser) {
     return <Navigate to="/auth" replace />;
+  }
+  
+  return <Layout>{children}</Layout>;
+};
+
+// Admin Route Component
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { currentUser, userProfile, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+  
+  if (!currentUser || userProfile?.role !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
   }
   
   return <Layout>{children}</Layout>;
@@ -75,20 +93,22 @@ const AppRoutes = () => {
           <Dashboard />
         </ProtectedRoute>
       } />
+      
+      {/* Admin Only Routes */}
       <Route path="/assessment" element={
-        <ProtectedRoute>
+        <AdminRoute>
           <Assessment />
-        </ProtectedRoute>
+        </AdminRoute>
       } />
       <Route path="/profile" element={
-        <ProtectedRoute>
+        <AdminRoute>
           <Profile />
-        </ProtectedRoute>
+        </AdminRoute>
       } />
       <Route path="/admin" element={
-        <ProtectedRoute>
+        <AdminRoute>
           <Admin />
-        </ProtectedRoute>
+        </AdminRoute>
       } />
       
       {/* Catch all route */}
@@ -97,18 +117,20 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <BrowserRouter>
+            <AppRoutes />
+            <Toaster />
+            <Sonner />
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

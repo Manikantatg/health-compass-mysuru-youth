@@ -1,44 +1,66 @@
-
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { motion } from 'framer-motion';
 
-interface Props {
-  riskLevel: 'Low' | 'Medium' | 'High';
+interface RiskMeterProps {
+  riskLevel: string;
   riskPercentage: number;
 }
 
-const RiskMeter: React.FC<Props> = ({ riskLevel, riskPercentage }) => {
-  const data = [
-    { name: 'Risk', value: riskPercentage },
-    { name: 'Safe', value: 100 - riskPercentage }
-  ];
-
-  const getRiskColor = () => {
-    switch (riskLevel) {
-      case 'Low': return '#10B981';
-      case 'Medium': return '#F59E0B';
-      case 'High': return '#EF4444';
-      default: return '#6B7280';
+const RiskMeter: React.FC<RiskMeterProps> = ({ riskLevel, riskPercentage }) => {
+  const getRiskColor = (level: string) => {
+    switch (level.toLowerCase()) {
+      case 'low':
+        return 'bg-green-500';
+      case 'medium':
+        return 'bg-yellow-500';
+      case 'high':
+        return 'bg-red-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
-  const colors = [getRiskColor(), '#E5E7EB'];
+  const getRiskTextColor = (level: string) => {
+    switch (level.toLowerCase()) {
+      case 'low':
+        return 'text-green-700';
+      case 'medium':
+        return 'text-yellow-700';
+      case 'high':
+        return 'text-red-700';
+      default:
+        return 'text-gray-700';
+    }
+  };
+
+  const getRiskBgColor = (level: string) => {
+    switch (level.toLowerCase()) {
+      case 'low':
+        return 'bg-green-50 border-green-200';
+      case 'medium':
+        return 'bg-yellow-50 border-yellow-200';
+      case 'high':
+        return 'bg-red-50 border-red-200';
+      default:
+        return 'bg-gray-50 border-gray-200';
+    }
+  };
 
   const getRiskMessage = () => {
-    switch (riskLevel) {
-      case 'Low':
+    switch (riskLevel.toLowerCase()) {
+      case 'low':
         return {
           title: 'Great job! 🎉',
           message: 'Your lifestyle choices are supporting healthy weight management.',
           tips: 'Keep up the good work with regular exercise and balanced nutrition!'
         };
-      case 'Medium':
+      case 'medium':
         return {
           title: 'Room for improvement 💪',
           message: 'Some lifestyle adjustments could help reduce your risk.',
           tips: 'Focus on increasing physical activity and improving eating habits.'
         };
-      case 'High':
+      case 'high':
         return {
           title: 'Time for action 🎯',
           message: 'Several risk factors have been identified that need attention.',
@@ -56,48 +78,39 @@ const RiskMeter: React.FC<Props> = ({ riskLevel, riskPercentage }) => {
   const riskInfo = getRiskMessage();
 
   return (
-    <div className="space-y-4">
-      {/* Risk Meter Visualization */}
-      <div className="relative">
-        <div className="h-48">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                startAngle={90}
-                endAngle={-270}
-                innerRadius={60}
-                outerRadius={80}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={colors[index]} />
-                ))}
-              </Pie>
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        
-        {/* Center Content */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-3xl font-bold" style={{ color: getRiskColor() }}>
-              {riskPercentage}%
+    <div className="space-y-6">
+      {/* Risk Level Display */}
+      <div className={`p-4 rounded-xl border-2 ${getRiskBgColor(riskLevel)}`}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Current Risk Level</h3>
+            <p className={`text-2xl font-bold ${getRiskTextColor(riskLevel)}`}>
+              {riskLevel}
             </p>
-            <p className={`text-lg font-semibold`} style={{ color: getRiskColor() }}>
-              {riskLevel} Risk
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-gray-600">Risk Score</p>
+            <p className={`text-2xl font-bold ${getRiskTextColor(riskLevel)}`}>
+              {riskPercentage}%
             </p>
           </div>
         </div>
       </div>
 
+      {/* Risk Meter Visualization */}
+      <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${riskPercentage}%` }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className={`absolute top-0 left-0 h-full ${getRiskColor(riskLevel)}`}
+        />
+      </div>
+
       {/* Risk Information Card */}
       <div className={`p-4 rounded-lg border-2`} style={{ 
-        backgroundColor: `${getRiskColor()}10`, 
-        borderColor: `${getRiskColor()}40` 
+        backgroundColor: `${getRiskColor(riskLevel)}10`, 
+        borderColor: `${getRiskColor(riskLevel)}40` 
       }}>
         <h4 className="font-bold text-lg mb-2">{riskInfo.title}</h4>
         <p className="text-sm mb-2">{riskInfo.message}</p>
@@ -107,19 +120,10 @@ const RiskMeter: React.FC<Props> = ({ riskLevel, riskPercentage }) => {
       </div>
 
       {/* Risk Level Indicators */}
-      <div className="flex justify-between text-xs">
-        <div className="text-center">
-          <div className="w-4 h-4 bg-green-500 rounded-full mx-auto mb-1"></div>
-          <span className={riskLevel === 'Low' ? 'font-bold' : ''}>Low</span>
-        </div>
-        <div className="text-center">
-          <div className="w-4 h-4 bg-yellow-500 rounded-full mx-auto mb-1"></div>
-          <span className={riskLevel === 'Medium' ? 'font-bold' : ''}>Medium</span>
-        </div>
-        <div className="text-center">
-          <div className="w-4 h-4 bg-red-500 rounded-full mx-auto mb-1"></div>
-          <span className={riskLevel === 'High' ? 'font-bold' : ''}>High</span>
-        </div>
+      <div className="flex justify-between text-sm text-gray-600">
+        <span>Low Risk</span>
+        <span>Medium Risk</span>
+        <span>High Risk</span>
       </div>
     </div>
   );
