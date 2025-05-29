@@ -1,110 +1,126 @@
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-interface Props {
+interface BMIChartProps {
   bmi: number;
   age: number;
 }
 
-const BMIChart: React.FC<Props> = ({ bmi, age }) => {
-  const bmiCategories = [
-    { name: 'Underweight', value: 18.5, color: '#3B82F6' },
-    { name: 'Normal', value: 24.9, color: '#10B981' },
-    { name: 'Overweight', value: 29.9, color: '#F59E0B' },
-    { name: 'Obese', value: 35, color: '#EF4444' }
-  ];
-
-  const data = bmiCategories.map(category => ({
-    name: category.name,
-    value: category.value,
-    fill: category.color,
-    opacity: bmi <= category.value ? 0.8 : 0.3
-  }));
-
-  const getCurrentCategory = () => {
-    if (bmi < 18.5) return { name: 'Underweight', color: '#3B82F6' };
-    if (bmi < 25) return { name: 'Normal Weight', color: '#10B981' };
-    if (bmi < 30) return { name: 'Overweight', color: '#F59E0B' };
-    return { name: 'Obese', color: '#EF4444' };
+const BMIChart: React.FC<BMIChartProps> = ({ bmi, age }) => {
+  // BMI percentile data for children (simplified)
+  const getBMICategory = (bmi: number, age: number) => {
+    // Simplified BMI categories for children
+    if (age < 18) {
+      if (bmi < 18.5) return { category: 'Underweight', color: '#3b82f6' };
+      if (bmi < 25) return { category: 'Normal', color: '#10b981' };
+      if (bmi < 30) return { category: 'Overweight', color: '#f59e0b' };
+      return { category: 'Obese', color: '#ef4444' };
+    }
+    
+    // Adult BMI categories
+    if (bmi < 18.5) return { category: 'Underweight', color: '#3b82f6' };
+    if (bmi < 25) return { category: 'Normal', color: '#10b981' };
+    if (bmi < 30) return { category: 'Overweight', color: '#f59e0b' };
+    return { category: 'Obese', color: '#ef4444' };
   };
 
-  const currentCategory = getCurrentCategory();
+  const category = getBMICategory(bmi, age);
+
+  // Sample data for BMI tracking over time
+  const data = [
+    { month: 'Jan', bmi: bmi - 2 },
+    { month: 'Feb', bmi: bmi - 1.5 },
+    { month: 'Mar', bmi: bmi - 1 },
+    { month: 'Apr', bmi: bmi - 0.5 },
+    { month: 'May', bmi: bmi },
+  ];
 
   return (
-    <div className="space-y-4">
-      {/* Current BMI Display */}
-      <div className="text-center p-4 bg-gray-50 rounded-lg">
-        <p className="text-3xl font-bold">{bmi}</p>
-        <p className={`text-lg font-semibold`} style={{ color: currentCategory.color }}>
-          {currentCategory.name}
-        </p>
-        <p className="text-sm text-gray-600">Body Mass Index</p>
-      </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>BMI Tracking</CardTitle>
+        <CardDescription>
+          Current BMI: {bmi} - {category.category}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {/* BMI Category Indicator */}
+          <div className="flex items-center justify-between p-4 rounded-lg border" style={{ borderColor: category.color }}>
+            <div>
+              <p className="text-sm text-gray-600">BMI Category</p>
+              <p className="text-xl font-semibold" style={{ color: category.color }}>
+                {category.category}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-gray-600">BMI Value</p>
+              <p className="text-2xl font-bold">{bmi}</p>
+            </div>
+          </div>
 
-      {/* BMI Categories Chart */}
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
-              dataKey="name" 
-              tick={{ fontSize: 12 }}
-              interval={0}
-            />
-            <YAxis 
-              label={{ value: 'BMI Value', angle: -90, position: 'insideLeft' }}
-              domain={[0, 40]}
-            />
-            <Tooltip 
-              formatter={(value) => [`${value}`, 'BMI Threshold']}
-              labelStyle={{ color: '#374151' }}
-            />
-            <ReferenceLine 
-              y={bmi} 
-              stroke={currentCategory.color}
-              strokeWidth={3}
-              strokeDasharray="5 5"
-              label={{ value: `Your BMI: ${bmi}`, position: 'topRight' }}
-            />
-            <Bar dataKey="value" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+          {/* BMI Chart */}
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis domain={['dataMin - 2', 'dataMax + 2']} />
+                <Tooltip />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="bmi" 
+                  stroke={category.color} 
+                  strokeWidth={2}
+                  dot={{ fill: category.color, strokeWidth: 2, r: 4 }}
+                />
+                {/* Normal BMI range reference lines */}
+                <ReferenceLine 
+                  y={18.5} 
+                  stroke="#94a3b8" 
+                  strokeDasharray="5 5" 
+                  label={{ value: "Underweight", position: "topLeft" }}
+                />
+                <ReferenceLine 
+                  y={25} 
+                  stroke="#94a3b8" 
+                  strokeDasharray="5 5" 
+                  label={{ value: "Normal", position: "topLeft" }}
+                />
+                <ReferenceLine 
+                  y={30} 
+                  stroke="#94a3b8" 
+                  strokeDasharray="5 5" 
+                  label={{ value: "Overweight", position: "topLeft" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
 
-      {/* BMI Information */}
-      <div className="grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <h4 className="font-medium mb-2">BMI Categories:</h4>
-          <ul className="space-y-1">
-            <li className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded"></div>
-              <span>Underweight: &lt; 18.5</span>
-            </li>
-            <li className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded"></div>
-              <span>Normal: 18.5 - 24.9</span>
-            </li>
-            <li className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-              <span>Overweight: 25 - 29.9</span>
-            </li>
-            <li className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-red-500 rounded"></div>
-              <span>Obese: ≥ 30</span>
-            </li>
-          </ul>
+          {/* BMI Scale */}
+          <div className="space-y-2">
+            <h4 className="font-medium text-sm">BMI Categories</h4>
+            <div className="grid grid-cols-4 gap-2 text-xs">
+              <div className="text-center p-2 rounded bg-blue-100 text-blue-800">
+                Underweight<br/>{'< 18.5'}
+              </div>
+              <div className="text-center p-2 rounded bg-green-100 text-green-800">
+                Normal<br/>18.5 - 24.9
+              </div>
+              <div className="text-center p-2 rounded bg-yellow-100 text-yellow-800">
+                Overweight<br/>25 - 29.9
+              </div>
+              <div className="text-center p-2 rounded bg-red-100 text-red-800">
+                Obese<br/>{'≥ 30'}
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <h4 className="font-medium mb-2">Important Note:</h4>
-          <p className="text-xs text-gray-600">
-            BMI is a screening tool and may not reflect body composition differences. 
-            For growing children and adolescents, BMI percentiles are often more appropriate. 
-            Consult with a healthcare provider for personalized advice.
-          </p>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

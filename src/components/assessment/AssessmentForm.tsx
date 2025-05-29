@@ -163,10 +163,13 @@ const AssessmentForm: React.FC = () => {
   };
 
   const updateAssessmentData = (step: string, data: any) => {
-    setAssessmentData(prev => ({
-      ...prev,
-      [step]: { ...prev[step as keyof AssessmentData], ...data }
-    }));
+    setAssessmentData(prev => {
+      const currentStepData = prev[step as keyof AssessmentData] || {};
+      return {
+        ...prev,
+        [step]: { ...currentStepData, ...data }
+      };
+    });
   };
 
   const nextStep = () => {
