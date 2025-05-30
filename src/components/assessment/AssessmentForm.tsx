@@ -23,8 +23,7 @@ const AssessmentForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   
-  const [assessmentData, setAssessmentData] = useState<Partial<AssessmentData>>({
-    userId: currentUser?.uid || '',
+  const initialData = {
     socioDemographic: {
       schoolName: '',
       name: '',
@@ -64,8 +63,10 @@ const AssessmentForm: React.FC = () => {
       snacks: 1,
       beverages: 1,
       sweets: 1,
+      // Legacy fields for backward compatibility
+      junkFood: 1,
       softDrinks: 1,
-      energyDrinks: 0,
+      energyDrinks: 1,
     },
     physicalActivity: {
       ptFrequency: 2,
@@ -123,7 +124,7 @@ const AssessmentForm: React.FC = () => {
       sleepLossOfInterest: 0,
       sleepForgetfulness: 1,
     },
-  });
+  };
 
   const steps = [
     { title: 'Personal Information', component: SocioDemographicStep },

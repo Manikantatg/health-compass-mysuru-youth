@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ const StudentDashboard: React.FC = () => {
   const [assessmentData, setAssessmentData] = useState<AssessmentData | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handlePhoneVerification = (data: any) => {
+  const handlePhoneVerification = (data: AssessmentData) => {
     setAssessmentData(data);
   };
 
@@ -237,7 +238,7 @@ const StudentDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {assessmentData.aiPrediction?.recommendations.map((recommendation, index) => (
+                    {(assessmentData.aiPrediction?.recommendations || []).map((recommendation, index) => (
                       <motion.div
                         key={index}
                         initial={{ opacity: 0, y: 20 }}

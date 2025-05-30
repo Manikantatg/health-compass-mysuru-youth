@@ -46,7 +46,7 @@ export interface EatingHabits {
   snacks: number; // Replaces junkFood
   beverages: number; // Replaces softDrinks and energyDrinks
   sweets: number; // Keep existing
-  // Legacy fields for backward compatibility
+  // Legacy fields for backward compatibility - all required for type safety
   junkFood: number;
   softDrinks: number;
   energyDrinks: number;
@@ -131,7 +131,7 @@ export interface AssessmentData {
   sleepQuality: SleepQuality;
   bmi: number;
   completedAt: Date;
-  aiPrediction?: {
+  aiPrediction: {
     riskLevel: 'Low' | 'Medium' | 'High';
     riskPercentage: number;
     recommendations: string[];

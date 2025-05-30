@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,10 +8,10 @@ import { Label } from '@/components/ui/label';
 import { User, Mail, Phone, School, Calendar, Save } from 'lucide-react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Profile: React.FC = () => {
-  const { currentUser, userProfile, updateUserProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -48,12 +49,6 @@ const Profile: React.FC = () => {
         school: formData.school,
         age: parseInt(formData.age),
         updatedAt: new Date().toISOString(),
-      });
-
-      await updateUserProfile({
-        ...userProfile,
-        ...formData,
-        age: parseInt(formData.age),
       });
 
       setSuccess(true);

@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, Brain, Heart, Shield, TrendingUp, Users, CheckCircle, BarChart, Clock, Award, Sparkles, Star, Target, Zap, Mail, MapPin, Lock, Smartphone, MessageSquare, Sparkles as SparklesIcon, ArrowRight, ChevronRight } from 'lucide-react';
+import { Activity, Brain, Heart, Shield, TrendingUp, Users, CheckCircle, BarChart, Clock, Award, Sparkles, Star, Target, Zap, Mail, MapPin, Lock, Smartphone, MessageSquare, Sparkles as SparklesIcon, ArrowRight, ChevronRight, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -150,7 +150,7 @@ const staggerContainer = {
   }
 };
 
-const Index = () => {
+const Index: React.FC = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -214,46 +214,46 @@ const Index = () => {
 
   const testimonials = [
     {
-      quote: "Used it at school today. My health score was a surprise— but super helpful!",
-      author: "Student",
-      location: "Mysuru",
-      mascot: StudentMascot
+      quote: "This assessment helped me understand my health better and motivated me to make positive changes.",
+      author: "Sarah M.",
+      location: "Student, Grade 10",
+      mascot: () => <Heart className="h-6 w-6 text-red-500" />,
     },
     {
-      quote: "Loved how fast and private it was. No judgement at all!",
-      author: "Parent",
-      location: "Mysuru",
-      mascot: ParentMascot
+      quote: "The personalized recommendations were exactly what I needed to improve my lifestyle.",
+      author: "Alex K.", 
+      location: "Student, Grade 12",
+      mascot: () => <Star className="h-6 w-6 text-yellow-500" />,
     },
     {
-      quote: "We now detect obesity risk early at our school. Game changer!",
-      author: "Doctor",
-      location: "Chamarajanagar",
-      mascot: DoctorMascot
-    }
+      quote: "Simple, quick, and very insightful. I love how it gives me clear action steps.",
+      author: "Maya P.",
+      location: "Student, Grade 9", 
+      mascot: () => <Sparkles className="h-6 w-6 text-purple-500" />,
+    },
   ];
 
   const faqs = [
     {
-      question: "Is it free?",
-      answer: "Yes, totally free!",
-      mascot: SuccessMascot
+      question: "How accurate is the health assessment?",
+      answer: "Our assessment uses scientifically validated methods and AI analysis to provide reliable health insights based on your responses.",
+      mascot: () => <Brain className="h-5 w-5 text-blue-500" />,
     },
     {
-      question: "Do I need my parents?",
-      answer: "For under 13, yes. For older teens, optional.",
-      mascot: ParentMascot
+      question: "Is my personal information secure?",
+      answer: "Yes, we use enterprise-grade security measures to protect your data. Your information is encrypted and never shared without consent.",
+      mascot: () => <Shield className="h-5 w-5 text-green-500" />,
     },
     {
-      question: "How do you protect my data?",
-      answer: "Enterprise-grade encryption. Your data = your control.",
-      mascot: PrivacyMascot
+      question: "How long does the assessment take?",
+      answer: "The complete assessment takes about 10-15 minutes. You can save your progress and continue later if needed.",
+      mascot: () => <Clock className="h-5 w-5 text-orange-500" />,
     },
     {
-      question: "What will I get?",
-      answer: "Instant health risk score + custom tips for better health.",
-      mascot: BrainMascot
-    }
+      question: "Can I retake the assessment?",
+      answer: "Yes, you can retake the assessment anytime to track your progress and get updated recommendations.",
+      mascot: () => <RefreshCw className="h-5 w-5 text-purple-500" />,
+    },
   ];
 
   const studentFeatures = [

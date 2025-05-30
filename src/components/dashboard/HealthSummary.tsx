@@ -1,21 +1,12 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Brain, Activity, Heart, Clock, TrendingUp } from 'lucide-react';
+import { AssessmentData } from '../../types/assessment';
 
 interface HealthSummaryProps {
-  assessmentData: {
-    socioDemographic: {
-      name: string;
-      age: number;
-    };
-    bmi: number;
-    aiPrediction: {
-      riskLevel: string;
-      explanation: string;
-      recommendations: string[];
-    };
-  };
+  assessmentData: AssessmentData;
 }
 
 const HealthSummary: React.FC<HealthSummaryProps> = ({ assessmentData }) => {
@@ -29,6 +20,13 @@ const HealthSummary: React.FC<HealthSummaryProps> = ({ assessmentData }) => {
   };
 
   const bmiInfo = getBMICategory(bmi);
+
+  // Provide default values for aiPrediction if it doesn't exist
+  const prediction = aiPrediction || {
+    riskLevel: 'Medium',
+    explanation: 'Assessment data is being analyzed.',
+    recommendations: ['Stay active', 'Eat healthy', 'Get enough sleep']
+  };
 
   const messages = [
     {
@@ -47,7 +45,7 @@ const HealthSummary: React.FC<HealthSummaryProps> = ({ assessmentData }) => {
     },
     {
       type: 'risk',
-      content: `Your health risk level is ${aiPrediction.riskLevel}. ${aiPrediction.explanation}`,
+      content: `Your health risk level is ${prediction.riskLevel}. ${prediction.explanation}`,
       icon: Heart,
       color: 'bg-purple-100',
       iconColor: 'text-purple-600'
@@ -61,7 +59,7 @@ const HealthSummary: React.FC<HealthSummaryProps> = ({ assessmentData }) => {
     },
     {
       type: 'tip',
-      content: `Here's a quick tip: ${aiPrediction.recommendations[0]}`,
+      content: `Here's a quick tip: ${prediction.recommendations[0]}`,
       icon: TrendingUp,
       color: 'bg-yellow-100',
       iconColor: 'text-yellow-600'
@@ -94,4 +92,4 @@ const HealthSummary: React.FC<HealthSummaryProps> = ({ assessmentData }) => {
   );
 };
 
-export default HealthSummary; 
+export default HealthSummary;
