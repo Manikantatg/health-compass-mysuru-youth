@@ -24,12 +24,12 @@ const AssessmentForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   
-  const initialData = {
+  const initialData: Partial<AssessmentData> = {
     socioDemographic: {
       schoolName: '',
       name: '',
       age: 0,
-      gender: 'male' as const,
+      gender: 'male',
       class: '',
       section: '',
       height: 0,
@@ -43,12 +43,12 @@ const AssessmentForm: React.FC = () => {
       brothers: 0,
       sisters: 0,
       birthOrder: 1,
-      familyType: 'nuclear' as const,
-      hasSiblings: 'no' as const,
-      familyObesity: 'no' as const,
-      familyDiabetes: 'no' as const,
-      familyHypertension: 'no' as const,
-      familyThyroid: 'no' as const,
+      familyType: 'nuclear',
+      hasSiblings: 'no',
+      familyObesity: 'no',
+      familyDiabetes: 'no',
+      familyHypertension: 'no',
+      familyThyroid: 'no',
       familyObesityHistory: false,
       diabetesHistory: false,
       bpHistory: false,
@@ -99,7 +99,7 @@ const AssessmentForm: React.FC = () => {
     mentalHealth: {
       bodyPerception: 3,
       bullyingExperience: false,
-      weightGoal: 'maintain' as const,
+      weightGoal: 'maintain',
       bodyImageSelection: 5,
       difficultyWalking: 0,
       difficultyRunning: 0,
