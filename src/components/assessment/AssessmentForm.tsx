@@ -242,12 +242,12 @@ const AssessmentForm: React.FC = () => {
       // Calculate scores
       const scores = calculateScores(assessmentData);
 
-      // Generate AI prediction - fix the type issue by being more explicit
+      // Generate AI prediction - fix the type issue by using explicit checks
       const socio = assessmentData.socioDemographic;
-      const familyHistory = (socio?.familyObesity && socio.familyObesity === 'yes') || 
-                           (socio?.familyDiabetes && socio.familyDiabetes === 'yes') ||
-                           (socio?.familyHypertension && socio.familyHypertension === 'yes') ||
-                           (socio?.familyThyroid && socio.familyThyroid === 'yes');
+      const familyHistory = socio?.familyObesity === 'yes' || 
+                           socio?.familyDiabetes === 'yes' ||
+                           socio?.familyHypertension === 'yes' ||
+                           socio?.familyThyroid === 'yes';
 
       const aiPrediction = await generateObesityPrediction({
         age: assessmentData.socioDemographic?.age,
