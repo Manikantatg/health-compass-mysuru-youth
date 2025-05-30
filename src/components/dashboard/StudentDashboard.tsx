@@ -4,13 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../../contexts/AuthContext';
 import { AssessmentData } from '../../types/assessment';
-import { Activity, TrendingUp, User, Heart, Brain, Shield } from 'lucide-react';
+import { Activity, TrendingUp, User, Heart, Brain, Shield, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BMIChart from './BMIChart';
 import RiskMeter from './RiskMeter';
 import PhoneVerification from './PhoneVerification';
 import HealthSummary from './HealthSummary';
+import ProfileSummaryCard from './ProfileSummaryCard';
+import HealthCharts from './HealthCharts';
 import { motion, AnimatePresence } from 'framer-motion';
+import { generateHealthReportPDF } from '../../utils/pdfExport';
+import { toast } from '@/hooks/use-toast';
 
 const StudentDashboard: React.FC = () => {
   const { currentUser, userProfile } = useAuth();
@@ -20,6 +24,24 @@ const StudentDashboard: React.FC = () => {
 
   const handlePhoneVerification = (data: AssessmentData) => {
     setAssessmentData(data);
+  };
+
+  const handleDownloadPDF = async () => {
+    if (!assessmentData) return;
+    
+    try {
+      await generateHealthReportPDF(assessmentData);
+      toast({
+        title: "Success!",
+        description: "Your health report has been downloaded successfully."
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate PDF report. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (loading) {
@@ -60,127 +82,81 @@ const StudentDashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white p-8 rounded-2xl shadow-xl"
-      >
-        <div className="flex items-center space-x-6">
-          <div className="p-4 bg-white/20 rounded-full backdrop-blur-sm">
-            <User className="h-10 w-10" />
-          </div>
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-4xl md:text-5xl font-bold mb-2"
-            >
-              Welcome to HealthPredict
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-blue-100 text-lg"
-            >
-              Your personalized health insights dashboard
-            </motion.p>
-          </div>
-        </div>
-      </motion.div>
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       <AnimatePresence mode="wait">
         {!assessmentData ? (
           <motion.div
             key="verification"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
             <PhoneVerification onVerified={handlePhoneVerification} />
           </motion.div>
         ) : (
           <motion.div
             key="dashboard"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="container mx-auto px-4 py-8 space-y-8"
           >
+            {/* Welcome Header */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center space-y-4"
+            >
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Your Health Dashboard
+              </h1>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Comprehensive insights powered by AI to help you achieve optimal wellness
+              </p>
+            </motion.div>
+
+            {/* Profile Summary */}
+            <ProfileSummaryCard assessmentData={assessmentData} />
+
+            {/* Download Report Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex justify-center"
+            >
+              <Button
+                onClick={handleDownloadPDF}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center space-x-2 transform hover:scale-105 transition-all duration-200"
+              >
+                <Download className="w-5 h-5" />
+                <span>Download Full Health Report (PDF)</span>
+              </Button>
+            </motion.div>
+
             {/* Health Summary */}
             <HealthSummary assessmentData={assessmentData} />
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <Card className="bg-white border-2 border-blue-200 hover:shadow-lg transition-all duration-300 h-full">
-                  <CardContent className="p-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-blue-100 rounded-full">
-                        <Activity className="h-6 w-6 text-blue-700" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 font-medium">BMI Score</p>
-                        <p className="text-2xl font-bold text-gray-900">{assessmentData.bmi.toFixed(1)}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Card className="bg-white border-2 border-green-200 hover:shadow-lg transition-all duration-300 h-full">
-                  <CardContent className="p-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-green-100 rounded-full">
-                        <Shield className="h-6 w-6 text-green-700" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 font-medium">Risk Level</p>
-                        <p className="text-xl font-bold text-gray-900">
-                          {assessmentData.aiPrediction?.riskLevel || 'Medium'}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <Card className="bg-white border-2 border-purple-200 hover:shadow-lg transition-all duration-300 h-full">
-                  <CardContent className="p-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-purple-100 rounded-full">
-                        <Brain className="h-6 w-6 text-purple-700" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600 font-medium">Age</p>
-                        <p className="text-2xl font-bold text-gray-900">
-                          {assessmentData.socioDemographic.age}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
+            {/* Visual Health Charts */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Card className="border-2 border-gray-200 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold text-gray-900">
+                    Health Metrics Visualization
+                  </CardTitle>
+                  <CardDescription className="text-gray-600">
+                    Interactive charts showing your health data patterns
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <HealthCharts assessmentData={assessmentData} />
+                </CardContent>
+              </Card>
+            </motion.div>
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -221,7 +197,7 @@ const StudentDashboard: React.FC = () => {
               </motion.div>
             </div>
 
-            {/* Recommendations */}
+            {/* AI Recommendations */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -237,7 +213,7 @@ const StudentDashboard: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {(assessmentData.aiPrediction?.recommendations || []).map((recommendation, index) => (
                       <motion.div
                         key={index}
