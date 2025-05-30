@@ -775,7 +775,7 @@ const Index: React.FC = () => {
                   <CardContent className="p-10">
                     <div className="flex flex-col h-full">
                       <div className="flex items-center gap-3 mb-6">
-                        <span className="text-3xl">{testimonial.emoji}</span>
+                        <testimonial.mascot />
                         <div>
                           <p className="text-lg font-semibold text-gray-900">{testimonial.author}</p>
                           <p className="text-gray-500">{testimonial.location}</p>
@@ -820,7 +820,7 @@ const Index: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-blue-500/5 to-blue-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                   <CardContent className="p-8">
                     <div className="flex items-start gap-4">
-                      <span className="text-2xl mt-1">{faq.emoji}</span>
+                      <faq.mascot />
                       <div>
                         <h3 className="text-xl font-semibold text-gray-900 mb-4">{faq.question}</h3>
                         <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
@@ -829,10 +829,10 @@ const Index: React.FC = () => {
                   </CardContent>
                 </Card>
               </motion.div>
-                  ))}
+            ))}
           </motion.div>
         </div>
-                </div>
+      </div>
                 
       {/* Final CTA Section */}
       <div className="py-32 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 relative overflow-hidden">

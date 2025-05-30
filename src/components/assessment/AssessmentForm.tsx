@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,7 +29,7 @@ const AssessmentForm: React.FC = () => {
       schoolName: '',
       name: '',
       age: 0,
-      gender: 'male',
+      gender: 'male' as const,
       class: '',
       section: '',
       height: 0,
@@ -42,12 +43,12 @@ const AssessmentForm: React.FC = () => {
       brothers: 0,
       sisters: 0,
       birthOrder: 1,
-      familyType: 'nuclear',
-      hasSiblings: 'no',
-      familyObesity: 'no',
-      familyDiabetes: 'no',
-      familyHypertension: 'no',
-      familyThyroid: 'no',
+      familyType: 'nuclear' as const,
+      hasSiblings: 'no' as const,
+      familyObesity: 'no' as const,
+      familyDiabetes: 'no' as const,
+      familyHypertension: 'no' as const,
+      familyThyroid: 'no' as const,
       familyObesityHistory: false,
       diabetesHistory: false,
       bpHistory: false,
@@ -98,7 +99,7 @@ const AssessmentForm: React.FC = () => {
     mentalHealth: {
       bodyPerception: 3,
       bullyingExperience: false,
-      weightGoal: 'maintain',
+      weightGoal: 'maintain' as const,
       bodyImageSelection: 5,
       difficultyWalking: 0,
       difficultyRunning: 0,
@@ -125,6 +126,8 @@ const AssessmentForm: React.FC = () => {
       sleepForgetfulness: 1,
     },
   };
+
+  const [assessmentData, setAssessmentData] = useState(initialData);
 
   const steps = [
     { title: 'Personal Information', component: SocioDemographicStep },
@@ -207,7 +210,7 @@ const AssessmentForm: React.FC = () => {
 
   const updateAssessmentData = (step: string, data: any) => {
     setAssessmentData(prev => {
-      const currentStepData = prev[step as keyof AssessmentData] || {};
+      const currentStepData = prev[step as keyof typeof prev] || {};
       return {
         ...prev,
         [step]: { ...currentStepData, ...data }
@@ -253,6 +256,7 @@ const AssessmentForm: React.FC = () => {
 
       // Save to Firestore
       const finalAssessment = {
+        userId: currentUser?.uid || '',
         ...assessmentData,
         bmi,
         aiPrediction,
