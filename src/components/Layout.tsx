@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -39,12 +40,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <div className="flex-shrink-0 flex items-center">
+              <div className="flex-shrink-0 flex items-center space-x-3">
                 <img
                   className="h-10 w-auto"
                   src="/logo.png"
-                  alt="HealthPredict"
+                  alt="HealthPredict Logo"
                 />
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  HealthPredict
+                </h1>
               </div>
               <div className="hidden md:ml-8 md:flex md:space-x-6">
                 {navItems.map((item) => (
@@ -147,4 +151,3 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 export default Layout;
-

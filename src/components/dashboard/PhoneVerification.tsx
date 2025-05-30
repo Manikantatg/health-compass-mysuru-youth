@@ -7,9 +7,10 @@ import { Phone, Loader2, Shield, AlertCircle } from 'lucide-react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AssessmentData } from '../../types/assessment';
 
 interface PhoneVerificationProps {
-  onVerified: (data: any) => void;
+  onVerified: (data: AssessmentData) => void;
 }
 
 const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified }) => {
@@ -45,14 +46,22 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified }) => 
       if (fatherSnapshot.empty && motherSnapshot.empty) {
         setError("This number doesn't match our records. Please contact your school administrator.");
       } else {
-        const assessmentData = !fatherSnapshot.empty 
-          ? fatherSnapshot.docs[0].data() 
-          : motherSnapshot.docs[0].data();
+        const assessmentDoc = !fatherSnapshot.empty 
+          ? fatherSnapshot.docs[0] 
+          : motherSnapshot.docs[0];
+        
+        const assessmentData = {
+          id: assessmentDoc.id,
+          ...assessmentDoc.data(),
+          completedAt: assessmentDoc.data().completedAt?.toDate() || new Date()
+        } as AssessmentData;
+        
+        console.log('Assessment data retrieved:', assessmentData);
         onVerified(assessmentData);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
       console.error('Error fetching assessment:', err);
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
