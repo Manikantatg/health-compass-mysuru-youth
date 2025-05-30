@@ -45,38 +45,38 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
   const activities = [
     {
       title: 'Screen Time Activities',
-      description: 'How much time do you spend daily on these screen-based activities?',
+      description: 'How much time do you spend daily on these screen-based activities? (Last 7 Days)',
       items: [
         { key: 'tvTime', label: 'Watching TV/Movies' },
         { key: 'mobileTime', label: 'Mobile Phone/Tablet Usage' },
-        { key: 'gamingTime', label: 'Video Gaming' },
       ]
     },
     {
-      title: 'Study & Learning Activities',
-      description: 'Time spent on educational activities per day',
+      title: 'Reading and Writing Activities',
+      description: 'Time spent on reading and writing activities per day (Last 7 Days)',
       items: [
-        { key: 'homeworkTime', label: 'Homework & Assignments' },
-        { key: 'readingTime', label: 'Reading Books/Magazines' },
-        { key: 'tuitionTime', label: 'Tuition Classes' },
+        { key: 'schoolReading', label: 'Reading and Writing – School Related: Homework, textbooks, notes, assignments, projects' },
+        { key: 'nonSchoolReading', label: 'Reading and Writing – Non-School Related: Comics, novels, journaling, etc.' },
       ]
     },
     {
-      title: 'Other Activities',
-      description: 'Additional sedentary activities',
+      title: 'Games and Other Activities',
+      description: 'Time spent on games and other activities (Last 7 Days)',
       items: [
-        { key: 'musicTime', label: 'Listening to Music/Podcasts' },
+        { key: 'indoorGamesTime', label: 'Playing Indoor Games: Carrom, Pacchi, Ludo, Snake and Ladder, Chess, etc.' },
+        { key: 'outdoorGamesTime', label: 'Playing Outdoor Games: Antakshari, Dumb Charades, Business Games' },
+        { key: 'tuitionTime', label: 'Tuition Classes After School' },
       ]
     }
   ];
 
-  const totalScreenTime = sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime + sedentaryBehavior.gamingTime;
+  const totalScreenTime = sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime;
   const totalSedentaryTime = Object.values(sedentaryBehavior).reduce((sum, value) => sum + value, 0);
 
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Sedentary Behavior Assessment</h3>
+        <h3 className="text-lg font-semibold">Sedentary Behavior Assessment (Last 7 Days)</h3>
         <p className="text-gray-600">Track how much time you spend on different sedentary activities each day</p>
       </div>
 

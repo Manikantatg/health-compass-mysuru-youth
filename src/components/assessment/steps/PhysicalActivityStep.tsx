@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,12 +19,12 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('physicalActivity', { [field]: value });
   };
 
-  const ActivitySlider = ({ field, label, max = 7 }: { field: keyof PhysicalActivity; label: string; max?: number }) => (
+  const ActivitySlider = ({ field, label, max = 420 }: { field: keyof PhysicalActivity; label: string; max?: number }) => (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
         <Label className="text-sm font-medium">{label}</Label>
         <span className="text-sm text-gray-600 font-medium">
-          {physicalActivity[field]} {max === 7 ? 'hours/week' : 'days/week'}
+          {physicalActivity[field]} minutes/week
         </span>
       </div>
       <Slider
@@ -31,12 +32,12 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         onValueChange={(value) => handleChange(field, value[0])}
         max={max}
         min={0}
-        step={1}
+        step={15}
         className="w-full"
       />
       <div className="flex justify-between text-xs text-gray-500">
-        <span>0</span>
-        <span>{max}</span>
+        <span>0 min</span>
+        <span>{max} min</span>
       </div>
     </div>
   );
@@ -44,7 +45,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Physical Activity Assessment</h3>
+        <h3 className="text-lg font-semibold">Physical Activity Assessment (Last 7 Days)</h3>
         <p className="text-gray-600">Tell us about your physical activities and exercise habits</p>
       </div>
 
@@ -94,30 +95,20 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         </CardContent>
       </Card>
 
-      {/* Sports & Games */}
+      {/* Physical Activities */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Sports & Games</CardTitle>
-          <CardDescription>How many hours per week do you spend on these activities?</CardDescription>
+          <CardTitle className="text-lg">Physical Activities</CardTitle>
+          <CardDescription>How many minutes per week do you spend on these activities?</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <ActivitySlider field="indoorGames" label="Indoor Games (Chess, Carrom, etc.)" />
-          <ActivitySlider field="outdoorGames" label="Outdoor Games (Cricket, Football, etc.)" />
-        </CardContent>
-      </Card>
-
-      {/* Other Physical Activities */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Other Physical Activities</CardTitle>
-          <CardDescription>Hours per week spent on these activities</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <ActivitySlider field="yoga" label="Yoga & Meditation" />
-          <ActivitySlider field="dance" label="Dancing" />
-          <ActivitySlider field="swimming" label="Swimming" />
-          <ActivitySlider field="cycling" label="Cycling" />
-          <ActivitySlider field="walking" label="Walking/Jogging" />
+          <ActivitySlider field="yoga" label="Yoga" />
+          <ActivitySlider field="exercise" label="Exercise" />
+          <ActivitySlider field="indoorGames" label="Indoor Games (e.g., Table Tennis, Badminton)" />
+          <ActivitySlider field="outdoorGames" label="Outdoor Games (e.g., Cricket, Football, Kho-Kho)" />
+          <ActivitySlider field="playAfterSchool" label="Play after school hours / Help with household chores" />
+          <ActivitySlider field="cycling" label="Self-transport via Bicycle" />
+          <ActivitySlider field="walking" label="Walking" />
         </CardContent>
       </Card>
 
@@ -131,15 +122,16 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <h4 className="font-medium mb-2">Weekly Activity Score</h4>
               <p className="text-2xl font-bold text-green-700">
-                {physicalActivity.ptFrequency + physicalActivity.indoorGames + physicalActivity.outdoorGames + 
-                 physicalActivity.yoga + physicalActivity.dance + physicalActivity.swimming + 
-                 physicalActivity.cycling + physicalActivity.walking} hours
+                {(physicalActivity.ptFrequency * physicalActivity.ptDuration) + 
+                 physicalActivity.yoga + physicalActivity.exercise + physicalActivity.indoorGames + 
+                 physicalActivity.outdoorGames + physicalActivity.playAfterSchool + 
+                 physicalActivity.cycling + physicalActivity.walking} minutes
               </p>
             </div>
             <div>
               <h4 className="font-medium mb-2">Recommendation</h4>
               <p className="text-sm text-gray-600">
-                WHO recommends at least 60 minutes of moderate to vigorous physical activity daily for children and adolescents.
+                WHO recommends at least 420 minutes (60 minutes daily) of moderate to vigorous physical activity per week for children and adolescents.
               </p>
             </div>
           </div>

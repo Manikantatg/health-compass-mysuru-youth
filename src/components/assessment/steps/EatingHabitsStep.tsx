@@ -22,7 +22,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
   const foodCategories = [
     {
       title: 'Healthy Foods',
-      description: 'How often do you consume these nutritious foods?',
+      description: 'How often do you consume these nutritious foods? (Last 15 Days)',
       items: [
         { key: 'cereals', label: 'Cereals (Rice, Wheat, Millets)' },
         { key: 'pulses', label: 'Pulses & Legumes' },
@@ -33,19 +33,18 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
     },
     {
       title: 'Protein Foods',
-      description: 'How often do you consume protein-rich foods?',
+      description: 'How often do you consume protein-rich foods? (Last 15 Days)',
       items: [
         { key: 'nonVeg', label: 'Non-Vegetarian Foods' },
       ]
     },
     {
       title: 'Processed & Sugary Foods',
-      description: 'How often do you consume these foods?',
+      description: 'How often do you consume these foods? (Last 15 Days)',
       items: [
-        { key: 'junkFood', label: 'Junk Food (Chips, Burgers, Pizza)' },
+        { key: 'snacks', label: 'Snacks: Chips, Burger, Biscuits, Pizza, etc.' },
+        { key: 'beverages', label: 'Beverages: Soft drinks, Energy drinks (Tang, Pediasure, Glucon-D, etc.)' },
         { key: 'sweets', label: 'Sweets & Desserts' },
-        { key: 'softDrinks', label: 'Soft Drinks' },
-        { key: 'energyDrinks', label: 'Energy Drinks' },
       ]
     }
   ];
@@ -119,7 +118,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <h4 className="font-medium text-orange-700 mb-2">Processed Foods Score</h4>
               <div className="space-y-1">
-                {['junkFood', 'sweets', 'softDrinks', 'energyDrinks'].map((key) => (
+                {['snacks', 'beverages', 'sweets'].map((key) => (
                   <div key={key} className="flex justify-between text-sm">
                     <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
                     <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]}</span>

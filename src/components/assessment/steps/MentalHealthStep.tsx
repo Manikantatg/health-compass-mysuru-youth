@@ -20,7 +20,7 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
   };
 
   const bodyPerceptionLabels = ['Very Underweight', 'Underweight', 'Normal', 'Overweight', 'Very Overweight'];
-  const mobilityLabels = ['No Issues', 'Minor Issues', 'Some Issues', 'Major Issues', 'Severe Issues'];
+  const frequencyLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
 
   const bodyImageOptions = [
     { value: 1, label: 'Very Thin' },
@@ -34,11 +34,34 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
     { value: 9, label: 'Very Fuller' }
   ];
 
+  const FrequencySlider = ({ field, label }: { field: keyof MentalHealth; label: string }) => (
+    <div className="space-y-3">
+      <div className="flex justify-between items-center">
+        <Label className="text-sm font-medium">{label}</Label>
+        <span className="text-sm text-gray-600 font-medium">
+          {frequencyLabels[mentalHealth[field] as number]}
+        </span>
+      </div>
+      <Slider
+        value={[mentalHealth[field] as number]}
+        onValueChange={(value) => handleChange(field, value[0])}
+        max={4}
+        min={0}
+        step={1}
+        className="w-full"
+      />
+      <div className="flex justify-between text-xs text-gray-500">
+        <span>Never</span>
+        <span>Almost Always</span>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Mental Health & Body Image Assessment</h3>
-        <p className="text-gray-600">This helps us understand how you feel about yourself and your body</p>
+        <h3 className="text-lg font-semibold">Mental Health and Wellbeing Assessment (Last 15 Days)</h3>
+        <p className="text-gray-600">This helps us understand how you feel about yourself and your wellbeing</p>
       </div>
 
       {/* Body Perception */}
@@ -98,36 +121,6 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         </CardContent>
       </Card>
 
-      {/* Mobility Issues */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Physical Mobility</CardTitle>
-          <CardDescription>Do you have any challenges with physical movement or activities?</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <Label className="text-sm font-medium">Physical mobility challenges:</Label>
-              <span className="text-sm text-gray-600 font-medium">
-                {mobilityLabels[mentalHealth.mobilityIssues - 1]}
-              </span>
-            </div>
-            <Slider
-              value={[mentalHealth.mobilityIssues]}
-              onValueChange={(value) => handleChange('mobilityIssues', value[0])}
-              max={5}
-              min={1}
-              step={1}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>No Issues</span>
-              <span>Severe Issues</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Weight Goal */}
       <Card>
         <CardHeader>
@@ -145,6 +138,24 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               <SelectItem value="maintain">I want to maintain my current weight</SelectItem>
             </SelectContent>
           </Select>
+        </CardContent>
+      </Card>
+
+      {/* Mental Health and Wellbeing Questions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Mental Health and Wellbeing</CardTitle>
+          <CardDescription>Please rate how often you experience these situations (Last 15 Days)</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <FrequencySlider field="difficultyWalking" label="It is hard for me to walk" />
+          <FrequencySlider field="difficultyRunning" label="It is hard for me to run" />
+          <FrequencySlider field="difficultySports" label="It is hard for me to do sports activity or exercise" />
+          <FrequencySlider field="difficultyAttention" label="It is hard to pay attention at school" />
+          <FrequencySlider field="forgetThings" label="I forget things" />
+          <FrequencySlider field="troubleKeepingUp" label="I have trouble keeping up with my work or studies" />
+          <FrequencySlider field="feelLonely" label="I feel lonely and not interested in my work" />
+          <FrequencySlider field="wantEatLess" label="I feel I want to eat less to lose weight" />
         </CardContent>
       </Card>
 
@@ -172,20 +183,56 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               </SelectContent>
             </Select>
             
+            {/* Body Shape Icons Grid */}
             <div className="grid grid-cols-9 gap-2 mt-4">
               {bodyImageOptions.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => handleChange('bodyImageSelection', option.value)}
-                  className={`p-2 text-xs border rounded-md transition-colors ${
+                  className={`p-3 text-xs border rounded-md transition-all duration-200 ${
                     mentalHealth.bodyImageSelection === option.value
-                      ? 'bg-blue-100 border-blue-500'
-                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                      ? 'bg-blue-100 border-blue-500 shadow-md'
+                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
                   }`}
                 >
-                  {option.value}
+                  {/* SVG Body Shape Icons */}
+                  <div className="w-8 h-12 mx-auto mb-1">
+                    <svg viewBox="0 0 24 48" className="w-full h-full">
+                      {/* Simple body shape representation */}
+                      <ellipse 
+                        cx="12" 
+                        cy="8" 
+                        rx={2 + (option.value - 1) * 0.3} 
+                        ry="3" 
+                        fill="currentColor" 
+                        opacity="0.7"
+                      />
+                      <rect 
+                        x={12 - (3 + (option.value - 1) * 0.5)} 
+                        y="11" 
+                        width={6 + (option.value - 1) * 1} 
+                        height="20" 
+                        rx="2" 
+                        fill="currentColor" 
+                        opacity="0.7"
+                      />
+                      <ellipse 
+                        cx="12" 
+                        cy="35" 
+                        rx={2 + (option.value - 1) * 0.4} 
+                        ry="8" 
+                        fill="currentColor" 
+                        opacity="0.7"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-xs">{option.value}</span>
                 </button>
               ))}
+            </div>
+            
+            <div className="text-center text-sm text-gray-600 mt-2">
+              <p>Select the body shape that best represents how you see yourself (1 = Very Thin, 9 = Very Fuller)</p>
             </div>
           </div>
         </CardContent>
@@ -194,7 +241,7 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
       {/* Mental Health Summary */}
       <Card className="bg-purple-50">
         <CardHeader>
-          <CardTitle className="text-lg text-purple-900">Mental Health & Wellbeing</CardTitle>
+          <CardTitle className="text-lg text-purple-900">Mental Health & Wellbeing Summary</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -205,7 +252,7 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               <strong>Weight Goal:</strong> {mentalHealth.weightGoal.charAt(0).toUpperCase() + mentalHealth.weightGoal.slice(1)} weight
             </p>
             <p className="text-sm">
-              <strong>Mobility:</strong> {mobilityLabels[mentalHealth.mobilityIssues - 1]}
+              <strong>Body Image Selection:</strong> {bodyImageOptions.find(opt => opt.value === mentalHealth.bodyImageSelection)?.label || 'Not selected'}
             </p>
             <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
               <p className="text-xs text-blue-800">

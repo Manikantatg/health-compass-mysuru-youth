@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,6 +44,11 @@ const AssessmentForm: React.FC = () => {
       sisters: 0,
       birthOrder: 1,
       familyType: 'nuclear',
+      hasSiblings: 'no',
+      familyObesity: 'no',
+      familyDiabetes: 'no',
+      familyHypertension: 'no',
+      familyThyroid: 'no',
       familyObesityHistory: false,
       diabetesHistory: false,
       bpHistory: false,
@@ -57,7 +61,8 @@ const AssessmentForm: React.FC = () => {
       fruits: 2,
       milkProducts: 2,
       nonVeg: 1,
-      junkFood: 1,
+      snacks: 1,
+      beverages: 1,
       sweets: 1,
       softDrinks: 1,
       energyDrinks: 0,
@@ -66,34 +71,57 @@ const AssessmentForm: React.FC = () => {
       ptFrequency: 2,
       ptDuration: 30,
       participation: true,
-      indoorGames: 2,
-      outdoorGames: 2,
       yoga: 0,
+      exercise: 0,
+      indoorGames: 60,
+      outdoorGames: 120,
+      playAfterSchool: 60,
+      cycling: 0,
+      walking: 60,
       dance: 0,
       swimming: 0,
-      cycling: 0,
-      walking: 0,
     },
     sedentaryBehavior: {
       tvTime: 2,
       mobileTime: 2,
+      schoolReading: 2,
+      nonSchoolReading: 1,
+      indoorGamesTime: 1,
+      outdoorGamesTime: 0,
+      tuitionTime: 1,
       homeworkTime: 2,
       readingTime: 1,
       gamingTime: 1,
-      tuitionTime: 1,
       musicTime: 0,
     },
     mentalHealth: {
       bodyPerception: 3,
       bullyingExperience: false,
-      mobilityIssues: 1,
       weightGoal: 'maintain',
       bodyImageSelection: 5,
+      difficultyWalking: 0,
+      difficultyRunning: 0,
+      difficultySports: 0,
+      difficultyAttention: 1,
+      forgetThings: 1,
+      troubleKeepingUp: 1,
+      feelLonely: 0,
+      wantEatLess: 0,
+      mobilityIssues: 1,
     },
     sleepQuality: {
       bedtime: '22:00',
       wakeupTime: '06:00',
       sleepIssues: [],
+      difficultyFallingAsleep: 1,
+      wakeUpDuringSleep: 1,
+      wakeUpFromNoise: 1,
+      difficultyGettingBackToSleep: 1,
+      sleepinessInClasses: 1,
+      sleepHeadache: 0,
+      sleepIrritation: 1,
+      sleepLossOfInterest: 0,
+      sleepForgetfulness: 1,
     },
   });
 
@@ -121,37 +149,51 @@ const AssessmentForm: React.FC = () => {
                         (data.eatingHabits?.vegetables || 0) + 
                         (data.eatingHabits?.fruits || 0) + 
                         (data.eatingHabits?.milkProducts || 0);
-    const unhealthyFoods = (data.eatingHabits?.junkFood || 0) + 
-                          (data.eatingHabits?.sweets || 0) + 
-                          (data.eatingHabits?.softDrinks || 0) + 
-                          (data.eatingHabits?.energyDrinks || 0);
+    const unhealthyFoods = (data.eatingHabits?.snacks || 0) + 
+                          (data.eatingHabits?.beverages || 0) + 
+                          (data.eatingHabits?.sweets || 0);
     const eatingScore = Math.max(0, Math.min(10, (healthyFoods - unhealthyFoods + 10) / 2));
 
-    // Calculate physical activity score
-    const activityScore = Math.min(10, 
-      ((data.physicalActivity?.ptFrequency || 0) * 1.5) + 
-      ((data.physicalActivity?.outdoorGames || 0) * 0.5) + 
-      ((data.physicalActivity?.indoorGames || 0) * 0.3)
-    );
+    // Calculate physical activity score (convert minutes to appropriate scale)
+    const totalActivity = ((data.physicalActivity?.ptFrequency || 0) * (data.physicalActivity?.ptDuration || 0)) + 
+                         (data.physicalActivity?.yoga || 0) + 
+                         (data.physicalActivity?.exercise || 0) + 
+                         (data.physicalActivity?.indoorGames || 0) + 
+                         (data.physicalActivity?.outdoorGames || 0) + 
+                         (data.physicalActivity?.playAfterSchool || 0) + 
+                         (data.physicalActivity?.cycling || 0) + 
+                         (data.physicalActivity?.walking || 0);
+    const activityScore = Math.min(10, totalActivity / 42); // 420 minutes per week = 10 points
 
     // Calculate sedentary score (lower is better)
     const sedentaryTotal = (data.sedentaryBehavior?.tvTime || 0) + 
                           (data.sedentaryBehavior?.mobileTime || 0) + 
-                          (data.sedentaryBehavior?.gamingTime || 0);
+                          (data.sedentaryBehavior?.schoolReading || 0) + 
+                          (data.sedentaryBehavior?.nonSchoolReading || 0);
     const sedentaryScore = Math.max(0, 10 - (sedentaryTotal * 0.8));
 
     // Calculate mental health score
-    const mentalScore = Math.min(10, 
-      ((6 - (data.mentalHealth?.bodyPerception || 3)) * 2) + 
-      (data.mentalHealth?.bullyingExperience ? 0 : 3) + 
-      ((6 - (data.mentalHealth?.mobilityIssues || 1)) * 1.5)
-    );
+    const mentalHealthIssues = (data.mentalHealth?.difficultyWalking || 0) + 
+                              (data.mentalHealth?.difficultyRunning || 0) + 
+                              (data.mentalHealth?.difficultySports || 0) + 
+                              (data.mentalHealth?.difficultyAttention || 0) + 
+                              (data.mentalHealth?.forgetThings || 0) + 
+                              (data.mentalHealth?.troubleKeepingUp || 0) + 
+                              (data.mentalHealth?.feelLonely || 0) + 
+                              (data.mentalHealth?.wantEatLess || 0);
+    const mentalScore = Math.max(0, 10 - (mentalHealthIssues * 0.3));
 
-    // Calculate sleep score (based on sleep duration)
-    const bedtime = data.sleepQuality?.bedtime ? new Date(`2000-01-01T${data.sleepQuality.bedtime}`) : new Date();
-    const wakeup = data.sleepQuality?.wakeupTime ? new Date(`2000-01-02T${data.sleepQuality.wakeupTime}`) : new Date();
-    const sleepHours = (wakeup.getTime() - bedtime.getTime()) / (1000 * 60 * 60);
-    const sleepScore = Math.min(10, Math.max(0, 10 - Math.abs(sleepHours - 9)));
+    // Calculate sleep score
+    const sleepIssues = (data.sleepQuality?.difficultyFallingAsleep || 0) + 
+                       (data.sleepQuality?.wakeUpDuringSleep || 0) + 
+                       (data.sleepQuality?.wakeUpFromNoise || 0) + 
+                       (data.sleepQuality?.difficultyGettingBackToSleep || 0) + 
+                       (data.sleepQuality?.sleepinessInClasses || 0) + 
+                       (data.sleepQuality?.sleepHeadache || 0) + 
+                       (data.sleepQuality?.sleepIrritation || 0) + 
+                       (data.sleepQuality?.sleepLossOfInterest || 0) + 
+                       (data.sleepQuality?.sleepForgetfulness || 0);
+    const sleepScore = Math.max(0, 10 - (sleepIssues * 0.25));
 
     return {
       eatingHabitsScore: Math.round(eatingScore),
@@ -201,7 +243,10 @@ const AssessmentForm: React.FC = () => {
         age: assessmentData.socioDemographic?.age,
         gender: assessmentData.socioDemographic?.gender,
         bmi,
-        familyHistory: assessmentData.socioDemographic?.familyObesityHistory,
+        familyHistory: assessmentData.socioDemographic?.familyObesity === 'yes' || 
+                      assessmentData.socioDemographic?.familyDiabetes === 'yes' ||
+                      assessmentData.socioDemographic?.familyHypertension === 'yes' ||
+                      assessmentData.socioDemographic?.familyThyroid === 'yes',
         ...scores
       });
 
