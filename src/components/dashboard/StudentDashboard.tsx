@@ -4,14 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../../contexts/AuthContext';
 import { AssessmentData } from '../../types/assessment';
-import { Activity, TrendingUp, User, Heart, Brain, Shield, Download } from 'lucide-react';
+import { Download, User, School, Calendar, TrendingUp, AlertTriangle, Lightbulb } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import BMIChart from './BMIChart';
-import RiskMeter from './RiskMeter';
 import PhoneVerification from './PhoneVerification';
-import HealthSummary from './HealthSummary';
-import ProfileSummaryCard from './ProfileSummaryCard';
-import HealthCharts from './HealthCharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateHealthReportPDF } from '../../utils/pdfExport';
 import { toast } from '@/hooks/use-toast';
@@ -56,9 +51,6 @@ const StudentDashboard: React.FC = () => {
         >
           <div className="relative">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Heart className="h-8 w-8 text-blue-600 animate-pulse" />
-            </div>
           </div>
           <div className="space-y-2">
             <motion.p
@@ -88,143 +80,178 @@ const StudentDashboard: React.FC = () => {
     return <PhoneVerification onVerified={handlePhoneVerification} />;
   }
 
+  const getStrengths = () => {
+    const strengths = [];
+    const { bmi, physicalActivity, eatingHabits, sleepQuality } = assessmentData;
+    
+    if (bmi >= 18.5 && bmi < 25) {
+      strengths.push("Healthy BMI range maintained");
+    }
+    
+    if (physicalActivity.ptFrequency >= 3) {
+      strengths.push("Regular physical activity participation");
+    }
+    
+    if (eatingHabits.fruits >= 2 && eatingHabits.vegetables >= 2) {
+      strengths.push("Good fruit and vegetable intake");
+    }
+    
+    if (sleepQuality.difficultyFallingAsleep <= 1) {
+      strengths.push("Good sleep quality");
+    }
+    
+    return strengths.length > 0 ? strengths.slice(0, 2) : ["Completed health assessment", "Actively monitoring health"];
+  };
+
+  const getAreasToImprove = () => {
+    const improvements = [];
+    const { bmi, physicalActivity, eatingHabits, sedentaryBehavior } = assessmentData;
+    
+    if (bmi < 18.5) {
+      improvements.push("Consider healthy weight gain strategies");
+    } else if (bmi >= 25) {
+      improvements.push("Focus on healthy weight management");
+    }
+    
+    if (physicalActivity.ptFrequency < 3) {
+      improvements.push("Increase physical activity frequency");
+    }
+    
+    if (sedentaryBehavior.tvTime > 2 || sedentaryBehavior.mobileTime > 2) {
+      improvements.push("Reduce screen time for better health");
+    }
+    
+    if (eatingHabits.snacks > 2) {
+      improvements.push("Limit processed snacks and choose healthier options");
+    }
+    
+    return improvements.length > 0 ? improvements.slice(0, 2) : ["Continue healthy lifestyle habits", "Regular health monitoring"];
+  };
+
+  const getAITips = () => {
+    const tips = assessmentData.aiPrediction?.recommendations || [
+      "Maintain regular physical activity for 60 minutes daily",
+      "Include more fruits and vegetables in your diet",
+      "Ensure 8-9 hours of quality sleep each night"
+    ];
+    
+    return {
+      brain: tips[0] || "Practice mindfulness and stress management techniques",
+      nutrition: tips[1] || "Stay hydrated and eat balanced meals",
+      sleep: tips[2] || "Maintain consistent sleep schedule"
+    };
+  };
+
+  const strengths = getStrengths();
+  const improvements = getAreasToImprove();
+  const aiTips = getAITips();
+
   // Show dashboard when assessment data is available
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 p-4">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="container mx-auto px-4 py-8 space-y-8"
+        className="container mx-auto max-w-4xl space-y-6"
       >
-        {/* Welcome Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-4"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Your Health Dashboard
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Comprehensive insights powered by AI to help you achieve optimal wellness
-          </p>
-        </motion.div>
-
-        {/* Profile Summary */}
-        <ProfileSummaryCard assessmentData={assessmentData} />
-
-        {/* Download Report Button */}
+        {/* Main Dashboard Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="flex justify-center"
+          transition={{ duration: 0.6 }}
         >
-          <Button
-            onClick={handleDownloadPDF}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center space-x-2 transform hover:scale-105 transition-all duration-200"
-          >
-            <Download className="w-5 h-5" />
-            <span>Download Full Health Report (PDF)</span>
-          </Button>
-        </motion.div>
-
-        {/* Health Summary */}
-        <HealthSummary assessmentData={assessmentData} />
-
-        {/* Visual Health Charts */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="border-2 border-gray-200 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-gray-900">
-                Health Metrics Visualization
+          <Card className="border-2 border-gray-200 shadow-xl bg-white">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
+              <CardTitle className="text-3xl font-bold text-center">
+                🎉 Welcome, {assessmentData.socioDemographic.name}!
               </CardTitle>
-              <CardDescription className="text-gray-600">
-                Interactive charts showing your health data patterns
-              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <HealthCharts assessmentData={assessmentData} />
-            </CardContent>
-          </Card>
-        </motion.div>
+            <CardContent className="p-8 space-y-6">
+              {/* Student Information Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg">
+                <div className="flex items-center space-x-2">
+                  <User className="w-5 h-5 text-blue-600" />
+                  <span><strong>Name:</strong> {assessmentData.socioDemographic.name}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <School className="w-5 h-5 text-blue-600" />
+                  <span><strong>School:</strong> {assessmentData.socioDemographic.schoolName}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span><strong>🎂 Age:</strong> {assessmentData.socioDemographic.age}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span><strong>🚻 Gender:</strong> {assessmentData.socioDemographic.gender}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span><strong>⚖️ BMI:</strong> {assessmentData.bmi.toFixed(1)}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span><strong>📊 Risk Level:</strong> {assessmentData.aiPrediction?.riskLevel || 'Medium'}</span>
+                </div>
+                <div className="flex items-center space-x-2 md:col-span-2">
+                  <Calendar className="w-5 h-5 text-blue-600" />
+                  <span><strong>Assessment Date:</strong> {new Date(assessmentData.completedAt).toLocaleDateString()}</span>
+                </div>
+              </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Risk Assessment */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Card className="bg-white border-2 border-gray-200 shadow-lg h-full">
-              <CardHeader>
-                <CardTitle className="text-2xl font-bold text-gray-900">
-                  Your Health Assessment
-                </CardTitle>
-                <CardDescription className="text-gray-600 font-medium">
-                  AI-powered analysis of your health data
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <RiskMeter 
-                  riskLevel={assessmentData.aiPrediction?.riskLevel || 'Medium'}
-                  riskPercentage={assessmentData.aiPrediction?.riskPercentage || 50}
-                />
-              </CardContent>
-            </Card>
-          </motion.div>
+              {/* Strengths Section */}
+              <div className="border-t pt-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                  <h3 className="text-xl font-bold text-green-600">✅ Strengths:</h3>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-gray-700 ml-8">
+                  {strengths.map((strength, index) => (
+                    <li key={index}>{strength}</li>
+                  ))}
+                </ul>
+              </div>
 
-          {/* BMI Visualization */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 }}
-          >
-            <BMIChart 
-              bmi={assessmentData.bmi}
-              age={assessmentData.socioDemographic.age}
-            />
-          </motion.div>
-        </div>
+              {/* Areas to Improve Section */}
+              <div className="border-t pt-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <AlertTriangle className="w-6 h-6 text-yellow-600" />
+                  <h3 className="text-xl font-bold text-yellow-600">⚠️ Areas to Improve:</h3>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-gray-700 ml-8">
+                  {improvements.map((improvement, index) => (
+                    <li key={index}>{improvement}</li>
+                  ))}
+                </ul>
+              </div>
 
-        {/* AI Recommendations */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          <Card className="bg-white border-2 border-gray-200 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold text-gray-900">
-                Your Personalized Action Plan
-              </CardTitle>
-              <CardDescription className="text-gray-600 font-medium">
-                AI-generated recommendations tailored for you
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(assessmentData.aiPrediction?.recommendations || []).map((recommendation, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 + index * 0.1 }}
-                    className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200 hover:shadow-md transition-all duration-200"
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                        {index + 1}
-                      </div>
-                      <p className="text-sm text-gray-800 font-medium leading-relaxed">{recommendation}</p>
-                    </div>
-                  </motion.div>
-                ))}
+              {/* AI Health Tips Section */}
+              <div className="border-t pt-6">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Lightbulb className="w-6 h-6 text-purple-600" />
+                  <h3 className="text-xl font-bold text-purple-600">💡 AI Health Tips:</h3>
+                </div>
+                <div className="space-y-3 ml-8">
+                  <div className="flex items-start space-x-2">
+                    <span className="text-lg">🧠</span>
+                    <p className="text-gray-700">{aiTips.brain}</p>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <span className="text-lg">🥗</span>
+                    <p className="text-gray-700">{aiTips.nutrition}</p>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <span className="text-lg">🛌</span>
+                    <p className="text-gray-700">{aiTips.sleep}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Download Button */}
+              <div className="border-t pt-6 text-center">
+                <Button
+                  onClick={handleDownloadPDF}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center space-x-2 mx-auto transform hover:scale-105 transition-all duration-200"
+                >
+                  <Download className="w-5 h-5" />
+                  <span>📥 Download Full Health Report as PDF</span>
+                </Button>
               </div>
             </CardContent>
           </Card>
