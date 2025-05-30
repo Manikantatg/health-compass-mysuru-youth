@@ -242,15 +242,17 @@ const AssessmentForm: React.FC = () => {
       // Calculate scores
       const scores = calculateScores(assessmentData);
 
-      // Generate AI prediction
+      // Generate AI prediction - fix the type issue here
+      const familyHistory = assessmentData.socioDemographic?.familyObesity === 'yes' || 
+                           assessmentData.socioDemographic?.familyDiabetes === 'yes' ||
+                           assessmentData.socioDemographic?.familyHypertension === 'yes' ||
+                           assessmentData.socioDemographic?.familyThyroid === 'yes';
+
       const aiPrediction = await generateObesityPrediction({
         age: assessmentData.socioDemographic?.age,
         gender: assessmentData.socioDemographic?.gender,
         bmi,
-        familyHistory: assessmentData.socioDemographic?.familyObesity === 'yes' || 
-                      assessmentData.socioDemographic?.familyDiabetes === 'yes' ||
-                      assessmentData.socioDemographic?.familyHypertension === 'yes' ||
-                      assessmentData.socioDemographic?.familyThyroid === 'yes',
+        familyHistory,
         ...scores
       });
 
