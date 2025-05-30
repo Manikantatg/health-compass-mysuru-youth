@@ -120,6 +120,14 @@ export interface SleepQuality {
   sleepIssues: string[];
 }
 
+export interface HealthScores {
+  eatingHabitsScore: number;
+  physicalActivityScore: number;
+  sedentaryScore: number;
+  mentalHealthScore: number;
+  sleepScore: number;
+}
+
 export interface AssessmentData {
   id?: string;
   userId: string;
@@ -131,6 +139,7 @@ export interface AssessmentData {
   sleepQuality: SleepQuality;
   bmi: number;
   completedAt: Date;
+  scores?: HealthScores;
   aiPrediction: {
     riskLevel: 'Low' | 'Medium' | 'High';
     riskPercentage: number;
