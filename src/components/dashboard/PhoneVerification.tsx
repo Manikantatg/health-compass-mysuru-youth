@@ -26,6 +26,7 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified }) => 
     try {
       // Format phone number (remove spaces, dashes, etc.)
       const formattedPhone = phoneNumber.replace(/\D/g, '');
+      console.log('Searching for phone number:', formattedPhone);
       
       // Query Firestore for matching phone number in both father and mother contact fields
       const fatherQuery = query(
@@ -42,6 +43,9 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified }) => 
         getDocs(fatherQuery),
         getDocs(motherQuery)
       ]);
+      
+      console.log('Father query results:', fatherSnapshot.size);
+      console.log('Mother query results:', motherSnapshot.size);
       
       if (fatherSnapshot.empty && motherSnapshot.empty) {
         setError("This number doesn't match our records. Please contact your school administrator.");
