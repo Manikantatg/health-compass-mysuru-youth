@@ -62,7 +62,7 @@ const Index: React.FC = () => {
     {
       icon: MapPin,
       title: 'Built for Local Youth',
-      description: 'Designed for Karnataka\'s youth',
+      description: 'Designed for Karnataka youth',
       gradient: 'from-neon-pink to-neon-purple'
     }
   ];
@@ -127,7 +127,7 @@ const Index: React.FC = () => {
     <div className="min-h-screen bg-off-white font-inter">
       {/* Hero Section */}
       <div className="relative overflow-hidden gradient-dark min-h-screen flex items-center">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.03\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"2\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
         
         <motion.div 
           initial={{ opacity: 0 }}
@@ -385,7 +385,7 @@ const Index: React.FC = () => {
             className="text-center mb-20"
           >
             <h2 className="text-6xl font-bold text-jet-black mb-6 font-satoshi tracking-tighter">
-              Why It's <span className="text-gradient-sunset">Powerful</span>
+              Why It&apos;s <span className="text-gradient-sunset">Powerful</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto font-inter">
               Health assessment that feels empowering, not clinical
@@ -471,7 +471,7 @@ const Index: React.FC = () => {
                             <p className="text-gray-500 font-inter text-sm">{testimonial.location}</p>
                           </div>
                         </div>
-                        <p className="text-xl text-gray-700 mb-8 flex-grow leading-relaxed font-inter">"{testimonial.quote}"</p>
+                        <p className="text-xl text-gray-700 mb-8 flex-grow leading-relaxed font-inter">&quot;{testimonial.quote}&quot;</p>
                       </div>
                     </CardContent>
                   </Card>
@@ -531,7 +531,7 @@ const Index: React.FC = () => {
                 
       {/* Final CTA Section */}
       <div className="space-section gradient-dark relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.03\"%3E%3Ccircle cx=\"30\" cy=\"30\" r=\"2\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
         <div className="container mx-auto px-4 text-center relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
