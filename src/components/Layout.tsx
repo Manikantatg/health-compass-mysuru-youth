@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Activity, Settings, Menu, X } from 'lucide-react';
+import { LogOut, User, Activity, Settings, Menu, X, Bell, Search } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -22,43 +22,50 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   const navItems = [
-    { icon: Activity, label: 'Dashboard', path: '/dashboard' }
+    { icon: Activity, label: 'Dashboard', path: '/dashboard', description: 'Patient overview and analytics' }
   ];
 
   if (userProfile?.role === 'admin') {
     navItems.push(
-      { icon: User, label: 'Profile', path: '/profile' },
-      { icon: Settings, label: 'Admin', path: '/admin' }
+      { icon: User, label: 'Profile', path: '/profile', description: 'Personal settings and preferences' },
+      { icon: Settings, label: 'Admin', path: '/admin', description: 'System administration tools' }
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-off-white to-gray-50 font-inter">
-      {/* Navigation */}
-      <nav className="glass-morphism border-b border-white/20 sticky top-0 z-50 backdrop-blur-xl">
+    <div className="min-h-screen bg-background font-inter">
+      {/* Medical Navigation Header */}
+      <nav className="glass-medical border-b sticky top-0 z-50 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
+              {/* Medical Logo */}
               <div className="flex-shrink-0 flex items-center space-x-3">
-                <div className="w-10 h-10 gradient-electric rounded-2xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-medical-blue rounded-xl flex items-center justify-center shadow-sm">
                   <Activity className="h-6 w-6 text-white" />
                 </div>
-                <h1 className="text-2xl font-bold text-gradient-electric font-satoshi tracking-tight">
-                  HealthPredict
-                </h1>
+                <div className="flex flex-col">
+                  <h1 className="text-xl font-semibold text-medical-blue font-satoshi tracking-tight">
+                    HealthPredict
+                  </h1>
+                  <span className="text-xs text-muted-foreground font-medium">Clinical Platform</span>
+                </div>
               </div>
-              <div className="hidden md:ml-8 md:flex md:space-x-6">
+              
+              {/* Navigation Links */}
+              <div className="hidden md:ml-8 md:flex md:space-x-2">
                 {navItems.map((item) => (
                   <motion.button
                     key={item.path}
                     onClick={() => navigate(item.path)}
                     className={`${
                       location.pathname === item.path
-                        ? 'text-electric-blue'
-                        : 'text-gray-600 hover:text-electric-blue'
-                    } inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 nav-link font-satoshi tracking-tight`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                        ? 'text-medical-blue bg-primary/10'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                    } medical-nav-link tab-medical font-satoshi tracking-tight group relative`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    title={item.description}
                   >
                     <item.icon className="h-5 w-5 mr-2" />
                     {item.label}
@@ -66,19 +73,61 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 ))}
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            
+            {/* Header Actions */}
+            <div className="flex items-center space-x-3">
+              {/* Search */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden md:flex tap-target rounded-xl text-muted-foreground hover:text-foreground"
+                title="Search patients and records"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+              
+              {/* Notifications */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden md:flex tap-target rounded-xl text-muted-foreground hover:text-foreground relative"
+                title="Notifications and alerts"
+              >
+                <Bell className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 h-3 w-3 bg-coral-red rounded-full animate-pulse"></span>
+              </Button>
+              
+              {/* User Profile */}
+              <div className="hidden md:flex items-center space-x-3 pl-3 border-l">
+                <div className="flex flex-col text-right">
+                  <span className="text-sm font-medium text-foreground">
+                    {currentUser?.email?.split('@')[0]}
+                  </span>
+                  <span className="text-xs text-muted-foreground capitalize">
+                    {userProfile?.role || 'User'}
+                  </span>
+                </div>
+                <div className="w-8 h-8 bg-sage-green rounded-lg flex items-center justify-center">
+                  <User className="h-4 w-4 text-foreground" />
+                </div>
+              </div>
+              
+              {/* Logout */}
               <Button
                 onClick={handleLogout}
                 variant="ghost"
-                className="hidden md:flex items-center text-gray-600 hover:text-electric-blue hover:bg-electric-blue/10 transition-all duration-200 button-press font-satoshi tracking-tight"
+                className="hidden md:flex items-center btn-medical-ghost text-sm"
               >
-                <LogOut className="h-5 w-5 mr-2" />
-                Logout
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
               </Button>
+              
+              {/* Mobile Menu Toggle */}
               <Button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 variant="ghost"
-                className="md:hidden button-press"
+                size="icon"
+                className="md:hidden tap-target rounded-xl"
               >
                 {isMobileMenuOpen ? (
                   <X className="h-6 w-6" />
@@ -97,9 +146,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden glass-morphism border-t border-white/20"
+              className="md:hidden glass-medical border-t"
             >
-              <div className="px-2 pt-2 pb-3 space-y-1">
+              <div className="px-4 pt-4 pb-6 space-y-3">
                 {navItems.map((item) => (
                   <motion.button
                     key={item.path}
@@ -109,36 +158,45 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     }}
                     className={`${
                       location.pathname === item.path
-                        ? 'bg-electric-blue/10 text-electric-blue'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    } w-full flex items-center px-3 py-2 rounded-2xl text-base font-medium transition-all duration-200 font-satoshi tracking-tight`}
+                        ? 'bg-primary/10 text-medical-blue'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    } w-full flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 font-satoshi tracking-tight tap-target`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <item.icon className="h-5 w-5 mr-3" />
-                    {item.label}
+                    <div className="flex flex-col items-start">
+                      <span>{item.label}</span>
+                      <span className="text-xs text-muted-foreground font-normal">
+                        {item.description}
+                      </span>
+                    </div>
                   </motion.button>
                 ))}
-                <Button
-                  onClick={handleLogout}
-                  variant="ghost"
-                  className="w-full flex items-center justify-start px-3 py-2 text-gray-600 hover:bg-gray-50 font-satoshi tracking-tight"
-                >
-                  <LogOut className="h-5 w-5 mr-3" />
-                  Logout
-                </Button>
+                
+                <div className="pt-3 border-t">
+                  <Button
+                    onClick={handleLogout}
+                    variant="ghost"
+                    className="w-full flex items-center justify-start px-4 py-3 text-muted-foreground hover:bg-muted hover:text-foreground rounded-xl tap-target"
+                  >
+                    <LogOut className="h-5 w-5 mr-3" />
+                    Sign Out
+                  </Button>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </nav>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Main Content Area */}
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="animate-fade-in-smooth"
         >
           {children}
         </motion.div>

@@ -5,85 +5,93 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base System Colors */
+    --background: 250 250 250; /* Off-white #FAFAFA */
+    --foreground: 11 26 47; /* Deep Midnight Blue #0B1A2F */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 255 255 255;
+    --card-foreground: 11 26 47;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 255 255 255;
+    --popover-foreground: 11 26 47;
 
-    --primary: 210 100% 20%;
-    --primary-foreground: 210 40% 98%;
+    /* Medical Blue Primary */
+    --primary: 53 106 230; /* Medical Blue #356AE6 */
+    --primary-foreground: 255 255 255;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Sage Green Secondary */
+    --secondary: 164 203 180; /* Sage #A4CBB4 */
+    --secondary-foreground: 11 26 47;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 242 242 242; /* Light Grey #F2F2F2 */
+    --muted-foreground: 107 114 126;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 162 155 254; /* Lavender #A29BFE */
+    --accent-foreground: 11 26 47;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Status Colors */
+    --destructive: 255 107 107; /* Coral Red #FF6B6B */
+    --destructive-foreground: 255 255 255;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 78 205 196; /* Aqua Mint #4ECDC4 */
+    --warning: 255 230 109; /* Gen Z Yellow #FFE66D */
 
-    --radius: 0.5rem;
+    --border: 229 231 235;
+    --input: 229 231 235;
+    --ring: 53 106 230;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --radius: 0.75rem; /* Increased for Gen Z soft corners */
 
-    /* Gen Z Color Variables */
-    --neon-cyan: 180 100% 50%;
-    --neon-pink: 320 100% 75%;
-    --neon-purple: 270 100% 75%;
-    --soft-lavender: 250 60% 85%;
-    --electric-blue: 210 100% 60%;
-    --mint-green: 150 80% 60%;
-    --sunset-orange: 25 95% 65%;
-    --jet-black: 0 0% 8%;
-    --off-white: 0 0% 98%;
+    /* Sidebar */
+    --sidebar-background: 255 255 255;
+    --sidebar-foreground: 11 26 47;
+    --sidebar-primary: 53 106 230;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 242 242 242;
+    --sidebar-accent-foreground: 11 26 47;
+    --sidebar-border: 229 231 235;
+    --sidebar-ring: 53 106 230;
+
+    /* Gen Z Medical Color System */
+    --medical-blue: 53 106 230;
+    --sage-green: 164 203 180;
+    --lavender: 162 155 254;
+    --coral-red: 255 107 107;
+    --aqua-mint: 78 205 196;
+    --gen-z-yellow: 255 230 109;
+    --off-white: 250 250 250;
+    --light-grey: 242 242 242;
+    --deep-midnight: 11 26 47;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 11 26 47; /* Deep Midnight Blue */
+    --foreground: 250 250 250;
+    --card: 15 32 52;
+    --card-foreground: 250 250 250;
+    --popover: 15 32 52;
+    --popover-foreground: 250 250 250;
+    --primary: 78 205 196; /* Dimmed Teal */
+    --primary-foreground: 11 26 47;
+    --secondary: 107 114 126; /* Dusty Indigo */
+    --secondary-foreground: 250 250 250;
+    --muted: 30 45 65;
+    --muted-foreground: 164 203 180;
+    --accent: 107 114 126;
+    --accent-foreground: 250 250 250;
+    --destructive: 220 90 90; /* Muted Coral */
+    --destructive-foreground: 250 250 250;
+    --border: 30 45 65;
+    --input: 30 45 65;
+    --ring: 78 205 196;
+    --sidebar-background: 11 26 47;
+    --sidebar-foreground: 250 250 250;
+    --sidebar-primary: 78 205 196;
+    --sidebar-primary-foreground: 11 26 47;
+    --sidebar-accent: 30 45 65;
+    --sidebar-accent-foreground: 250 250 250;
+    --sidebar-border: 30 45 65;
+    --sidebar-ring: 78 205 196;
   }
 }
 
@@ -93,38 +101,53 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    line-height: 1.6; /* Enhanced for readability */
+    letter-spacing: -0.005em;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    font-family: 'Satoshi', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-weight: 600;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  /* Medical Typography Scale */
+  .text-medical-title {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+
+  .text-medical-subtitle {
+    @apply text-xl font-medium tracking-tight;
+  }
+
+  .text-medical-body {
+    @apply text-base leading-relaxed;
+  }
+
+  .text-medical-caption {
+    @apply text-sm text-muted-foreground;
   }
 }
 
-/* Gen Z Professional Animations & Micro-interactions */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-@keyframes pulse-glow {
+/* Gen Z Medical Animations & Micro-interactions */
+@keyframes pulse-medical {
   0%, 100% { 
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 0 0 rgba(53, 106, 230, 0.4);
     transform: scale(1);
   }
   50% { 
-    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
-    transform: scale(1.02);
+    box-shadow: 0 0 0 8px rgba(53, 106, 230, 0);
+    transform: scale(1.01);
   }
 }
 
-@keyframes slide-up {
+@keyframes slide-up-gentle {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -132,226 +155,207 @@
   }
 }
 
-@keyframes slide-in-left {
+@keyframes fade-in-smooth {
   from {
     opacity: 0;
-    transform: translateX(-30px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
   }
 }
 
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes card-hover {
+@keyframes draw-border {
   from {
-    transform: translateY(0) scale(1);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    stroke-dasharray: 0 100;
   }
   to {
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    stroke-dasharray: 100 0;
   }
-}
-
-@keyframes button-press {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.98); }
-  100% { transform: scale(1); }
 }
 
 @layer utilities {
-  .animate-float {
-    animation: float 4s ease-in-out infinite;
-  }
-  
-  .animate-slide-up {
-    animation: slide-up 0.6s ease-out;
-  }
-  
-  .animate-slide-in-left {
-    animation: slide-in-left 0.6s ease-out;
+  /* Medical UI Components */
+  .card-medical {
+    @apply bg-card rounded-xl border shadow-sm hover:shadow-md transition-all duration-300 ease-out;
   }
 
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
+  .card-medical:hover {
+    @apply shadow-lg transform -translate-y-1;
   }
 
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
+  .btn-medical-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out;
   }
 
-  /* Gen Z Gradients */
-  .gradient-electric {
-    background: linear-gradient(135deg, 
-      hsl(var(--electric-blue)) 0%, 
-      hsl(var(--neon-cyan)) 50%, 
-      hsl(var(--mint-green)) 100%);
+  .btn-medical-primary:hover {
+    @apply shadow-lg transform -translate-y-0.5;
   }
 
-  .gradient-sunset {
-    background: linear-gradient(135deg, 
-      hsl(var(--sunset-orange)) 0%, 
-      hsl(var(--neon-pink)) 50%, 
-      hsl(var(--neon-purple)) 100%);
+  .btn-medical-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out;
   }
 
-  .gradient-lavender {
-    background: linear-gradient(135deg, 
-      hsl(var(--soft-lavender)) 0%, 
-      hsl(var(--off-white)) 100%);
+  .btn-medical-ghost {
+    @apply text-foreground hover:bg-accent hover:text-accent-foreground rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out;
   }
 
-  .gradient-dark {
-    background: linear-gradient(135deg, 
-      hsl(var(--jet-black)) 0%, 
-      hsl(222.2 84% 15%) 100%);
+  .input-medical {
+    @apply flex h-12 w-full rounded-xl border border-input bg-background px-4 py-3 text-base ring-offset-background transition-all duration-200 file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
-  /* Text Gradients */
-  .text-gradient-electric {
-    background: linear-gradient(135deg, 
-      hsl(var(--electric-blue)), 
-      hsl(var(--neon-cyan)));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .tab-medical {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
   }
 
-  .text-gradient-sunset {
-    background: linear-gradient(135deg, 
-      hsl(var(--sunset-orange)), 
-      hsl(var(--neon-pink)));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .tab-medical-active {
+    @apply bg-primary text-primary-foreground shadow-sm;
   }
 
-  /* Micro-interactions */
-  .hover-lift {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  .tab-medical-inactive {
+    @apply text-muted-foreground hover:text-foreground hover:bg-muted;
   }
 
-  .hover-lift:hover {
-    animation: card-hover 0.3s ease-out forwards;
+  /* Status Indicators */
+  .status-urgent {
+    @apply border-l-4 border-destructive bg-destructive/5;
+    animation: pulse-medical 2s infinite;
   }
 
-  .button-press {
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  .status-normal {
+    @apply border-l-4 border-success bg-success/5;
   }
 
-  .button-press:active {
-    animation: button-press 0.15s ease-out;
+  .status-warning {
+    @apply border-l-4 border-warning bg-warning/5;
   }
 
-  .glass-morphism {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+  /* Animation Classes */
+  .animate-slide-up-gentle {
+    animation: slide-up-gentle 0.4s ease-out;
+  }
+
+  .animate-fade-in-smooth {
+    animation: fade-in-smooth 0.3s ease-out;
+  }
+
+  .animate-pulse-medical {
+    animation: pulse-medical 2s ease-in-out infinite;
+  }
+
+  /* Medical Color Classes */
+  .text-medical-blue {
+    color: rgb(var(--medical-blue));
+  }
+
+  .bg-medical-blue {
+    background-color: rgb(var(--medical-blue));
+  }
+
+  .text-sage-green {
+    color: rgb(var(--sage-green));
+  }
+
+  .bg-sage-green {
+    background-color: rgb(var(--sage-green));
+  }
+
+  .text-coral-red {
+    color: rgb(var(--coral-red));
+  }
+
+  .bg-coral-red {
+    background-color: rgb(var(--coral-red));
+  }
+
+  .text-aqua-mint {
+    color: rgb(var(--aqua-mint));
+  }
+
+  .bg-aqua-mint {
+    background-color: rgb(var(--aqua-mint));
+  }
+
+  /* Accessibility Enhancements */
+  .focus-medical {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Large Tap Targets for iPads */
+  .tap-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  /* Gen Z Visual Elements */
+  .glass-medical {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  .text-shadow-glow {
-    text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  .dark .glass-medical {
+    background: rgba(11, 26, 47, 0.8);
+    border: 1px solid rgba(78, 205, 196, 0.2);
   }
 
-  /* Typography Utilities */
-  .font-satoshi {
-    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  }
-
-  .font-inter {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  }
-
-  .tracking-tight {
-    letter-spacing: -0.025em;
-  }
-
-  .tracking-tighter {
-    letter-spacing: -0.05em;
-  }
-
-  /* Professional Spacing */
-  .space-section {
-    padding-top: 5rem;
-    padding-bottom: 5rem;
-  }
-
-  .space-hero {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
-  }
-
-  /* Border Radius */
-  .rounded-2xl {
-    border-radius: 1rem;
-  }
-
-  .rounded-3xl {
-    border-radius: 1.5rem;
-  }
-
-  .rounded-4xl {
-    border-radius: 2rem;
+  /* Responsive Typography */
+  @media (max-width: 640px) {
+    .text-medical-title {
+      @apply text-2xl;
+    }
+    
+    .text-medical-subtitle {
+      @apply text-lg;
+    }
   }
 }
 
-/* Component-specific styles */
-.card-interactive {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.card-interactive:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  border-color: rgba(59, 130, 246, 0.3);
-}
-
-.button-modern {
-  position: relative;
-  overflow: hidden;
+/* Component-specific Medical Styles */
+.medical-card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.button-modern::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+.medical-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -6px rgba(53, 106, 230, 0.15);
 }
 
-.button-modern:hover::before {
-  left: 100%;
-}
-
-.nav-link {
+.medical-nav-link {
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
-.nav-link::after {
+.medical-nav-link::after {
   content: '';
   position: absolute;
   width: 0;
   height: 2px;
-  bottom: -4px;
+  bottom: -2px;
   left: 0;
-  background: linear-gradient(90deg, hsl(var(--electric-blue)), hsl(var(--neon-cyan)));
+  background: rgb(var(--medical-blue));
   transition: width 0.3s ease;
 }
 
-.nav-link:hover::after {
+.medical-nav-link:hover::after,
+.medical-nav-link.active::after {
   width: 100%;
+}
+
+/* Medical Form Enhancements */
+.floating-label {
+  position: relative;
+}
+
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label {
+  transform: translateY(-24px) scale(0.85);
+  color: rgb(var(--medical-blue));
+}
+
+.floating-label label {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  transition: all 0.2s ease;
+  pointer-events: none;
+  color: rgb(var(--muted-foreground));
 }
