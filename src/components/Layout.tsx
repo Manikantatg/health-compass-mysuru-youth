@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Activity, FileText, Settings, Menu, X } from 'lucide-react';
+import { LogOut, User, Activity, Settings, Menu, X } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -27,26 +27,23 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   if (userProfile?.role === 'admin') {
     navItems.push(
-      { icon: FileText, label: 'Assessment', path: '/assessment' },
       { icon: User, label: 'Profile', path: '/profile' },
       { icon: Settings, label: 'Admin', path: '/admin' }
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-off-white to-gray-50 font-inter">
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
+      <nav className="glass-morphism border-b border-white/20 sticky top-0 z-50 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center space-x-3">
-                <img
-                  className="h-10 w-auto"
-                  src="/logo.png"
-                  alt="HealthPredict Logo"
-                />
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <div className="w-10 h-10 gradient-electric rounded-2xl flex items-center justify-center">
+                  <Activity className="h-6 w-6 text-white" />
+                </div>
+                <h1 className="text-2xl font-bold text-gradient-electric font-satoshi tracking-tight">
                   HealthPredict
                 </h1>
               </div>
@@ -57,9 +54,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     onClick={() => navigate(item.path)}
                     className={`${
                       location.pathname === item.path
-                        ? 'text-blue-600 border-blue-600'
-                        : 'text-gray-600 hover:text-blue-600 border-transparent hover:border-blue-600'
-                    } inline-flex items-center px-3 py-2 border-b-2 text-sm font-medium transition-all duration-200`}
+                        ? 'text-electric-blue'
+                        : 'text-gray-600 hover:text-electric-blue'
+                    } inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 nav-link font-satoshi tracking-tight`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -73,7 +70,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Button
                 onClick={handleLogout}
                 variant="ghost"
-                className="hidden md:flex items-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"
+                className="hidden md:flex items-center text-gray-600 hover:text-electric-blue hover:bg-electric-blue/10 transition-all duration-200 button-press font-satoshi tracking-tight"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 Logout
@@ -81,7 +78,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 variant="ghost"
-                className="md:hidden"
+                className="md:hidden button-press"
               >
                 {isMobileMenuOpen ? (
                   <X className="h-6 w-6" />
@@ -100,7 +97,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-white border-t border-gray-200"
+              className="md:hidden glass-morphism border-t border-white/20"
             >
               <div className="px-2 pt-2 pb-3 space-y-1">
                 {navItems.map((item) => (
@@ -112,9 +109,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     }}
                     className={`${
                       location.pathname === item.path
-                        ? 'bg-blue-50 text-blue-600'
+                        ? 'bg-electric-blue/10 text-electric-blue'
                         : 'text-gray-600 hover:bg-gray-50'
-                    } w-full flex items-center px-3 py-2 rounded-md text-base font-medium transition-all duration-200`}
+                    } w-full flex items-center px-3 py-2 rounded-2xl text-base font-medium transition-all duration-200 font-satoshi tracking-tight`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -125,7 +122,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <Button
                   onClick={handleLogout}
                   variant="ghost"
-                  className="w-full flex items-center justify-start px-3 py-2 text-gray-600 hover:bg-gray-50"
+                  className="w-full flex items-center justify-start px-3 py-2 text-gray-600 hover:bg-gray-50 font-satoshi tracking-tight"
                 >
                   <LogOut className="h-5 w-5 mr-3" />
                   Logout
