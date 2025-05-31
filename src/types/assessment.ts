@@ -90,6 +90,9 @@ export interface MentalHealth {
   bullyingExperience: boolean;
   weightGoal: 'lose' | 'gain' | 'maintain';
   bodyImageSelection: number; // 1-9 scale
+  // New body image satisfaction fields
+  currentBodyImageSatisfaction?: number; // 1-5 scale (Very dissatisfied to Very satisfied)
+  desiredBodyImageSatisfaction?: number; // 1-5 scale (Very dissatisfied to Very satisfied)
   // New mental health questions (0-4 scale: Never, Rarely, Sometimes, Often, Almost Always)
   difficultyWalking: number;
   difficultyRunning: number;

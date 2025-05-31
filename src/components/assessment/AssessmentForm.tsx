@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -101,6 +100,8 @@ const AssessmentForm: React.FC = () => {
       bullyingExperience: false,
       weightGoal: 'maintain',
       bodyImageSelection: 5,
+      currentBodyImageSatisfaction: 3,
+      desiredBodyImageSatisfaction: 4,
       difficultyWalking: 0,
       difficultyRunning: 0,
       difficultySports: 0,

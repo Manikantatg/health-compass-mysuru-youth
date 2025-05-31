@@ -3,6 +3,7 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MentalHealth } from '../../../types/assessment';
@@ -21,6 +22,7 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
 
   const bodyPerceptionLabels = ['Very Underweight', 'Underweight', 'Normal', 'Overweight', 'Very Overweight'];
   const frequencyLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
+  const bodyImageSatisfactionLabels = ['Very dissatisfied', 'Dissatisfied', 'Neutral', 'Satisfied', 'Very satisfied'];
 
   const bodyImageOptions = [
     { value: 1, label: 'Very Thin' },
@@ -60,14 +62,59 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Mental Health and Wellbeing Assessment (Last 15 Days)</h3>
-        <p className="text-gray-600">This helps us understand how you feel about yourself and your wellbeing</p>
+        <h3 className="text-lg font-semibold">🧠 Mental Health and Wellbeing Assessment (Last 15 Days)</h3>
+        <p className="text-gray-600">This section assesses students' perceptions of their mental health and body image</p>
       </div>
+
+      {/* Body Image Perception - Current vs Desired */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Body Image Perception</CardTitle>
+          <CardDescription>How you see and feel about your body</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Current Body Image Perception */}
+          <div className="space-y-4">
+            <Label className="text-base font-medium">Q1: Please rate your current perception of your body image</Label>
+            <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
+            <RadioGroup
+              value={mentalHealth.currentBodyImageSatisfaction?.toString() || "3"}
+              onValueChange={(value) => handleChange('currentBodyImageSatisfaction', parseInt(value))}
+              className="space-y-2"
+            >
+              {bodyImageSatisfactionLabels.map((label, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <RadioGroupItem value={(index + 1).toString()} id={`current-${index}`} />
+                  <Label htmlFor={`current-${index}`} className="cursor-pointer">{label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          {/* Desired Body Image Perception */}
+          <div className="space-y-4">
+            <Label className="text-base font-medium">Q2: Please rate your desired perception of your body image</Label>
+            <p className="text-sm text-gray-600">(How would you ideally like to perceive your body?)</p>
+            <RadioGroup
+              value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "4"}
+              onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', parseInt(value))}
+              className="space-y-2"
+            >
+              {bodyImageSatisfactionLabels.map((label, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <RadioGroupItem value={(index + 1).toString()} id={`desired-${index}`} />
+                  <Label htmlFor={`desired-${index}`} className="cursor-pointer">{label}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Body Perception */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Body Perception</CardTitle>
+          <CardTitle className="text-lg">Body Weight Perception</CardTitle>
           <CardDescription>How do you perceive your current body weight?</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -90,6 +137,85 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               <span>Very Underweight</span>
               <span>Very Overweight</span>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Body Image Visual Reference Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Body Image Reference Chart</CardTitle>
+          <CardDescription>Select the body image that best represents how you see yourself currently</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Body Shape Icons Grid */}
+            <div className="grid grid-cols-9 gap-2">
+              {bodyImageOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => handleChange('bodyImageSelection', option.value)}
+                  className={`p-3 text-xs border rounded-md transition-all duration-200 ${
+                    mentalHealth.bodyImageSelection === option.value
+                      ? 'bg-blue-100 border-blue-500 shadow-md'
+                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
+                  }`}
+                >
+                  {/* SVG Body Shape Icons */}
+                  <div className="w-8 h-12 mx-auto mb-1">
+                    <svg viewBox="0 0 24 48" className="w-full h-full">
+                      {/* Simple body shape representation */}
+                      <ellipse 
+                        cx="12" 
+                        cy="8" 
+                        rx={2 + (option.value - 1) * 0.3} 
+                        ry="3" 
+                        fill="currentColor" 
+                        opacity="0.7"
+                      />
+                      <rect 
+                        x={12 - (3 + (option.value - 1) * 0.5)} 
+                        y="11" 
+                        width={6 + (option.value - 1) * 1} 
+                        height="20" 
+                        rx="2" 
+                        fill="currentColor" 
+                        opacity="0.7"
+                      />
+                      <ellipse 
+                        cx="12" 
+                        cy="35" 
+                        rx={2 + (option.value - 1) * 0.4} 
+                        ry="8" 
+                        fill="currentColor" 
+                        opacity="0.7"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-xs">{option.value}</span>
+                </button>
+              ))}
+            </div>
+            
+            <div className="text-center text-sm text-gray-600 mt-2">
+              <p>Select the body shape that best represents how you see yourself (1 = Very Thin, 9 = Very Fuller)</p>
+            </div>
+
+            <Select 
+              value={mentalHealth.bodyImageSelection.toString()} 
+              onValueChange={(value) => handleChange('bodyImageSelection', parseInt(value))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select body image that represents you" />
+              </SelectTrigger>
+              <SelectContent>
+                {bodyImageOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value.toString()}>
+                    {option.value}. {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -159,85 +285,6 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         </CardContent>
       </Card>
 
-      {/* Body Image Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Body Image Perception</CardTitle>
-          <CardDescription>Which body image best represents how you see yourself?</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <Select 
-              value={mentalHealth.bodyImageSelection.toString()} 
-              onValueChange={(value) => handleChange('bodyImageSelection', parseInt(value))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select body image that represents you" />
-              </SelectTrigger>
-              <SelectContent>
-                {bodyImageOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value.toString()}>
-                    {option.value}. {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {/* Body Shape Icons Grid */}
-            <div className="grid grid-cols-9 gap-2 mt-4">
-              {bodyImageOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => handleChange('bodyImageSelection', option.value)}
-                  className={`p-3 text-xs border rounded-md transition-all duration-200 ${
-                    mentalHealth.bodyImageSelection === option.value
-                      ? 'bg-blue-100 border-blue-500 shadow-md'
-                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
-                  }`}
-                >
-                  {/* SVG Body Shape Icons */}
-                  <div className="w-8 h-12 mx-auto mb-1">
-                    <svg viewBox="0 0 24 48" className="w-full h-full">
-                      {/* Simple body shape representation */}
-                      <ellipse 
-                        cx="12" 
-                        cy="8" 
-                        rx={2 + (option.value - 1) * 0.3} 
-                        ry="3" 
-                        fill="currentColor" 
-                        opacity="0.7"
-                      />
-                      <rect 
-                        x={12 - (3 + (option.value - 1) * 0.5)} 
-                        y="11" 
-                        width={6 + (option.value - 1) * 1} 
-                        height="20" 
-                        rx="2" 
-                        fill="currentColor" 
-                        opacity="0.7"
-                      />
-                      <ellipse 
-                        cx="12" 
-                        cy="35" 
-                        rx={2 + (option.value - 1) * 0.4} 
-                        ry="8" 
-                        fill="currentColor" 
-                        opacity="0.7"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-xs">{option.value}</span>
-                </button>
-              ))}
-            </div>
-            
-            <div className="text-center text-sm text-gray-600 mt-2">
-              <p>Select the body shape that best represents how you see yourself (1 = Very Thin, 9 = Very Fuller)</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Mental Health Summary */}
       <Card className="bg-purple-50">
         <CardHeader>
@@ -246,7 +293,13 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         <CardContent>
           <div className="space-y-2">
             <p className="text-sm">
-              <strong>Body Perception:</strong> {bodyPerceptionLabels[mentalHealth.bodyPerception - 1]}
+              <strong>Current Body Image:</strong> {bodyImageSatisfactionLabels[(mentalHealth.currentBodyImageSatisfaction || 3) - 1]}
+            </p>
+            <p className="text-sm">
+              <strong>Desired Body Image:</strong> {bodyImageSatisfactionLabels[(mentalHealth.desiredBodyImageSatisfaction || 4) - 1]}
+            </p>
+            <p className="text-sm">
+              <strong>Body Weight Perception:</strong> {bodyPerceptionLabels[mentalHealth.bodyPerception - 1]}
             </p>
             <p className="text-sm">
               <strong>Weight Goal:</strong> {mentalHealth.weightGoal.charAt(0).toUpperCase() + mentalHealth.weightGoal.slice(1)} weight

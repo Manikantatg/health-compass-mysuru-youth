@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PhysicalActivity } from '../../../types/assessment';
 
@@ -49,14 +50,75 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         <p className="text-gray-600">Tell us about your physical activities and exercise habits</p>
       </div>
 
-      {/* School Physical Training */}
-      <Card>
+      {/* PT Participation - Core Question */}
+      <Card className="border-l-4 border-l-orange-500">
         <CardHeader>
-          <CardTitle className="text-lg">School Physical Training</CardTitle>
-          <CardDescription>Information about your school's physical education program</CardDescription>
+          <CardTitle className="text-lg flex items-center space-x-2">
+            <span>⚠️</span>
+            <span>Physical Training (PT) Participation</span>
+          </CardTitle>
+          <CardDescription className="text-orange-700 font-medium">
+            Caution: Do not remove or alter this question. It is a core component of this assessment.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <div>
+              <Label className="text-base font-medium">Q: I actively participate in PT (Physical Training) classes</Label>
+              <div className="flex items-center space-x-2 mt-2">
+                <Checkbox
+                  id="ptParticipation"
+                  checked={physicalActivity.participation}
+                  onCheckedChange={(checked) => handleChange('participation', checked)}
+                />
+                <Label htmlFor="ptParticipation">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-2 mt-2">
+                <Checkbox
+                  id="ptNonParticipation"
+                  checked={!physicalActivity.participation}
+                  onCheckedChange={(checked) => handleChange('participation', !checked)}
+                />
+                <Label htmlFor="ptNonParticipation">No</Label>
+              </div>
+            </div>
+
+            {physicalActivity.participation && (
+              <div className="space-y-4 bg-green-50 p-4 rounded-md border">
+                <Label className="text-base font-medium">If marked "Yes," please select one or more of the following activities you participate in:</Label>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="outdoorGamesActivity"
+                      checked={physicalActivity.outdoorGames > 0}
+                      onCheckedChange={(checked) => handleChange('outdoorGames', checked ? 120 : 0)}
+                    />
+                    <Label htmlFor="outdoorGamesActivity">Outdoor Games (e.g., football, basketball, athletics, etc.)</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="indoorGamesActivity"
+                      checked={physicalActivity.indoorGames > 0 || physicalActivity.yoga > 0}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          handleChange('indoorGames', 60);
+                          handleChange('yoga', 30);
+                        } else {
+                          handleChange('indoorGames', 0);
+                          handleChange('yoga', 0);
+                        }
+                      }}
+                    />
+                    <Label htmlFor="indoorGamesActivity">Indoor Games (e.g., table tennis, yoga, badminton, etc.)</Label>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 mt-4">
             <div>
               <Label htmlFor="ptFrequency">PT Classes per Week</Label>
               <Input
@@ -82,15 +144,6 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
                 placeholder="e.g., 45"
               />
             </div>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="participation"
-              checked={physicalActivity.participation}
-              onCheckedChange={(checked) => handleChange('participation', checked)}
-            />
-            <Label htmlFor="participation">I actively participate in PT classes</Label>
           </div>
         </CardContent>
       </Card>
