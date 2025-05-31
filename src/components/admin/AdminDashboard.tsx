@@ -202,7 +202,13 @@ const AdminDashboard: React.FC = () => {
 
   const stats = getStatistics();
   const schoolData = getSchoolDistribution();
-  const uniqueSchools = [...new Set(assessments.map(a => a.socioDemographic.schoolName))];
+  
+  // Filter out empty school names and ensure we have valid values for SelectItem
+  const uniqueSchools = [...new Set(
+    assessments
+      .map(a => a.socioDemographic.schoolName)
+      .filter(schoolName => schoolName && schoolName.trim() !== '')
+  )];
 
   const riskChartData = [
     { name: 'Low', value: stats.riskDistribution.Low || 0, color: '#10B981' },
