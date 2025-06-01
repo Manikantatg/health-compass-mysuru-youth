@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -34,7 +33,10 @@
     --destructive-foreground: 255 255 255;
 
     --success: 78 205 196; /* Aqua Mint #4ECDC4 */
+    --success-foreground: 255 255 255;
+    
     --warning: 255 230 109; /* Gen Z Yellow #FFE66D */
+    --warning-foreground: 11 26 47;
 
     --border: 229 231 235;
     --input: 229 231 235;
@@ -81,6 +83,10 @@
     --accent-foreground: 250 250 250;
     --destructive: 220 90 90; /* Muted Coral */
     --destructive-foreground: 250 250 250;
+    --success: 78 205 196; /* Aqua Mint */
+    --success-foreground: 11 26 47;
+    --warning: 255 230 109; /* Gen Z Yellow */
+    --warning-foreground: 11 26 47;
     --border: 30 45 65;
     --input: 30 45 65;
     --ring: 78 205 196;
