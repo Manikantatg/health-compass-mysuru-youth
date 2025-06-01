@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,9 +63,6 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Status Colors
-				success: 'hsl(var(--success))',
-				warning: 'hsl(var(--warning))',
 				// Gen Z Color Palette
 				'neon-cyan': 'hsl(var(--neon-cyan))',
 				'neon-pink': 'hsl(var(--neon-pink))',
