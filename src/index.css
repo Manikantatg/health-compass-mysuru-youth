@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -212,10 +213,6 @@
 
   .status-normal {
     @apply border-l-4 border-success bg-success/5;
-  }
-
-  .status-warning {
-    @apply border-l-4 border-warning bg-warning/5;
   }
 
   /* Animation Classes */
