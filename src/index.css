@@ -5,92 +5,93 @@
 
 @layer base {
   :root {
-    /* Primary (60%) - Soft Cool White */
-    --background: 249 250 252; /* #F9FAFC */
-    --foreground: 31 41 55; /* #1F2937 - Dark neutral gray */
+    /* Base System Colors */
+    --background: 250 250 250; /* Off-white #FAFAFA */
+    --foreground: 11 26 47; /* Deep Midnight Blue #0B1A2F */
 
     --card: 255 255 255;
-    --card-foreground: 31 41 55;
+    --card-foreground: 11 26 47;
 
     --popover: 255 255 255;
-    --popover-foreground: 31 41 55;
+    --popover-foreground: 11 26 47;
 
-    /* Secondary (30%) - Muted Sky Blue */
-    --primary: 163 213 255; /* #A3D5FF */
-    --primary-foreground: 31 41 55;
+    /* Medical Blue Primary */
+    --primary: 53 106 230; /* Medical Blue #356AE6 */
+    --primary-foreground: 255 255 255;
 
-    /* Accent (10%) - Soft Coral */
-    --secondary: 255 143 163; /* #FF8FA3 */
-    --secondary-foreground: 31 41 55;
+    /* Sage Green Secondary */
+    --secondary: 164 203 180; /* Sage #A4CBB4 */
+    --secondary-foreground: 11 26 47;
 
-    --muted: 249 250 252; /* Same as background for consistency */
-    --muted-foreground: 107 114 128; /* #6B7280 - Cool gray */
+    --muted: 242 242 242; /* Light Grey #F2F2F2 */
+    --muted-foreground: 107 114 126;
 
-    --accent: 160 255 230; /* #A0FFE6 - Fresh Mint alternative */
-    --accent-foreground: 31 41 55;
+    --accent: 162 155 254; /* Lavender #A29BFE */
+    --accent-foreground: 11 26 47;
 
-    /* Status Colors - Soft and Modern */
-    --destructive: 248 113 113; /* #F87171 - Soft red */
+    /* Status Colors */
+    --destructive: 255 107 107; /* Coral Red #FF6B6B */
     --destructive-foreground: 255 255 255;
 
-    --success: 52 211 153; /* #34D399 - Muted green */
-    --success-foreground: 255 255 255;
+    --success: 78 205 196; /* Aqua Mint #4ECDC4 */
+    --warning: 255 230 109; /* Gen Z Yellow #FFE66D */
 
-    --border: 229 231 235; /* Light border */
+    --border: 229 231 235;
     --input: 229 231 235;
-    --ring: 163 213 255; /* Primary color for focus rings */
+    --ring: 53 106 230;
 
-    --radius: 0.75rem; /* Soft corners for Gen Z appeal */
+    --radius: 0.75rem; /* Increased for Gen Z soft corners */
 
-    /* Sidebar using primary colors */
+    /* Sidebar */
     --sidebar-background: 255 255 255;
-    --sidebar-foreground: 31 41 55;
-    --sidebar-primary: 163 213 255;
-    --sidebar-primary-foreground: 31 41 55;
-    --sidebar-accent: 249 250 252;
-    --sidebar-accent-foreground: 31 41 55;
+    --sidebar-foreground: 11 26 47;
+    --sidebar-primary: 53 106 230;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 242 242 242;
+    --sidebar-accent-foreground: 11 26 47;
     --sidebar-border: 229 231 235;
-    --sidebar-ring: 163 213 255;
+    --sidebar-ring: 53 106 230;
 
-    /* Modern Color System Variables */
-    --soft-cool-white: 249 250 252;
-    --muted-sky-blue: 163 213 255;
-    --soft-coral: 255 143 163;
-    --fresh-mint: 160 255 230;
-    --text-primary: 31 41 55;
-    --text-secondary: 107 114 128;
+    /* Gen Z Medical Color System */
+    --medical-blue: 53 106 230;
+    --sage-green: 164 203 180;
+    --lavender: 162 155 254;
+    --coral-red: 255 107 107;
+    --aqua-mint: 78 205 196;
+    --gen-z-yellow: 255 230 109;
+    --off-white: 250 250 250;
+    --light-grey: 242 242 242;
+    --deep-midnight: 11 26 47;
   }
 
   .dark {
-    --background: 15 23 42; /* Soft dark blue instead of harsh black */
-    --foreground: 248 250 252;
-    --card: 30 41 59;
-    --card-foreground: 248 250 252;
-    --popover: 30 41 59;
-    --popover-foreground: 248 250 252;
-    --primary: 125 171 224; /* Dimmed sky blue for dark mode */
-    --primary-foreground: 15 23 42;
-    --secondary: 219 112 147; /* Muted coral for dark mode */
-    --secondary-foreground: 248 250 252;
-    --muted: 51 65 85;
-    --muted-foreground: 148 163 184;
-    --accent: 94 234 212; /* Adjusted mint for dark mode */
-    --accent-foreground: 15 23 42;
-    --destructive: 239 68 68;
-    --destructive-foreground: 248 250 252;
-    --success: 34 197 94;
-    --success-foreground: 15 23 42;
-    --border: 51 65 85;
-    --input: 51 65 85;
-    --ring: 125 171 224;
-    --sidebar-background: 15 23 42;
-    --sidebar-foreground: 248 250 252;
-    --sidebar-primary: 125 171 224;
-    --sidebar-primary-foreground: 15 23 42;
-    --sidebar-accent: 51 65 85;
-    --sidebar-accent-foreground: 248 250 252;
-    --sidebar-border: 51 65 85;
-    --sidebar-ring: 125 171 224;
+    --background: 11 26 47; /* Deep Midnight Blue */
+    --foreground: 250 250 250;
+    --card: 15 32 52;
+    --card-foreground: 250 250 250;
+    --popover: 15 32 52;
+    --popover-foreground: 250 250 250;
+    --primary: 78 205 196; /* Dimmed Teal */
+    --primary-foreground: 11 26 47;
+    --secondary: 107 114 126; /* Dusty Indigo */
+    --secondary-foreground: 250 250 250;
+    --muted: 30 45 65;
+    --muted-foreground: 164 203 180;
+    --accent: 107 114 126;
+    --accent-foreground: 250 250 250;
+    --destructive: 220 90 90; /* Muted Coral */
+    --destructive-foreground: 250 250 250;
+    --border: 30 45 65;
+    --input: 30 45 65;
+    --ring: 78 205 196;
+    --sidebar-background: 11 26 47;
+    --sidebar-foreground: 250 250 250;
+    --sidebar-primary: 78 205 196;
+    --sidebar-primary-foreground: 11 26 47;
+    --sidebar-accent: 30 45 65;
+    --sidebar-accent-foreground: 250 250 250;
+    --sidebar-border: 30 45 65;
+    --sidebar-ring: 78 205 196;
   }
 }
 
@@ -102,7 +103,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    line-height: 1.6;
+    line-height: 1.6; /* Enhanced for readability */
     letter-spacing: -0.005em;
   }
 
@@ -113,32 +114,32 @@
     line-height: 1.3;
   }
 
-  /* Modern Typography Scale */
+  /* Medical Typography Scale */
   .text-medical-title {
-    @apply text-3xl font-semibold tracking-tight text-text-primary;
+    @apply text-3xl font-semibold tracking-tight;
   }
 
   .text-medical-subtitle {
-    @apply text-xl font-medium tracking-tight text-text-primary;
+    @apply text-xl font-medium tracking-tight;
   }
 
   .text-medical-body {
-    @apply text-base leading-relaxed text-text-primary;
+    @apply text-base leading-relaxed;
   }
 
   .text-medical-caption {
-    @apply text-sm text-text-secondary;
+    @apply text-sm text-muted-foreground;
   }
 }
 
-/* Soft Medical Animations */
-@keyframes pulse-soft {
+/* Gen Z Medical Animations & Micro-interactions */
+@keyframes pulse-medical {
   0%, 100% { 
-    box-shadow: 0 0 0 0 rgba(163, 213, 255, 0.4);
+    box-shadow: 0 0 0 0 rgba(53, 106, 230, 0.4);
     transform: scale(1);
   }
   50% { 
-    box-shadow: 0 0 0 8px rgba(163, 213, 255, 0);
+    box-shadow: 0 0 0 8px rgba(53, 106, 230, 0);
     transform: scale(1.01);
   }
 }
@@ -163,10 +164,19 @@
   }
 }
 
+@keyframes draw-border {
+  from {
+    stroke-dasharray: 0 100;
+  }
+  to {
+    stroke-dasharray: 100 0;
+  }
+}
+
 @layer utilities {
-  /* Modern Medical UI Components */
+  /* Medical UI Components */
   .card-medical {
-    @apply bg-card rounded-xl border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 ease-out;
+    @apply bg-card rounded-xl border shadow-sm hover:shadow-md transition-all duration-300 ease-out;
   }
 
   .card-medical:hover {
@@ -174,19 +184,19 @@
   }
 
   .btn-medical-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out shadow-sm;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out;
   }
 
   .btn-medical-primary:hover {
-    @apply shadow-md transform -translate-y-0.5;
+    @apply shadow-lg transform -translate-y-0.5;
   }
 
   .btn-medical-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out shadow-sm;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out;
   }
 
   .btn-medical-ghost {
-    @apply text-foreground hover:bg-accent/20 hover:text-accent-foreground rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out;
+    @apply text-foreground hover:bg-accent hover:text-accent-foreground rounded-xl px-6 py-3 font-medium transition-all duration-200 ease-out;
   }
 
   .input-medical {
@@ -205,14 +215,18 @@
     @apply text-muted-foreground hover:text-foreground hover:bg-muted;
   }
 
-  /* Soft Status Indicators */
+  /* Status Indicators */
   .status-urgent {
     @apply border-l-4 border-destructive bg-destructive/5;
-    animation: pulse-soft 2s infinite;
+    animation: pulse-medical 2s infinite;
   }
 
   .status-normal {
     @apply border-l-4 border-success bg-success/5;
+  }
+
+  .status-warning {
+    @apply border-l-4 border-warning bg-warning/5;
   }
 
   /* Animation Classes */
@@ -224,41 +238,41 @@
     animation: fade-in-smooth 0.3s ease-out;
   }
 
-  .animate-pulse-soft {
-    animation: pulse-soft 2s ease-in-out infinite;
+  .animate-pulse-medical {
+    animation: pulse-medical 2s ease-in-out infinite;
   }
 
-  /* Modern Color Classes */
-  .text-soft-coral {
-    color: rgb(var(--soft-coral));
+  /* Medical Color Classes */
+  .text-medical-blue {
+    color: rgb(var(--medical-blue));
   }
 
-  .bg-soft-coral {
-    background-color: rgb(var(--soft-coral));
+  .bg-medical-blue {
+    background-color: rgb(var(--medical-blue));
   }
 
-  .text-muted-sky-blue {
-    color: rgb(var(--muted-sky-blue));
+  .text-sage-green {
+    color: rgb(var(--sage-green));
   }
 
-  .bg-muted-sky-blue {
-    background-color: rgb(var(--muted-sky-blue));
+  .bg-sage-green {
+    background-color: rgb(var(--sage-green));
   }
 
-  .text-fresh-mint {
-    color: rgb(var(--fresh-mint));
+  .text-coral-red {
+    color: rgb(var(--coral-red));
   }
 
-  .bg-fresh-mint {
-    background-color: rgb(var(--fresh-mint));
+  .bg-coral-red {
+    background-color: rgb(var(--coral-red));
   }
 
-  .text-text-primary {
-    color: rgb(var(--text-primary));
+  .text-aqua-mint {
+    color: rgb(var(--aqua-mint));
   }
 
-  .text-text-secondary {
-    color: rgb(var(--text-secondary));
+  .bg-aqua-mint {
+    background-color: rgb(var(--aqua-mint));
   }
 
   /* Accessibility Enhancements */
@@ -266,21 +280,21 @@
     @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
   }
 
-  /* Large Tap Targets */
+  /* Large Tap Targets for iPads */
   .tap-target {
     @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
   }
 
-  /* Soft Glass Effect */
+  /* Gen Z Visual Elements */
   .glass-medical {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(229, 231, 235, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .dark .glass-medical {
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(11, 26, 47, 0.8);
+    border: 1px solid rgba(78, 205, 196, 0.2);
   }
 
   /* Responsive Typography */
@@ -295,14 +309,14 @@
   }
 }
 
-/* Component-specific Soft Styles */
+/* Component-specific Medical Styles */
 .medical-card-hover {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .medical-card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px -6px rgba(163, 213, 255, 0.15);
+  box-shadow: 0 12px 24px -6px rgba(53, 106, 230, 0.15);
 }
 
 .medical-nav-link {
@@ -317,7 +331,7 @@
   height: 2px;
   bottom: -2px;
   left: 0;
-  background: rgb(var(--muted-sky-blue));
+  background: rgb(var(--medical-blue));
   transition: width 0.3s ease;
 }
 
@@ -326,7 +340,7 @@
   width: 100%;
 }
 
-/* Soft Form Enhancements */
+/* Medical Form Enhancements */
 .floating-label {
   position: relative;
 }
@@ -334,7 +348,7 @@
 .floating-label input:focus + label,
 .floating-label input:not(:placeholder-shown) + label {
   transform: translateY(-24px) scale(0.85);
-  color: rgb(var(--muted-sky-blue));
+  color: rgb(var(--medical-blue));
 }
 
 .floating-label label {
@@ -343,5 +357,5 @@
   top: 12px;
   transition: all 0.2s ease;
   pointer-events: none;
-  color: rgb(var(--text-secondary));
+  color: rgb(var(--muted-foreground));
 }

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,18 +63,16 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Status Colors
-				success: {
-					DEFAULT: 'hsl(var(--success))',
-					foreground: 'hsl(var(--success-foreground))'
-				},
-				// Modern 60:30:10 Color Palette
-				'soft-cool-white': 'hsl(var(--soft-cool-white))',
-				'muted-sky-blue': 'hsl(var(--muted-sky-blue))',
-				'soft-coral': 'hsl(var(--soft-coral))',
-				'fresh-mint': 'hsl(var(--fresh-mint))',
-				'text-primary': 'hsl(var(--text-primary))',
-				'text-secondary': 'hsl(var(--text-secondary))'
+				// Gen Z Color Palette
+				'neon-cyan': 'hsl(var(--neon-cyan))',
+				'neon-pink': 'hsl(var(--neon-pink))',
+				'neon-purple': 'hsl(var(--neon-purple))',
+				'soft-lavender': 'hsl(var(--soft-lavender))',
+				'electric-blue': 'hsl(var(--electric-blue))',
+				'mint-green': 'hsl(var(--mint-green))',
+				'sunset-orange': 'hsl(var(--sunset-orange))',
+				'jet-black': 'hsl(var(--jet-black))',
+				'off-white': 'hsl(var(--off-white))'
 			},
 			fontFamily: {
 				'satoshi': ['Satoshi', 'sans-serif'],
@@ -127,13 +126,13 @@ export default {
 					'0%, 100%': { transform: 'translateY(0px)' },
 					'50%': { transform: 'translateY(-8px)' }
 				},
-				'pulse-soft': {
+				'pulse-glow': {
 					'0%, 100%': { 
-						boxShadow: '0 0 0 0 rgba(163, 213, 255, 0.4)',
+						boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.4)',
 						transform: 'scale(1)'
 					},
 					'50%': { 
-						boxShadow: '0 0 0 8px rgba(163, 213, 255, 0)',
+						boxShadow: '0 0 0 8px rgba(59, 130, 246, 0)',
 						transform: 'scale(1.02)'
 					}
 				},
@@ -149,7 +148,7 @@ export default {
 				'fade-in': 'fade-in 0.6s ease-out',
 				'slide-up': 'slide-up 0.6s ease-out',
 				'float': 'float 4s ease-in-out infinite',
-				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
 				'gradient': 'gradient-shift 3s ease infinite'
 			},
 			spacing: {
