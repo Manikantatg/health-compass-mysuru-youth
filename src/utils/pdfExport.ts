@@ -1,4 +1,3 @@
-
 import { AssessmentData } from '../types/assessment';
 
 export const generateHealthReportPDF = async (assessmentData: AssessmentData) => {
@@ -36,7 +35,7 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
   const riskLevel = assessmentData.aiPrediction?.riskLevel || 'Medium';
   const riskColor = riskLevel === 'Low' ? [34, 197, 94] : riskLevel === 'High' ? [239, 68, 68] : [245, 158, 11];
   
-  doc.setFillColor(...riskColor);
+  doc.setFillColor(riskColor[0], riskColor[1], riskColor[2]);
   doc.rect(20, currentY, pageWidth - 40, 25, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(20);
