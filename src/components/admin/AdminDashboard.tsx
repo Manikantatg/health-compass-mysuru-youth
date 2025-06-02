@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import StudentCardsView from './StudentCardsView';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const AdminDashboard: React.FC = () => {
   const [filterRisk, setFilterRisk] = useState('all');
   const [editingAssessment, setEditingAssessment] = useState<AssessmentData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -239,14 +241,34 @@ const AdminDashboard: React.FC = () => {
               HealthPredict Administration Panel - Website Data Control
             </p>
           </div>
-          <Button 
-            onClick={() => navigate('/assessment')}
-            className="bg-white text-purple-700 hover:bg-gray-100 flex items-center space-x-2"
-            size="lg"
-          >
-            <ClipboardList className="h-5 w-5" />
-            <span>New Assessment</span>
-          </Button>
+          <div className="flex space-x-3">
+            <div className="flex bg-white/20 rounded-lg p-1">
+              <Button
+                variant={viewMode === 'cards' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('cards')}
+                className={viewMode === 'cards' ? 'bg-white text-purple-700' : 'text-white hover:bg-white/20'}
+              >
+                Student Cards
+              </Button>
+              <Button
+                variant={viewMode === 'table' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('table')}
+                className={viewMode === 'table' ? 'bg-white text-purple-700' : 'text-white hover:bg-white/20'}
+              >
+                Data Table
+              </Button>
+            </div>
+            <Button 
+              onClick={() => navigate('/assessment')}
+              className="bg-white text-purple-700 hover:bg-gray-100 flex items-center space-x-2"
+              size="lg"
+            >
+              <ClipboardList className="h-5 w-5" />
+              <span>New Assessment</span>
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -640,379 +662,383 @@ const AdminDashboard: React.FC = () => {
         </Card>
       </div>
 
-      {/* CRUD Operations Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Assessment Data Management</CardTitle>
-              <CardDescription>Full CRUD operations for website data control</CardDescription>
+      {/* Main Content - Student Cards or Data Table */}
+      {viewMode === 'cards' ? (
+        <StudentCardsView assessments={assessments} />
+      ) : (
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle>Assessment Data Management</CardTitle>
+                <CardDescription>Full CRUD operations for website data control</CardDescription>
+              </div>
+              <div className="flex space-x-2">
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button 
+                      onClick={() => {
+                        setEditingAssessment({
+                          userId: '',
+                          socioDemographic: {
+                            schoolName: '',
+                            name: '',
+                            age: 0,
+                            gender: 'male',
+                            class: '',
+                            section: '',
+                            height: 0,
+                            weight: 0,
+                            address: '',
+                            hostelResident: false,
+                            fatherName: '',
+                            motherName: '',
+                            fatherContact: '',
+                            motherContact: '',
+                            brothers: 0,
+                            sisters: 0,
+                            birthOrder: 0,
+                            familyType: 'nuclear',
+                            hasSiblings: 'no',
+                            familyObesity: 'no',
+                            familyDiabetes: 'no',
+                            familyHypertension: 'no',
+                            familyThyroid: 'no',
+                            familyObesityHistory: false,
+                            diabetesHistory: false,
+                            bpHistory: false,
+                            thyroidHistory: false
+                          },
+                          eatingHabits: {
+                            cereals: 0,
+                            pulses: 0,
+                            vegetables: 0,
+                            fruits: 0,
+                            milkProducts: 0,
+                            nonVeg: 0,
+                            snacks: 0,
+                            beverages: 0,
+                            sweets: 0,
+                            junkFood: 0,
+                            softDrinks: 0,
+                            energyDrinks: 0
+                          },
+                          physicalActivity: {
+                            ptFrequency: 0,
+                            ptDuration: 0,
+                            participation: false,
+                            yoga: 0,
+                            exercise: 0,
+                            indoorGames: 0,
+                            outdoorGames: 0,
+                            playAfterSchool: 0,
+                            cycling: 0,
+                            walking: 0,
+                            dance: 0,
+                            swimming: 0
+                          },
+                          sedentaryBehavior: {
+                            tvTime: 0,
+                            mobileTime: 0,
+                            schoolReading: 0,
+                            nonSchoolReading: 0,
+                            indoorGamesTime: 0,
+                            outdoorGamesTime: 0,
+                            tuitionTime: 0,
+                            homeworkTime: 0,
+                            readingTime: 0,
+                            gamingTime: 0,
+                            musicTime: 0
+                          },
+                          mentalHealth: {
+                            bodyPerception: 0,
+                            bullyingExperience: false,
+                            weightGoal: 'maintain',
+                            bodyImageSelection: 1,
+                            difficultyWalking: 0,
+                            difficultyRunning: 0,
+                            difficultySports: 0,
+                            difficultyAttention: 0,
+                            forgetThings: 0,
+                            troubleKeepingUp: 0,
+                            feelLonely: 0,
+                            wantEatLess: 0,
+                            mobilityIssues: 0
+                          },
+                          sleepQuality: {
+                            difficultyFallingAsleep: 0,
+                            wakeUpDuringSleep: 0,
+                            wakeUpFromNoise: 0,
+                            difficultyGettingBackToSleep: 0,
+                            sleepinessInClasses: 0,
+                            sleepHeadache: 0,
+                            sleepIrritation: 0,
+                            sleepLossOfInterest: 0,
+                            sleepForgetfulness: 0,
+                            bedtime: '',
+                            wakeupTime: '',
+                            sleepIssues: []
+                          },
+                          bmi: 0,
+                          completedAt: new Date(),
+                          aiPrediction: {
+                            riskLevel: 'Medium',
+                            riskPercentage: 0,
+                            recommendations: [],
+                            explanation: ''
+                          }
+                        } as AssessmentData);
+                      }}
+                      className="flex items-center space-x-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span>Add New</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>
+                        {editingAssessment?.id ? 'Edit Assessment' : 'Create New Assessment'}
+                      </DialogTitle>
+                      <DialogDescription>
+                        {editingAssessment?.id ? 'Update assessment data' : 'Add a new student assessment'}
+                      </DialogDescription>
+                    </DialogHeader>
+                    {editingAssessment && (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="name">Student Name</Label>
+                            <Input
+                              id="name"
+                              value={editingAssessment.socioDemographic.name}
+                              onChange={(e) => setEditingAssessment({
+                                ...editingAssessment,
+                                socioDemographic: {
+                                  ...editingAssessment.socioDemographic,
+                                  name: e.target.value
+                                }
+                              })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="school">School Name</Label>
+                            <Input
+                              id="school"
+                              value={editingAssessment.socioDemographic.schoolName}
+                              onChange={(e) => setEditingAssessment({
+                                ...editingAssessment,
+                                socioDemographic: {
+                                  ...editingAssessment.socioDemographic,
+                                  schoolName: e.target.value
+                                }
+                              })}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label htmlFor="age">Age</Label>
+                            <Input
+                              id="age"
+                              type="number"
+                              value={editingAssessment.socioDemographic.age}
+                              onChange={(e) => setEditingAssessment({
+                                ...editingAssessment,
+                                socioDemographic: {
+                                  ...editingAssessment.socioDemographic,
+                                  age: parseInt(e.target.value) || 0
+                                }
+                              })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="class">Class</Label>
+                            <Input
+                              id="class"
+                              value={editingAssessment.socioDemographic.class}
+                              onChange={(e) => setEditingAssessment({
+                                ...editingAssessment,
+                                socioDemographic: {
+                                  ...editingAssessment.socioDemographic,
+                                  class: e.target.value
+                                }
+                              })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="bmi">BMI</Label>
+                            <Input
+                              id="bmi"
+                              type="number"
+                              step="0.1"
+                              value={editingAssessment.bmi}
+                              onChange={(e) => setEditingAssessment({
+                                ...editingAssessment,
+                                bmi: parseFloat(e.target.value) || 0
+                              })}
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="fatherContact">Father's Contact</Label>
+                            <Input
+                              id="fatherContact"
+                              value={editingAssessment.socioDemographic.fatherContact}
+                              onChange={(e) => setEditingAssessment({
+                                ...editingAssessment,
+                                socioDemographic: {
+                                  ...editingAssessment.socioDemographic,
+                                  fatherContact: e.target.value
+                                }
+                              })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="motherContact">Mother's Contact</Label>
+                            <Input
+                              id="motherContact"
+                              value={editingAssessment.socioDemographic.motherContact}
+                              onChange={(e) => setEditingAssessment({
+                                ...editingAssessment,
+                                socioDemographic: {
+                                  ...editingAssessment.socioDemographic,
+                                  motherContact: e.target.value
+                                }
+                              })}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                            <X className="h-4 w-4 mr-2" />
+                            Cancel
+                          </Button>
+                          <Button onClick={handleSaveAssessment}>
+                            <Save className="h-4 w-4 mr-2" />
+                            Save
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </DialogContent>
+                </Dialog>
+                <Button onClick={exportData} className="flex items-center space-x-2">
+                  <Download className="h-4 w-4" />
+                  <span>Export CSV</span>
+                </Button>
+              </div>
             </div>
-            <div className="flex space-x-2">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    onClick={() => {
-                      setEditingAssessment({
-                        userId: '',
-                        socioDemographic: {
-                          schoolName: '',
-                          name: '',
-                          age: 0,
-                          gender: 'male',
-                          class: '',
-                          section: '',
-                          height: 0,
-                          weight: 0,
-                          address: '',
-                          hostelResident: false,
-                          fatherName: '',
-                          motherName: '',
-                          fatherContact: '',
-                          motherContact: '',
-                          brothers: 0,
-                          sisters: 0,
-                          birthOrder: 0,
-                          familyType: 'nuclear',
-                          hasSiblings: 'no',
-                          familyObesity: 'no',
-                          familyDiabetes: 'no',
-                          familyHypertension: 'no',
-                          familyThyroid: 'no',
-                          familyObesityHistory: false,
-                          diabetesHistory: false,
-                          bpHistory: false,
-                          thyroidHistory: false
-                        },
-                        eatingHabits: {
-                          cereals: 0,
-                          pulses: 0,
-                          vegetables: 0,
-                          fruits: 0,
-                          milkProducts: 0,
-                          nonVeg: 0,
-                          snacks: 0,
-                          beverages: 0,
-                          sweets: 0,
-                          junkFood: 0,
-                          softDrinks: 0,
-                          energyDrinks: 0
-                        },
-                        physicalActivity: {
-                          ptFrequency: 0,
-                          ptDuration: 0,
-                          participation: false,
-                          yoga: 0,
-                          exercise: 0,
-                          indoorGames: 0,
-                          outdoorGames: 0,
-                          playAfterSchool: 0,
-                          cycling: 0,
-                          walking: 0,
-                          dance: 0,
-                          swimming: 0
-                        },
-                        sedentaryBehavior: {
-                          tvTime: 0,
-                          mobileTime: 0,
-                          schoolReading: 0,
-                          nonSchoolReading: 0,
-                          indoorGamesTime: 0,
-                          outdoorGamesTime: 0,
-                          tuitionTime: 0,
-                          homeworkTime: 0,
-                          readingTime: 0,
-                          gamingTime: 0,
-                          musicTime: 0
-                        },
-                        mentalHealth: {
-                          bodyPerception: 0,
-                          bullyingExperience: false,
-                          weightGoal: 'maintain',
-                          bodyImageSelection: 1,
-                          difficultyWalking: 0,
-                          difficultyRunning: 0,
-                          difficultySports: 0,
-                          difficultyAttention: 0,
-                          forgetThings: 0,
-                          troubleKeepingUp: 0,
-                          feelLonely: 0,
-                          wantEatLess: 0,
-                          mobilityIssues: 0
-                        },
-                        sleepQuality: {
-                          difficultyFallingAsleep: 0,
-                          wakeUpDuringSleep: 0,
-                          wakeUpFromNoise: 0,
-                          difficultyGettingBackToSleep: 0,
-                          sleepinessInClasses: 0,
-                          sleepHeadache: 0,
-                          sleepIrritation: 0,
-                          sleepLossOfInterest: 0,
-                          sleepForgetfulness: 0,
-                          bedtime: '',
-                          wakeupTime: '',
-                          sleepIssues: []
-                        },
-                        bmi: 0,
-                        completedAt: new Date(),
-                        aiPrediction: {
-                          riskLevel: 'Medium',
-                          riskPercentage: 0,
-                          recommendations: [],
-                          explanation: ''
-                        }
-                      } as AssessmentData);
-                    }}
-                    className="flex items-center space-x-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>Add New</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editingAssessment?.id ? 'Edit Assessment' : 'Create New Assessment'}
-                    </DialogTitle>
-                    <DialogDescription>
-                      {editingAssessment?.id ? 'Update assessment data' : 'Add a new student assessment'}
-                    </DialogDescription>
-                  </DialogHeader>
-                  {editingAssessment && (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="name">Student Name</Label>
-                          <Input
-                            id="name"
-                            value={editingAssessment.socioDemographic.name}
-                            onChange={(e) => setEditingAssessment({
-                              ...editingAssessment,
-                              socioDemographic: {
-                                ...editingAssessment.socioDemographic,
-                                name: e.target.value
-                              }
-                            })}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="school">School Name</Label>
-                          <Input
-                            id="school"
-                            value={editingAssessment.socioDemographic.schoolName}
-                            onChange={(e) => setEditingAssessment({
-                              ...editingAssessment,
-                              socioDemographic: {
-                                ...editingAssessment.socioDemographic,
-                                schoolName: e.target.value
-                              }
-                            })}
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div>
-                          <Label htmlFor="age">Age</Label>
-                          <Input
-                            id="age"
-                            type="number"
-                            value={editingAssessment.socioDemographic.age}
-                            onChange={(e) => setEditingAssessment({
-                              ...editingAssessment,
-                              socioDemographic: {
-                                ...editingAssessment.socioDemographic,
-                                age: parseInt(e.target.value) || 0
-                              }
-                            })}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="class">Class</Label>
-                          <Input
-                            id="class"
-                            value={editingAssessment.socioDemographic.class}
-                            onChange={(e) => setEditingAssessment({
-                              ...editingAssessment,
-                              socioDemographic: {
-                                ...editingAssessment.socioDemographic,
-                                class: e.target.value
-                              }
-                            })}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="bmi">BMI</Label>
-                          <Input
-                            id="bmi"
-                            type="number"
-                            step="0.1"
-                            value={editingAssessment.bmi}
-                            onChange={(e) => setEditingAssessment({
-                              ...editingAssessment,
-                              bmi: parseFloat(e.target.value) || 0
-                            })}
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="fatherContact">Father's Contact</Label>
-                          <Input
-                            id="fatherContact"
-                            value={editingAssessment.socioDemographic.fatherContact}
-                            onChange={(e) => setEditingAssessment({
-                              ...editingAssessment,
-                              socioDemographic: {
-                                ...editingAssessment.socioDemographic,
-                                fatherContact: e.target.value
-                              }
-                            })}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="motherContact">Mother's Contact</Label>
-                          <Input
-                            id="motherContact"
-                            value={editingAssessment.socioDemographic.motherContact}
-                            onChange={(e) => setEditingAssessment({
-                              ...editingAssessment,
-                              socioDemographic: {
-                                ...editingAssessment.socioDemographic,
-                                motherContact: e.target.value
-                              }
-                            })}
-                          />
-                        </div>
-                      </div>
-                      <div className="flex justify-end space-x-2">
-                        <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                          <X className="h-4 w-4 mr-2" />
-                          Cancel
-                        </Button>
-                        <Button onClick={handleSaveAssessment}>
-                          <Save className="h-4 w-4 mr-2" />
-                          Save
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </DialogContent>
-              </Dialog>
-              <Button onClick={exportData} className="flex items-center space-x-2">
-                <Download className="h-4 w-4" />
-                <span>Export CSV</span>
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-6">
-            <div className="flex items-center space-x-2">
-              <Search className="h-4 w-4 text-gray-500" />
-              <Input
-                placeholder="Search by name or school..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-64"
-              />
+          </CardHeader>
+          <CardContent>
+            {/* Filters */}
+            <div className="flex flex-wrap gap-4 mb-6">
+              <div className="flex items-center space-x-2">
+                <Search className="h-4 w-4 text-gray-500" />
+                <Input
+                  placeholder="Search by name or school..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-64"
+                />
+              </div>
+
+              <Select value={filterSchool} onValueChange={setFilterSchool}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filter by school" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Schools</SelectItem>
+                  {uniqueSchools.map(school => (
+                    <SelectItem key={school} value={school}>{school}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={filterRisk} onValueChange={setFilterRisk}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filter by risk" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Risk Levels</SelectItem>
+                  <SelectItem value="Low">Low Risk</SelectItem>
+                  <SelectItem value="Medium">Medium Risk</SelectItem>
+                  <SelectItem value="High">High Risk</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            <Select value={filterSchool} onValueChange={setFilterSchool}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filter by school" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Schools</SelectItem>
-                {uniqueSchools.map(school => (
-                  <SelectItem key={school} value={school}>{school}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={filterRisk} onValueChange={setFilterRisk}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filter by risk" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Risk Levels</SelectItem>
-                <SelectItem value="Low">Low Risk</SelectItem>
-                <SelectItem value="Medium">Medium Risk</SelectItem>
-                <SelectItem value="High">High Risk</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Data Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-200">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-200 p-2 text-left">Name</th>
-                  <th className="border border-gray-200 p-2 text-left">School</th>
-                  <th className="border border-gray-200 p-2 text-left">Age</th>
-                  <th className="border border-gray-200 p-2 text-left">Gender</th>
-                  <th className="border border-gray-200 p-2 text-left">BMI</th>
-                  <th className="border border-gray-200 p-2 text-left">Risk Level</th>
-                  <th className="border border-gray-200 p-2 text-left">Date</th>
-                  <th className="border border-gray-200 p-2 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getFilteredAssessments().slice(0, 50).map((assessment) => (
-                  <tr key={assessment.id} className="hover:bg-gray-50">
-                    <td className="border border-gray-200 p-2">{assessment.socioDemographic.name}</td>
-                    <td className="border border-gray-200 p-2">{assessment.socioDemographic.schoolName}</td>
-                    <td className="border border-gray-200 p-2">{assessment.socioDemographic.age}</td>
-                    <td className="border border-gray-200 p-2 capitalize">{assessment.socioDemographic.gender}</td>
-                    <td className="border border-gray-200 p-2">{assessment.bmi}</td>
-                    <td className="border border-gray-200 p-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        assessment.aiPrediction?.riskLevel === 'Low' ? 'bg-green-100 text-green-800' :
-                        assessment.aiPrediction?.riskLevel === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {assessment.aiPrediction?.riskLevel || 'N/A'}
-                      </span>
-                    </td>
-                    <td className="border border-gray-200 p-2">
-                      {new Date(assessment.completedAt).toLocaleDateString()}
-                    </td>
-                    <td className="border border-gray-200 p-2">
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setEditingAssessment(assessment);
-                            setIsDialogOpen(true);
-                          }}
-                        >
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDeleteAssessment(assessment.id!)}
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </td>
+            {/* Data Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-200 p-2 text-left">Name</th>
+                    <th className="border border-gray-200 p-2 text-left">School</th>
+                    <th className="border border-gray-200 p-2 text-left">Age</th>
+                    <th className="border border-gray-200 p-2 text-left">Gender</th>
+                    <th className="border border-gray-200 p-2 text-left">BMI</th>
+                    <th className="border border-gray-200 p-2 text-left">Risk Level</th>
+                    <th className="border border-gray-200 p-2 text-left">Date</th>
+                    <th className="border border-gray-200 p-2 text-left">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {getFilteredAssessments().length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              No assessments found matching your filters.
+                </thead>
+                <tbody>
+                  {getFilteredAssessments().slice(0, 50).map((assessment) => (
+                    <tr key={assessment.id} className="hover:bg-gray-50">
+                      <td className="border border-gray-200 p-2">{assessment.socioDemographic.name}</td>
+                      <td className="border border-gray-200 p-2">{assessment.socioDemographic.schoolName}</td>
+                      <td className="border border-gray-200 p-2">{assessment.socioDemographic.age}</td>
+                      <td className="border border-gray-200 p-2 capitalize">{assessment.socioDemographic.gender}</td>
+                      <td className="border border-gray-200 p-2">{assessment.bmi}</td>
+                      <td className="border border-gray-200 p-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          assessment.aiPrediction?.riskLevel === 'Low' ? 'bg-green-100 text-green-800' :
+                          assessment.aiPrediction?.riskLevel === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {assessment.aiPrediction?.riskLevel || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="border border-gray-200 p-2">
+                        {new Date(assessment.completedAt).toLocaleDateString()}
+                      </td>
+                      <td className="border border-gray-200 p-2">
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              setEditingAssessment(assessment);
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleDeleteAssessment(assessment.id!)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </CardContent>
-      </Card>
+
+            {getFilteredAssessments().length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                No assessments found matching your filters.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
