@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Activity, Settings, Menu, X } from 'lucide-react';
+import { LogOut, User, Activity, Settings, Menu, X, FileText } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -22,7 +22,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   const navItems = [
-    { icon: Activity, label: 'Dashboard', path: '/dashboard' }
+    { icon: Activity, label: 'Dashboard', path: '/dashboard' },
+    { icon: FileText, label: 'Assessment', path: '/assessment' }
   ];
 
   if (userProfile?.role === 'admin') {
