@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SleepQuality } from '../../../types/assessment';
@@ -15,6 +16,23 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
 
   const handleChange = (field: keyof SleepQuality, value: any) => {
     updateData('sleepQuality', { [field]: value });
+  };
+
+  const calculateSleepDuration = () => {
+    if (sleepQuality.bedtime && sleepQuality.wakeupTime) {
+      const bedtime = new Date(`2000-01-01 ${sleepQuality.bedtime}`);
+      let wakeup = new Date(`2000-01-01 ${sleepQuality.wakeupTime}`);
+      
+      // If wakeup time is earlier than bedtime, it means next day
+      if (wakeup < bedtime) {
+        wakeup = new Date(`2000-01-02 ${sleepQuality.wakeupTime}`);
+      }
+      
+      const durationMs = wakeup.getTime() - bedtime.getTime();
+      const durationHours = durationMs / (1000 * 60 * 60);
+      return Math.round(durationHours * 10) / 10; // Round to 1 decimal place
+    }
+    return 0;
   };
 
   const frequencyLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
@@ -48,6 +66,51 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
         <h3 className="text-lg font-semibold">Sleep Quality Assessment (Last 30 Days)</h3>
         <p className="text-gray-600">Please rate how often you experience these sleep-related situations</p>
       </div>
+
+      {/* Sleep Schedule */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Sleep Schedule</CardTitle>
+          <CardDescription>What time do you usually go to bed and wake up?</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="bedtime">Sleep Start Time</Label>
+              <Input
+                id="bedtime"
+                type="time"
+                value={sleepQuality.bedtime || '22:00'}
+                onChange={(e) => handleChange('bedtime', e.target.value)}
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="wakeupTime">Wake-up Time</Label>
+              <Input
+                id="wakeupTime"
+                type="time"
+                value={sleepQuality.wakeupTime || '06:00'}
+                onChange={(e) => handleChange('wakeupTime', e.target.value)}
+                className="w-full"
+              />
+            </div>
+          </div>
+          
+          {/* Sleep Duration Display */}
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium text-blue-900">Total Sleep Duration (auto-computed):</span>
+              <span className="text-lg font-bold text-blue-700">
+                {calculateSleepDuration()} hours
+              </span>
+            </div>
+            <div className="text-xs text-blue-600 mt-1">
+              Recommended: 8-10 hours for teenagers, 9-11 hours for children
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Sleep Issues */}
       <Card>
@@ -106,29 +169,26 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
       </Card>
 
       {/* Sleep Assessment Summary */}
-      <Card className="bg-indigo-50">
+      <Card className="bg-indigo-50 border-indigo-200">
         <CardHeader>
           <CardTitle className="text-lg text-indigo-900">Sleep Assessment Summary</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h4 className="font-medium mb-2">Sleep Issues Score</h4>
+              <h4 className="font-medium mb-2">Sleep Schedule</h4>
               <div className="space-y-1 text-sm">
-                <p><strong>Difficulty Falling Asleep:</strong> {frequencyLabels[sleepQuality.difficultyFallingAsleep]}</p>
-                <p><strong>Wake Up During Sleep:</strong> {frequencyLabels[sleepQuality.wakeUpDuringSleep]}</p>
-                <p><strong>Wake Up From Noise:</strong> {frequencyLabels[sleepQuality.wakeUpFromNoise]}</p>
-                <p><strong>Difficulty Getting Back to Sleep:</strong> {frequencyLabels[sleepQuality.difficultyGettingBackToSleep]}</p>
+                <p><strong>Bedtime:</strong> {sleepQuality.bedtime || '22:00'}</p>
+                <p><strong>Wake-up Time:</strong> {sleepQuality.wakeupTime || '06:00'}</p>
+                <p><strong>Sleep Duration:</strong> {calculateSleepDuration()} hours</p>
               </div>
             </div>
             <div>
-              <h4 className="font-medium mb-2">Daily Impact Score</h4>
+              <h4 className="font-medium mb-2">Sleep Quality Issues</h4>
               <div className="space-y-1 text-sm">
-                <p><strong>Sleepiness in Classes:</strong> {frequencyLabels[sleepQuality.sleepinessInClasses]}</p>
-                <p><strong>Sleep-Related Headaches:</strong> {frequencyLabels[sleepQuality.sleepHeadache]}</p>
-                <p><strong>Sleep-Related Irritation:</strong> {frequencyLabels[sleepQuality.sleepIrritation]}</p>
-                <p><strong>Loss of Interest:</strong> {frequencyLabels[sleepQuality.sleepLossOfInterest]}</p>
-                <p><strong>Forgetfulness:</strong> {frequencyLabels[sleepQuality.sleepForgetfulness]}</p>
+                <p><strong>Difficulty Falling Asleep:</strong> {frequencyLabels[sleepQuality.difficultyFallingAsleep]}</p>
+                <p><strong>Wake Up During Sleep:</strong> {frequencyLabels[sleepQuality.wakeUpDuringSleep]}</p>
+                <p><strong>Daytime Sleepiness:</strong> {frequencyLabels[sleepQuality.sleepinessInClasses]}</p>
               </div>
             </div>
           </div>
@@ -143,7 +203,7 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
       </Card>
 
       {/* Sleep Hygiene Tips */}
-      <Card className="bg-blue-50">
+      <Card className="bg-blue-50 border-blue-200">
         <CardHeader>
           <CardTitle className="text-lg text-blue-900">Sleep Hygiene Tips</CardTitle>
         </CardHeader>

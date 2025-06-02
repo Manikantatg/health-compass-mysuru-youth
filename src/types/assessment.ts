@@ -53,31 +53,36 @@ export interface EatingHabits {
 }
 
 export interface PhysicalActivity {
-  ptFrequency: number; // 0-6 days
+  ptFrequency: number; // 0-7 days
   ptDuration: number; // minutes
   participation: boolean;
-  // Updated activities (all in minutes per week)
-  yoga: number;
-  exercise: number;
-  indoorGames: number; // Table Tennis, Badminton
-  outdoorGames: number; // Cricket, Football, Kho-Kho
-  playAfterSchool: number; // Play after school hours / Help with household chores
-  cycling: number; // Self-transport via Bicycle
-  walking: number;
+  // New school activities
+  scouts?: boolean;
+  ncc?: boolean;
+  otherActivities?: boolean;
+  otherActivitiesDetail?: string;
+  // Updated activities with days and minutes structure
+  yoga: { days: number; minutes: number } | number;
+  exercise: { days: number; minutes: number } | number;
+  indoorGames: { days: number; minutes: number } | number;
+  outdoorGames: { days: number; minutes: number } | number;
+  playAfterSchool: { days: number; minutes: number } | number;
+  cycling: { days: number; minutes: number } | number;
+  walking: { days: number; minutes: number } | number;
   // Legacy fields for backward compatibility
   dance: number;
   swimming: number;
 }
 
 export interface SedentaryBehavior {
-  tvTime: number; // 0-4 scale
+  // Updated to use 0-2 scale (0-1 hrs, 2-3 hrs, 3+ hrs)
+  tvTime: number;
   mobileTime: number;
-  // Updated sedentary activities
-  schoolReading: number; // Reading and Writing – School Related
-  nonSchoolReading: number; // Reading and Writing – Non-School Related
-  indoorGamesTime: number; // Playing Indoor Games: Carrom, Pacchi, etc.
-  outdoorGamesTime: number; // Playing Outdoor Games: Antakshari, etc.
-  tuitionTime: number; // Tuition Classes After School
+  schoolReading: number;
+  nonSchoolReading: number;
+  indoorGamesTime: number;
+  outdoorGamesTime: number;
+  tuitionTime: number;
   // Legacy fields for backward compatibility
   homeworkTime: number;
   readingTime: number;
@@ -107,6 +112,10 @@ export interface MentalHealth {
 }
 
 export interface SleepQuality {
+  // New sleep time fields
+  bedtime?: string; // HH:MM format
+  wakeupTime?: string; // HH:MM format
+  sleepDuration?: number; // auto-computed in minutes
   // Updated sleep questions (0-4 scale: Never, Rarely, Sometimes, Often, Almost Always)
   difficultyFallingAsleep: number;
   wakeUpDuringSleep: number;
@@ -118,8 +127,6 @@ export interface SleepQuality {
   sleepLossOfInterest: number;
   sleepForgetfulness: number;
   // Legacy fields for backward compatibility
-  bedtime: string;
-  wakeupTime: string;
   sleepIssues: string[];
 }
 
@@ -129,6 +136,8 @@ export interface HealthScores {
   sedentaryScore: number;
   mentalHealthScore: number;
   sleepScore: number;
+  // New AI-generated score
+  aiScore?: number;
 }
 
 export interface AssessmentData {
@@ -148,5 +157,8 @@ export interface AssessmentData {
     riskPercentage: number;
     recommendations: string[];
     explanation: string;
+    // New AI analysis fields
+    strengths?: string[];
+    topRecommendations?: string[];
   };
 }
