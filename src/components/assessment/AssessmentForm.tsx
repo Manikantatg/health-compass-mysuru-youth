@@ -252,20 +252,24 @@ const AssessmentForm: React.FC = () => {
       // Calculate scores
       const scores = calculateScores(assessmentData);
 
-      // Generate AI prediction - fix the type issue by using proper type checking
-      const socio = assessmentData.socioDemographic;
-      const familyHistory = (socio?.familyObesity === 'yes') || 
-                           (socio?.familyDiabetes === 'yes') ||
-                           (socio?.familyHypertension === 'yes') ||
-                           (socio?.familyThyroid === 'yes');
-
-      const aiPrediction = await generateObesityPrediction({
-        age: assessmentData.socioDemographic?.age,
-        gender: assessmentData.socioDemographic?.gender,
+      // Generate AI prediction with proper data structure
+      const aiPredictionData = {
+        name: assessmentData.socioDemographic?.name || '',
+        age: assessmentData.socioDemographic?.age || 0,
+        gender: assessmentData.socioDemographic?.gender || 'male',
         bmi,
-        familyHistory,
-        ...scores
-      });
+        eatingHabits: assessmentData.eatingHabits || {},
+        physicalActivity: assessmentData.physicalActivity || {},
+        sedentaryBehavior: assessmentData.sedentaryBehavior || {},
+        sleepQuality: assessmentData.sleepQuality || {},
+        mentalHealth: assessmentData.mentalHealth || {},
+        familyHistory: (assessmentData.socioDemographic?.familyObesity === 'yes') || 
+                      (assessmentData.socioDemographic?.familyDiabetes === 'yes') ||
+                      (assessmentData.socioDemographic?.familyHypertension === 'yes') ||
+                      (assessmentData.socioDemographic?.familyThyroid === 'yes')
+      };
+
+      const aiPrediction = await generateObesityPrediction(aiPredictionData);
 
       // Save to Firestore
       const finalAssessment = {

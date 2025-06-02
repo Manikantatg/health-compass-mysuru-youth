@@ -8,13 +8,13 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 export const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 export const generateObesityPrediction = async (assessmentData: any) => {
-  // Calculate scores based on the specified logic
-  const bmiScore = getBMIScore(assessmentData.bmi);
-  const dietScore = getDietScore(assessmentData.eatingHabits);
-  const activityScore = getActivityScore(assessmentData.physicalActivity);
-  const screenScore = getScreenScore(assessmentData.sedentaryBehavior);
-  const sleepScore = getSleepScore(assessmentData.sleepQuality);
-  const mentalScore = getMentalHealthScore(assessmentData.mentalHealth);
+  // Calculate scores based on the specified logic with proper null checks
+  const bmiScore = getBMIScore(assessmentData.bmi || 0);
+  const dietScore = getDietScore(assessmentData.eatingHabits || {});
+  const activityScore = getActivityScore(assessmentData.physicalActivity || {});
+  const screenScore = getScreenScore(assessmentData.sedentaryBehavior || {});
+  const sleepScore = getSleepScore(assessmentData.sleepQuality || {});
+  const mentalScore = getMentalHealthScore(assessmentData.mentalHealth || {});
   
   const totalScore = bmiScore + dietScore + activityScore + screenScore + sleepScore + mentalScore;
   
@@ -34,10 +34,10 @@ export const generateObesityPrediction = async (assessmentData: any) => {
   }
 
   const prompt = `
-    As a pediatric health AI specialist, analyze this child's comprehensive health assessment and provide a detailed report following WHO and CDC guidelines.
+    As a pediatric health AI specialist, analyze this child's comprehensive health assessment and provide a detailed report following WHO and CDC guidelines in ENGLISH language only.
 
-    Student: ${assessmentData.name}, Age: ${assessmentData.age}, Gender: ${assessmentData.gender}
-    BMI: ${assessmentData.bmi} (Score: ${bmiScore}/2)
+    Student: ${assessmentData.name || 'Student'}, Age: ${assessmentData.age || 'N/A'}, Gender: ${assessmentData.gender || 'N/A'}
+    BMI: ${assessmentData.bmi || 0} (Score: ${bmiScore}/2)
     
     Assessment Scores:
     - BMI Health: ${bmiScore}/2
@@ -50,7 +50,7 @@ export const generateObesityPrediction = async (assessmentData: any) => {
     
     Risk Level: ${riskLevel} (${riskPercentage}% risk)
 
-    Please provide a comprehensive analysis in this exact markdown format:
+    Please provide a comprehensive analysis in this exact markdown format in ENGLISH:
 
     ## 🔎 Obesity Risk: ${riskLevel.toUpperCase()}
 
@@ -77,6 +77,8 @@ export const generateObesityPrediction = async (assessmentData: any) => {
 
     ### 🧠 Motivational Message:
     [Provide an encouraging, age-appropriate message that highlights strengths and motivates positive changes]
+
+    IMPORTANT: Respond only in English language.
   `;
 
   try {
@@ -94,7 +96,7 @@ export const generateObesityPrediction = async (assessmentData: any) => {
         "Ensure 8-9 hours of quality sleep each night",
         "Practice positive body image and stress management"
       ],
-      explanation: text || `Health assessment completed. ${assessmentData.name} shows ${riskLevel.toLowerCase()} risk level with a total score of ${totalScore}/12. Focus on maintaining healthy lifestyle habits.`,
+      explanation: text || `Health assessment completed. ${assessmentData.name || 'Student'} shows ${riskLevel.toLowerCase()} risk level with a total score of ${totalScore}/12. Focus on maintaining healthy lifestyle habits.`,
       strengths: getStrengths(assessmentData, { bmiScore, dietScore, activityScore, screenScore, sleepScore, mentalScore }),
       topRecommendations: getTopRecommendations(riskLevel, { bmiScore, dietScore, activityScore, screenScore, sleepScore, mentalScore })
     };
@@ -115,7 +117,7 @@ export const generateObesityPrediction = async (assessmentData: any) => {
   }
 };
 
-// Helper functions for scoring
+// Helper functions for scoring with proper null checks
 function getBMIScore(bmi: number): number {
   if (bmi >= 18.5 && bmi < 25) return 2;
   if (bmi >= 17 && bmi < 30) return 1;
@@ -123,8 +125,8 @@ function getBMIScore(bmi: number): number {
 }
 
 function getDietScore(eatingHabits: any): number {
-  const healthy = (eatingHabits.fruits + eatingHabits.vegetables + eatingHabits.cereals + eatingHabits.pulses) / 4;
-  const unhealthy = (eatingHabits.snacks + eatingHabits.sweets + eatingHabits.beverages) / 3;
+  const healthy = ((eatingHabits.fruits || 0) + (eatingHabits.vegetables || 0) + (eatingHabits.cereals || 0) + (eatingHabits.pulses || 0)) / 4;
+  const unhealthy = ((eatingHabits.snacks || 0) + (eatingHabits.sweets || 0) + (eatingHabits.beverages || 0)) / 3;
   const score = Math.max(0, 2 - Math.abs(unhealthy - healthy));
   return Math.min(2, score);
 }
@@ -137,9 +139,9 @@ function getActivityScore(physicalActivity: any): number {
     return Number(activity) || 0;
   };
 
-  const totalMinutes = getActivityMinutes(physicalActivity.yoga) + 
-                      getActivityMinutes(physicalActivity.exercise) + 
-                      getActivityMinutes(physicalActivity.outdoorGames);
+  const totalMinutes = getActivityMinutes(physicalActivity.yoga || 0) + 
+                      getActivityMinutes(physicalActivity.exercise || 0) + 
+                      getActivityMinutes(physicalActivity.outdoorGames || 0);
   
   if (totalMinutes >= 420) return 2; // 60 min * 7 days
   if (totalMinutes >= 180) return 1; // 60 min * 3 days
