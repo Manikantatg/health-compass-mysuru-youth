@@ -72,13 +72,13 @@ const AssessmentForm: React.FC = () => {
       ptFrequency: 2,
       ptDuration: 30,
       participation: true,
-      yoga: 0,
-      exercise: 0,
-      indoorGames: 60,
-      outdoorGames: 120,
-      playAfterSchool: 60,
-      cycling: 0,
-      walking: 60,
+      yoga: { days: 0, minutes: 0 },
+      exercise: { days: 0, minutes: 0 },
+      indoorGames: { days: 2, minutes: 60 },
+      outdoorGames: { days: 3, minutes: 120 },
+      playAfterSchool: { days: 5, minutes: 60 },
+      cycling: { days: 0, minutes: 0 },
+      walking: { days: 3, minutes: 60 },
       dance: 0,
       swimming: 0,
     },
@@ -147,6 +147,15 @@ const AssessmentForm: React.FC = () => {
     return 0;
   };
 
+  // Helper function to safely get numeric value from activity data
+  const getActivityValue = (value: any): number => {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'object' && value !== null && 'days' in value && 'minutes' in value) {
+      return (value.days || 0) * (value.minutes || 0);
+    }
+    return 0;
+  };
+
   const calculateScores = (data: Partial<AssessmentData>) => {
     // Calculate eating habits score (healthy foods vs unhealthy)
     const healthyFoods = (data.eatingHabits?.cereals || 0) + 
@@ -159,15 +168,15 @@ const AssessmentForm: React.FC = () => {
                           (data.eatingHabits?.sweets || 0);
     const eatingScore = Math.max(0, Math.min(10, (healthyFoods - unhealthyFoods + 10) / 2));
 
-    // Calculate physical activity score (convert minutes to appropriate scale)
+    // Calculate physical activity score using helper function
     const totalActivity = ((data.physicalActivity?.ptFrequency || 0) * (data.physicalActivity?.ptDuration || 0)) + 
-                         (data.physicalActivity?.yoga || 0) + 
-                         (data.physicalActivity?.exercise || 0) + 
-                         (data.physicalActivity?.indoorGames || 0) + 
-                         (data.physicalActivity?.outdoorGames || 0) + 
-                         (data.physicalActivity?.playAfterSchool || 0) + 
-                         (data.physicalActivity?.cycling || 0) + 
-                         (data.physicalActivity?.walking || 0);
+                         getActivityValue(data.physicalActivity?.yoga) + 
+                         getActivityValue(data.physicalActivity?.exercise) + 
+                         getActivityValue(data.physicalActivity?.indoorGames) + 
+                         getActivityValue(data.physicalActivity?.outdoorGames) + 
+                         getActivityValue(data.physicalActivity?.playAfterSchool) + 
+                         getActivityValue(data.physicalActivity?.cycling) + 
+                         getActivityValue(data.physicalActivity?.walking);
     const activityScore = Math.min(10, totalActivity / 42); // 420 minutes per week = 10 points
 
     // Calculate sedentary score (lower is better)

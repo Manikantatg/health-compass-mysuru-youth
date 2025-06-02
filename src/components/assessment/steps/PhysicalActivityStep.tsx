@@ -20,7 +20,16 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
   };
 
   const handleActivityChange = (activity: string, field: 'days' | 'minutes', value: number) => {
-    const activityData = physicalActivity[activity as keyof PhysicalActivity] || { days: 0, minutes: 0 };
+    const currentActivity = physicalActivity[activity as keyof PhysicalActivity];
+    let activityData: { days: number; minutes: number };
+    
+    // Ensure we have a proper object structure
+    if (typeof currentActivity === 'object' && currentActivity !== null && 'days' in currentActivity && 'minutes' in currentActivity) {
+      activityData = { ...currentActivity };
+    } else {
+      activityData = { days: 0, minutes: 0 };
+    }
+    
     updateData('physicalActivity', { 
       [activity]: { 
         ...activityData, 
@@ -40,7 +49,15 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
   ];
 
   const ActivityRow = ({ activity }: { activity: { key: string; label: string } }) => {
-    const activityData = physicalActivity[activity.key as keyof PhysicalActivity] || { days: 0, minutes: 0 };
+    const currentActivity = physicalActivity[activity.key as keyof PhysicalActivity];
+    let activityData: { days: number; minutes: number };
+    
+    // Safe type checking and conversion
+    if (typeof currentActivity === 'object' && currentActivity !== null && 'days' in currentActivity && 'minutes' in currentActivity) {
+      activityData = currentActivity as { days: number; minutes: number };
+    } else {
+      activityData = { days: 0, minutes: 0 };
+    }
     
     return (
       <tr className="border-b">
@@ -73,6 +90,18 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         </td>
       </tr>
     );
+  };
+
+  // Helper function to safely calculate total activity minutes
+  const calculateTotalActivityMinutes = () => {
+    return activities.reduce((total, activity) => {
+      const currentActivity = physicalActivity[activity.key as keyof PhysicalActivity];
+      if (typeof currentActivity === 'object' && currentActivity !== null && 'days' in currentActivity && 'minutes' in currentActivity) {
+        const activityData = currentActivity as { days: number; minutes: number };
+        return total + ((activityData.days || 0) * (activityData.minutes || 0));
+      }
+      return total;
+    }, (physicalActivity.ptFrequency || 0) * (physicalActivity.ptDuration || 0));
   };
 
   return (
@@ -213,10 +242,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <h4 className="font-medium mb-2">Weekly Activity Score</h4>
               <p className="text-2xl font-bold text-green-700">
-                {activities.reduce((total, activity) => {
-                  const activityData = physicalActivity[activity.key as keyof PhysicalActivity] || { days: 0, minutes: 0 };
-                  return total + (activityData.days * activityData.minutes);
-                }, (physicalActivity.ptFrequency * physicalActivity.ptDuration))} minutes
+                {calculateTotalActivityMinutes()} minutes
               </p>
             </div>
             <div>

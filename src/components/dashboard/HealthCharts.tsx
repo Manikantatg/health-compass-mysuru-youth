@@ -13,6 +13,15 @@ interface HealthChartsProps {
 const HealthCharts: React.FC<HealthChartsProps> = ({ assessmentData }) => {
   const { socioDemographic, eatingHabits, physicalActivity, sedentaryBehavior, sleepQuality } = assessmentData;
 
+  // Helper function to safely get numeric value from activity data
+  const getActivityMinutes = (value: any): number => {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'object' && value !== null && 'days' in value && 'minutes' in value) {
+      return (Number(value.days) || 0) * (Number(value.minutes) || 0);
+    }
+    return 0;
+  };
+
   // Family Health History Data
   const familyHealthData = [
     {
@@ -39,29 +48,29 @@ const HealthCharts: React.FC<HealthChartsProps> = ({ assessmentData }) => {
 
   // Eating Habits Data
   const eatingData = [
-    { category: 'Healthy Foods', cereals: eatingHabits.cereals, pulses: eatingHabits.pulses, vegetables: eatingHabits.vegetables, fruits: eatingHabits.fruits },
-    { category: 'Unhealthy Foods', snacks: eatingHabits.snacks, sweets: eatingHabits.sweets, beverages: eatingHabits.beverages }
+    { category: 'Healthy Foods', cereals: Number(eatingHabits.cereals) || 0, pulses: Number(eatingHabits.pulses) || 0, vegetables: Number(eatingHabits.vegetables) || 0, fruits: Number(eatingHabits.fruits) || 0 },
+    { category: 'Unhealthy Foods', snacks: Number(eatingHabits.snacks) || 0, sweets: Number(eatingHabits.sweets) || 0, beverages: Number(eatingHabits.beverages) || 0 }
   ];
 
   // Physical Activity Radar Data
   const activityData = [
-    { activity: 'Yoga', minutes: physicalActivity.yoga },
-    { activity: 'Exercise', minutes: physicalActivity.exercise },
-    { activity: 'Indoor Games', minutes: physicalActivity.indoorGames },
-    { activity: 'Outdoor Games', minutes: physicalActivity.outdoorGames },
-    { activity: 'Cycling', minutes: physicalActivity.cycling },
-    { activity: 'Walking', minutes: physicalActivity.walking }
+    { activity: 'Yoga', minutes: getActivityMinutes(physicalActivity.yoga) },
+    { activity: 'Exercise', minutes: getActivityMinutes(physicalActivity.exercise) },
+    { activity: 'Indoor Games', minutes: getActivityMinutes(physicalActivity.indoorGames) },
+    { activity: 'Outdoor Games', minutes: getActivityMinutes(physicalActivity.outdoorGames) },
+    { activity: 'Cycling', minutes: getActivityMinutes(physicalActivity.cycling) },
+    { activity: 'Walking', minutes: getActivityMinutes(physicalActivity.walking) }
   ];
 
   // Screen Time vs Active Time
   const screenTimeData = [
-    { day: 'Mon', screenTime: sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime, activeTime: physicalActivity.outdoorGames / 60 },
-    { day: 'Tue', screenTime: sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime, activeTime: physicalActivity.outdoorGames / 60 },
-    { day: 'Wed', screenTime: sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime, activeTime: physicalActivity.outdoorGames / 60 },
-    { day: 'Thu', screenTime: sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime, activeTime: physicalActivity.outdoorGames / 60 },
-    { day: 'Fri', screenTime: sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime, activeTime: physicalActivity.outdoorGames / 60 },
-    { day: 'Sat', screenTime: sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime, activeTime: physicalActivity.outdoorGames / 60 },
-    { day: 'Sun', screenTime: sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime, activeTime: physicalActivity.outdoorGames / 60 }
+    { day: 'Mon', screenTime: (Number(sedentaryBehavior.tvTime) || 0) + (Number(sedentaryBehavior.mobileTime) || 0), activeTime: getActivityMinutes(physicalActivity.outdoorGames) / 60 },
+    { day: 'Tue', screenTime: (Number(sedentaryBehavior.tvTime) || 0) + (Number(sedentaryBehavior.mobileTime) || 0), activeTime: getActivityMinutes(physicalActivity.outdoorGames) / 60 },
+    { day: 'Wed', screenTime: (Number(sedentaryBehavior.tvTime) || 0) + (Number(sedentaryBehavior.mobileTime) || 0), activeTime: getActivityMinutes(physicalActivity.outdoorGames) / 60 },
+    { day: 'Thu', screenTime: (Number(sedentaryBehavior.tvTime) || 0) + (Number(sedentaryBehavior.mobileTime) || 0), activeTime: getActivityMinutes(physicalActivity.outdoorGames) / 60 },
+    { day: 'Fri', screenTime: (Number(sedentaryBehavior.tvTime) || 0) + (Number(sedentaryBehavior.mobileTime) || 0), activeTime: getActivityMinutes(physicalActivity.outdoorGames) / 60 },
+    { day: 'Sat', screenTime: (Number(sedentaryBehavior.tvTime) || 0) + (Number(sedentaryBehavior.mobileTime) || 0), activeTime: getActivityMinutes(physicalActivity.outdoorGames) / 60 },
+    { day: 'Sun', screenTime: (Number(sedentaryBehavior.tvTime) || 0) + (Number(sedentaryBehavior.mobileTime) || 0), activeTime: getActivityMinutes(physicalActivity.outdoorGames) / 60 }
   ];
 
   const chartConfig = {
@@ -180,7 +189,7 @@ const HealthCharts: React.FC<HealthChartsProps> = ({ assessmentData }) => {
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">Healthy Foods</span>
                 <div className="flex space-x-1">
-                  {[...Array(Math.round((eatingHabits.cereals + eatingHabits.pulses + eatingHabits.vegetables + eatingHabits.fruits) / 4))].map((_, i) => (
+                  {[...Array(Math.round(((Number(eatingHabits.cereals) || 0) + (Number(eatingHabits.pulses) || 0) + (Number(eatingHabits.vegetables) || 0) + (Number(eatingHabits.fruits) || 0)) / 4))].map((_, i) => (
                     <div key={i} className="w-3 h-3 bg-green-500 rounded-full"></div>
                   ))}
                 </div>
@@ -188,7 +197,7 @@ const HealthCharts: React.FC<HealthChartsProps> = ({ assessmentData }) => {
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">Unhealthy Foods</span>
                 <div className="flex space-x-1">
-                  {[...Array(Math.round((eatingHabits.snacks + eatingHabits.sweets + eatingHabits.beverages) / 3))].map((_, i) => (
+                  {[...Array(Math.round(((Number(eatingHabits.snacks) || 0) + (Number(eatingHabits.sweets) || 0) + (Number(eatingHabits.beverages) || 0)) / 3))].map((_, i) => (
                     <div key={i} className="w-3 h-3 bg-red-500 rounded-full"></div>
                   ))}
                 </div>
