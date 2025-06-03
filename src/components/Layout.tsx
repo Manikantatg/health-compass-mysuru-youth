@@ -27,18 +27,19 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     document.documentElement.classList.toggle('dark');
   };
 
-  const navItems = [
-    { icon: Activity, label: 'Dashboard', path: '/dashboard' },
-    { icon: FileText, label: 'Assessments', path: '/assessment' },
-    { icon: Database, label: 'Data', path: '/data' }
-  ];
-
-  if (userProfile?.role === 'admin') {
-    navItems.push(
-      { icon: BarChart3, label: 'Reports', path: '/admin' },
-      { icon: Settings, label: 'Admin', path: '/profile' }
-    );
-  }
+  // Different nav items based on user role
+  const navItems = userProfile?.role === 'admin' 
+    ? [
+        { icon: Activity, label: 'Dashboard', path: '/dashboard' },
+        { icon: Database, label: 'Data', path: '/data' },
+        { icon: FileText, label: 'Assessments', path: '/assessment' },
+        { icon: BarChart3, label: 'Reports', path: '/admin' },
+        { icon: Settings, label: 'Admin', path: '/profile' }
+      ]
+    : [
+        { icon: Activity, label: 'Dashboard', path: '/dashboard' },
+        { icon: FileText, label: 'Assessments', path: '/assessment' }
+      ];
 
   return (
     <div className="min-h-screen bg-background font-inter">
@@ -62,9 +63,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     onClick={() => navigate(item.path)}
                     className={`${
                       location.pathname === item.path
-                        ? 'nav-link active'
-                        : 'nav-link'
-                    }`}
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                    } relative flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -79,7 +80,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {/* New Assessment Button */}
               <Button
                 onClick={() => navigate('/assessment')}
-                className="hidden md:flex btn-primary"
+                className="hidden md:flex bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-2 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 New Assessment
@@ -90,7 +91,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 onClick={toggleTheme}
                 variant="ghost"
                 size="icon"
-                className="rounded-lg"
+                className="rounded-lg hover:bg-accent"
               >
                 {isDarkMode ? (
                   <Sun className="h-4 w-4" />
@@ -103,7 +104,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Button
                 onClick={handleLogout}
                 variant="ghost"
-                className="hidden md:flex items-center text-muted-foreground hover:text-foreground"
+                className="hidden md:flex items-center text-muted-foreground hover:text-foreground hover:bg-accent px-4 py-2 rounded-lg"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -114,7 +115,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
+                className="md:hidden rounded-lg"
               >
                 {isMobileMenuOpen ? (
                   <X className="h-5 w-5" />
