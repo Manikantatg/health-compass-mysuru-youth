@@ -65,6 +65,18 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
     return Math.round(activityScore + dietScore + sleepScore + mentalScore);
   };
 
+  // Helper function to safely display activity values
+  const getActivityDisplay = (activity: any): string => {
+    if (typeof activity === 'number') {
+      return `${activity}h/week`;
+    }
+    if (typeof activity === 'object' && activity !== null && 'days' in activity && 'minutes' in activity) {
+      const totalHours = (activity.days * activity.minutes) / 60;
+      return `${totalHours.toFixed(1)}h/week`;
+    }
+    return '0h/week';
+  };
+
   const handleDownloadPDF = async () => {
     try {
       await generateHealthReportPDF(assessment);
@@ -214,7 +226,7 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-500 dark:text-slate-400">Outdoor Games</span>
-                        <span className="text-slate-900 dark:text-slate-100">{assessment.physicalActivity.outdoorGames}h/week</span>
+                        <span className="text-slate-900 dark:text-slate-100">{getActivityDisplay(assessment.physicalActivity.outdoorGames)}</span>
                       </div>
                     </div>
                   </div>
