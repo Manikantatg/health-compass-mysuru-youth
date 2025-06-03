@@ -152,7 +152,7 @@ export default {
 			fontSize: {
 				'xs': ['0.75rem', { lineHeight: '1.5' }],
 				'sm': ['0.875rem', { lineHeight: '1.5' }],
-				'base': ['1rem', { lineHeight: '1.5' }],
+				'base': ['1rem', { lineHeight: '1.6' }],
 				'lg': ['1.125rem', { lineHeight: '1.5' }],
 				'xl': ['1.25rem', { lineHeight: '1.4' }],
 				'2xl': ['1.5rem', { lineHeight: '1.3' }],
@@ -165,9 +165,9 @@ export default {
 				'tight': '-0.025em',
 			},
 			boxShadow: {
-				'premium': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-				'elevated': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-				'premium-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+				'premium': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+				'elevated': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+				'premium-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03)',
 			}
 		}
 	},

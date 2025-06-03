@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Assessment from "./pages/Assessment";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
+import Data from "./pages/Data";
 import Layout from "./components/Layout";
 
 const queryClient = new QueryClient();
@@ -22,8 +23,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
       </div>
     );
   }
@@ -41,8 +42,8 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
       </div>
     );
   }
@@ -60,8 +61,8 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
       </div>
     );
   }
@@ -99,6 +100,13 @@ const AppRoutes = () => {
       <Route path="/assessment" element={
         <ProtectedRoute>
           <Assessment />
+        </ProtectedRoute>
+      } />
+      
+      {/* Data - Available to all authenticated users */}
+      <Route path="/data" element={
+        <ProtectedRoute>
+          <Data />
         </ProtectedRoute>
       } />
       

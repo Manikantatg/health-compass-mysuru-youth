@@ -21,27 +21,23 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
     switch (riskLevel?.toLowerCase()) {
       case 'low': 
         return { 
-          color: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800',
-          dot: 'bg-emerald-500',
-          progress: 'bg-emerald-500'
+          color: 'risk-low',
+          bgColor: 'bg-green-500'
         };
       case 'medium': 
         return { 
-          color: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
-          dot: 'bg-amber-500',
-          progress: 'bg-amber-500'
+          color: 'risk-medium',
+          bgColor: 'bg-amber-500'
         };
       case 'high': 
         return { 
-          color: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800',
-          dot: 'bg-red-500',
-          progress: 'bg-red-500'
+          color: 'risk-high',
+          bgColor: 'bg-red-500'
         };
       default: 
         return { 
-          color: 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700',
-          dot: 'bg-slate-500',
-          progress: 'bg-slate-500'
+          color: 'bg-surface text-muted-foreground border-border',
+          bgColor: 'bg-muted'
         };
     }
   };
@@ -104,25 +100,25 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
       whileHover={{ y: -2 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <Card className={`card-premium border-l-4 border-l-${riskConfig.dot.replace('bg-', '')} overflow-hidden group`}>
+      <Card className="card-premium overflow-hidden group">
         {/* Header */}
-        <div className="p-6 pb-4">
+        <div className="p-6">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
-                <User className="h-6 w-6 text-slate-600 dark:text-slate-400" />
+              <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center">
+                <User className="h-6 w-6 text-muted-foreground" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                <h3 className="text-lg font-semibold text-foreground">
                   {assessment.socioDemographic.name}
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-caption">
                   {assessment.socioDemographic.age}y, {assessment.socioDemographic.gender}
                 </p>
               </div>
             </div>
             
-            <Badge className={`${riskConfig.color} font-medium px-3 py-1`}>
+            <Badge className={`${riskConfig.color} font-medium px-3 py-1 border`}>
               {riskLevel} Risk
             </Badge>
           </div>
@@ -130,21 +126,21 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
           {/* Quick Stats */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="space-y-1">
-              <div className="flex items-center space-x-1 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center space-x-1 text-caption">
                 <School className="h-3 w-3" />
                 <span>Class {assessment.socioDemographic.class}</span>
               </div>
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              <p className="text-sm font-medium text-foreground">
                 {assessment.socioDemographic.schoolName}
               </p>
             </div>
             
             <div className="space-y-1">
-              <div className="flex items-center space-x-1 text-xs text-slate-500 dark:text-slate-400">
+              <div className="flex items-center space-x-1 text-caption">
                 <Activity className="h-3 w-3" />
                 <span>Health Score</span>
               </div>
-              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+              <p className="text-sm font-medium text-foreground">
                 {healthScore}/100
               </p>
             </div>
@@ -152,42 +148,40 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
 
           {/* Health Score Progress */}
           <div className="space-y-2">
-            <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex justify-between text-caption">
               <span>Overall Health</span>
               <span>{healthScore}%</span>
             </div>
-            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+            <div className="w-full bg-surface rounded-full h-2">
               <div 
-                className={`h-2 rounded-full transition-all duration-500 ${riskConfig.progress}`}
+                className={`h-2 rounded-full transition-all duration-500 ${riskConfig.bgColor}`}
                 style={{ width: `${healthScore}%` }}
               />
             </div>
           </div>
 
           {/* BMI & Date */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
             <div className="text-sm">
-              <span className="text-slate-500 dark:text-slate-400">BMI: </span>
-              <span className="font-medium text-slate-900 dark:text-slate-100">
+              <span className="text-caption">BMI: </span>
+              <span className="font-medium text-foreground">
                 {assessment.bmi.toFixed(1)} kg/m²
               </span>
             </div>
             
-            <div className="flex items-center space-x-1 text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex items-center space-x-1 text-caption">
               <Calendar className="h-3 w-3" />
               <span>{new Date(assessment.completedAt).toLocaleDateString()}</span>
             </div>
           </div>
-        </div>
 
-        {/* Actions */}
-        <div className="px-6 pb-4">
-          <div className="flex space-x-2">
+          {/* Actions */}
+          <div className="flex space-x-2 mt-4">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex-1 btn-ghost text-xs"
+              className="flex-1"
             >
               <span>{isExpanded ? 'Less' : 'More'} Details</span>
               {isExpanded ? <ChevronUp className="h-3 w-3 ml-1" /> : <ChevronDown className="h-3 w-3 ml-1" />}
@@ -196,7 +190,7 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
             <Button
               onClick={handleDownloadPDF}
               size="sm"
-              className="flex-1 btn-primary text-xs"
+              className="flex-1"
             >
               <Download className="h-3 w-3 mr-1" />
               <span>PDF</span>
@@ -212,35 +206,35 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="overflow-hidden border-t border-slate-200 dark:border-slate-700"
+              className="overflow-hidden border-t border-border"
             >
-              <CardContent className="p-6 space-y-4 bg-slate-50 dark:bg-slate-800/50">
+              <CardContent className="p-6 space-y-4 bg-surface">
                 {/* Detailed Metrics */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">Activity</h4>
+                    <h4 className="text-sm font-medium text-foreground">Activity</h4>
                     <div className="space-y-2 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-slate-500 dark:text-slate-400">PT Frequency</span>
-                        <span className="text-slate-900 dark:text-slate-100">{assessment.physicalActivity.ptFrequency}/week</span>
+                        <span className="text-caption">PT Frequency</span>
+                        <span className="text-foreground">{assessment.physicalActivity.ptFrequency}/week</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500 dark:text-slate-400">Outdoor Games</span>
-                        <span className="text-slate-900 dark:text-slate-100">{getActivityDisplay(assessment.physicalActivity.outdoorGames)}</span>
+                        <span className="text-caption">Outdoor Games</span>
+                        <span className="text-foreground">{getActivityDisplay(assessment.physicalActivity.outdoorGames)}</span>
                       </div>
                     </div>
                   </div>
                   
                   <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100">Diet</h4>
+                    <h4 className="text-sm font-medium text-foreground">Diet</h4>
                     <div className="space-y-2 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-slate-500 dark:text-slate-400">Fruits</span>
-                        <span className="text-slate-900 dark:text-slate-100">{assessment.eatingHabits.fruits}/day</span>
+                        <span className="text-caption">Fruits</span>
+                        <span className="text-foreground">{assessment.eatingHabits.fruits}/day</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500 dark:text-slate-400">Vegetables</span>
-                        <span className="text-slate-900 dark:text-slate-100">{assessment.eatingHabits.vegetables}/day</span>
+                        <span className="text-caption">Vegetables</span>
+                        <span className="text-foreground">{assessment.eatingHabits.vegetables}/day</span>
                       </div>
                     </div>
                   </div>
@@ -248,27 +242,27 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
 
                 {/* AI Insights */}
                 {assessment.aiPrediction?.explanation && (
-                  <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+                  <div className="p-4 bg-accent rounded-lg border border-border">
+                    <h4 className="text-sm font-medium text-foreground mb-2">
                       AI Health Insights
                     </h4>
-                    <p className="text-xs text-blue-800 dark:text-blue-200 leading-relaxed">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       {assessment.aiPrediction.explanation}
                     </p>
                   </div>
                 )}
 
                 {/* Contact Info */}
-                <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-200 dark:border-slate-700">
+                <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border">
                   <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Father's Contact</p>
-                    <p className="text-xs font-medium text-slate-900 dark:text-slate-100">
+                    <p className="text-caption">Father's Contact</p>
+                    <p className="text-xs font-medium text-foreground">
                       {assessment.socioDemographic.fatherContact || 'Not provided'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Mother's Contact</p>
-                    <p className="text-xs font-medium text-slate-900 dark:text-slate-100">
+                    <p className="text-caption">Mother's Contact</p>
+                    <p className="text-xs font-medium text-foreground">
                       {assessment.socioDemographic.motherContact || 'Not provided'}
                     </p>
                   </div>
