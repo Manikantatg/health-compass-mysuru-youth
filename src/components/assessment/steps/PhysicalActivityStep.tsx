@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { PhysicalActivity } from '../../../types/assessment';
 
 interface Props {
@@ -23,7 +24,6 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
     const currentActivity = physicalActivity[activity as keyof PhysicalActivity];
     let activityData: { days: number; minutes: number };
     
-    // Ensure we have a proper object structure
     if (typeof currentActivity === 'object' && currentActivity !== null && 'days' in currentActivity && 'minutes' in currentActivity) {
       activityData = { ...currentActivity };
     } else {
@@ -41,8 +41,8 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
   const activities = [
     { key: 'yoga', label: 'Yoga' },
     { key: 'exercise', label: 'Exercise' },
-    { key: 'indoorGames', label: 'Indoor Games (Table Tennis, Badminton)' },
-    { key: 'outdoorGames', label: 'Outdoor Games (Cricket, Football, Kho-Kho)' },
+    { key: 'indoorGames', label: 'Indoor Games (e.g., Chess, Carrom, Ludo, Table Tennis)' },
+    { key: 'outdoorGames', label: 'Outdoor Games (e.g., Kho-Kho, Kabaddi, Cricket, Football, Lagori, Badminton)' },
     { key: 'playAfterSchool', label: 'Play/Household Chores' },
     { key: 'cycling', label: 'Bicycle (Self-transport)' },
     { key: 'walking', label: 'Walking' },
@@ -52,7 +52,6 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
     const currentActivity = physicalActivity[activity.key as keyof PhysicalActivity];
     let activityData: { days: number; minutes: number };
     
-    // Safe type checking and conversion
     if (typeof currentActivity === 'object' && currentActivity !== null && 'days' in currentActivity && 'minutes' in currentActivity) {
       activityData = currentActivity as { days: number; minutes: number };
     } else {
@@ -92,7 +91,6 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
     );
   };
 
-  // Helper function to safely calculate total activity minutes
   const calculateTotalActivityMinutes = () => {
     return activities.reduce((total, activity) => {
       const currentActivity = physicalActivity[activity.key as keyof PhysicalActivity];
@@ -115,44 +113,58 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Physical Training (PT) Participation</CardTitle>
-          <CardDescription>Basic information about your PE classes</CardDescription>
+          <CardDescription>Do you participate in Physical Training classes?</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center space-x-2">
-            <Checkbox
+            <Switch
               id="ptParticipation"
               checked={physicalActivity.participation}
               onCheckedChange={(checked) => handleChange('participation', checked)}
             />
-            <Label htmlFor="ptParticipation">I actively participate in PT (Physical Training) classes</Label>
+            <Label htmlFor="ptParticipation">I participate in PT (Physical Training) classes</Label>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="ptFrequency">PT Classes per Week</Label>
-              <Input
-                id="ptFrequency"
-                type="number"
-                min="0"
-                max="7"
-                value={physicalActivity.ptFrequency}
-                onChange={(e) => handleChange('ptFrequency', parseInt(e.target.value) || 0)}
-                placeholder="0-7 days"
-              />
+          {physicalActivity.participation && (
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <Label htmlFor="ptFrequency">PT Classes per Week</Label>
+                <Select
+                  value={physicalActivity.ptFrequency?.toString() || "0"}
+                  onValueChange={(value) => handleChange('ptFrequency', parseInt(value) || 0)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select days" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5, 6, 7].map(day => (
+                      <SelectItem key={day} value={day.toString()}>{day} days</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="ptDuration">Duration per Class (minutes)</Label>
+                <Select
+                  value={physicalActivity.ptDuration?.toString() || "30"}
+                  onValueChange={(value) => handleChange('ptDuration', parseInt(value) || 30)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select duration" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10 minutes</SelectItem>
+                    <SelectItem value="20">20 minutes</SelectItem>
+                    <SelectItem value="30">30 minutes</SelectItem>
+                    <SelectItem value="45">45 minutes</SelectItem>
+                    <SelectItem value="60">60 minutes</SelectItem>
+                    <SelectItem value="90">90 minutes</SelectItem>
+                    <SelectItem value="120">120 minutes</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div>
-              <Label htmlFor="ptDuration">Duration per Class (minutes)</Label>
-              <Input
-                id="ptDuration"
-                type="number"
-                min="0"
-                max="120"
-                value={physicalActivity.ptDuration}
-                onChange={(e) => handleChange('ptDuration', parseInt(e.target.value) || 0)}
-                placeholder="e.g., 45"
-              />
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
@@ -196,6 +208,14 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
                 className="ml-6"
               />
             )}
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="noActivities"
+              checked={physicalActivity.noActivities || false}
+              onCheckedChange={(checked) => handleChange('noActivities', checked)}
+            />
+            <Label htmlFor="noActivities">None</Label>
           </div>
         </CardContent>
       </Card>

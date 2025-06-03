@@ -209,7 +209,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="brothers">Brothers</Label>
+              <Label htmlFor="brothers">Number of Brothers</Label>
               <Input
                 id="brothers"
                 type="number"
@@ -220,7 +220,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             </div>
 
             <div>
-              <Label htmlFor="sisters">Sisters</Label>
+              <Label htmlFor="sisters">Number of Sisters</Label>
               <Input
                 id="sisters"
                 type="number"
@@ -232,13 +232,17 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
             <div>
               <Label htmlFor="birthOrder">Birth Order</Label>
-              <Input
-                id="birthOrder"
-                type="number"
-                min="1"
-                value={socioDemographic.birthOrder}
-                onChange={(e) => handleChange('birthOrder', parseInt(e.target.value) || 1)}
-              />
+              <Select value={socioDemographic.birthOrder?.toString()} onValueChange={(value) => handleChange('birthOrder', parseInt(value))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">First Child</SelectItem>
+                  <SelectItem value="2">Middle Child</SelectItem>
+                  <SelectItem value="999">Last Child</SelectItem>
+                  <SelectItem value="0">Only Child</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -261,30 +265,11 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
       {/* Family History Questions */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Family History Questions</CardTitle>
+          <CardTitle className="text-lg">Family Health History</CardTitle>
           <CardDescription>Please answer the following questions about your family health history</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Q1: Do you have siblings? */}
-          <div className="space-y-3">
-            <Label className="text-base font-medium">Do you have siblings?</Label>
-            <RadioGroup 
-              value={socioDemographic.hasSiblings} 
-              onValueChange={(value) => handleChange('hasSiblings', value)}
-              className="flex space-x-6"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="siblings-yes" />
-                <Label htmlFor="siblings-yes">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="siblings-no" />
-                <Label htmlFor="siblings-no">No</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Q2: Does anybody in the family look fat? */}
+          {/* Q1: Does anybody in the family look fat? */}
           <div className="space-y-3">
             <Label className="text-base font-medium">Does anybody in the family look fat?</Label>
             <RadioGroup 
@@ -331,7 +316,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             )}
           </div>
 
-          {/* Q3: Is anyone in the family suffering from diabetes? */}
+          {/* Q2: Is anyone in the family suffering from diabetes? */}
           <div className="space-y-3">
             <Label className="text-base font-medium">Is anyone in the family suffering from diabetes?</Label>
             <RadioGroup 
@@ -378,7 +363,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             )}
           </div>
 
-          {/* Q4: Is anyone in the family suffering from Hypertension? */}
+          {/* Q3: Is anyone in the family suffering from Hypertension? */}
           <div className="space-y-3">
             <Label className="text-base font-medium">Is anyone in the family suffering from Hypertension or taking medicines for High BP?</Label>
             <RadioGroup 
@@ -425,7 +410,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             )}
           </div>
 
-          {/* Q5: Is anybody in the family suffering from thyroid dysfunction? */}
+          {/* Q4: Is anybody in the family suffering from thyroid dysfunction? */}
           <div className="space-y-3">
             <Label className="text-base font-medium">Is anybody in the family suffering from thyroid dysfunction?</Label>
             <RadioGroup 

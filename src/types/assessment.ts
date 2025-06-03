@@ -16,10 +16,9 @@ export interface SocioDemographic {
   motherContact: string;
   brothers: number;
   sisters: number;
-  birthOrder: number;
+  birthOrder: number; // 0 = Only Child, 1 = First, 2+ = Middle, 999 = Last
   familyType: 'nuclear' | 'joint' | 'three-generation';
-  // New family history questions
-  hasSiblings: 'yes' | 'no';
+  // Family history questions
   familyObesity: 'yes' | 'no' | 'cannot-tell';
   familyObesityRelation?: 'father' | 'mother' | 'both-parents';
   familyDiabetes: 'yes' | 'no' | 'dont-know';
@@ -29,6 +28,7 @@ export interface SocioDemographic {
   familyThyroid: 'yes' | 'no' | 'dont-know';
   familyThyroidRelation?: 'father' | 'mother' | 'both-parents';
   // Legacy fields for backward compatibility
+  hasSiblings: 'yes' | 'no';
   familyObesityHistory: boolean;
   diabetesHistory: boolean;
   bpHistory: boolean;
@@ -61,6 +61,7 @@ export interface PhysicalActivity {
   ncc?: boolean;
   otherActivities?: boolean;
   otherActivitiesDetail?: string;
+  noActivities?: boolean; // New "None" option
   // Updated activities with days and minutes structure
   yoga: { days: number; minutes: number } | number;
   exercise: { days: number; minutes: number } | number;
@@ -75,11 +76,11 @@ export interface PhysicalActivity {
 }
 
 export interface SedentaryBehavior {
-  // Updated to use 0-2 scale (0-1 hrs, 2-3 hrs, 3+ hrs)
+  // Updated to use 0-3 scale (Never, Occasionally, Weekly, Daily)
   tvTime: number;
   mobileTime: number;
   schoolReading: number;
-  nonSchoolReading: number;
+  nonSchoolReading: number; // Now includes "(hobbies)" in label
   indoorGamesTime: number;
   outdoorGamesTime: number;
   tuitionTime: number;
