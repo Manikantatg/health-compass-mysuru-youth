@@ -152,7 +152,7 @@ const AssessmentForm: React.FC = () => {
     return 0;
   };
 
-  // Helper function to safely get numeric value from activity data
+  // Enhanced scoring system with better accuracy
   const getActivityValue = (value: any): number => {
     if (typeof value === 'number') return value;
     if (typeof value === 'object' && value !== null && 'days' in value && 'minutes' in value) {
@@ -162,64 +162,95 @@ const AssessmentForm: React.FC = () => {
   };
 
   const calculateScores = (data: Partial<AssessmentData>) => {
-    // Calculate eating habits score (healthy foods vs unhealthy)
-    const healthyFoods = (data.eatingHabits?.cereals || 0) + 
-                        (data.eatingHabits?.pulses || 0) + 
-                        (data.eatingHabits?.vegetables || 0) + 
-                        (data.eatingHabits?.fruits || 0) + 
-                        (data.eatingHabits?.milkProducts || 0);
-    const unhealthyFoods = (data.eatingHabits?.snacks || 0) + 
-                          (data.eatingHabits?.beverages || 0) + 
-                          (data.eatingHabits?.sweets || 0);
-    const eatingScore = Math.max(0, Math.min(10, (healthyFoods - unhealthyFoods + 10) / 2));
+    // Enhanced eating habits score with weighted calculations
+    const healthyFoods = ((data.eatingHabits?.cereals || 0) * 1.2) + 
+                        ((data.eatingHabits?.pulses || 0) * 1.5) + 
+                        ((data.eatingHabits?.vegetables || 0) * 2.0) + 
+                        ((data.eatingHabits?.fruits || 0) * 1.8) + 
+                        ((data.eatingHabits?.milkProducts || 0) * 1.3) +
+                        ((data.eatingHabits?.nonVeg || 0) * 1.0);
+    
+    const unhealthyFoods = ((data.eatingHabits?.snacks || 0) * 1.5) + 
+                          ((data.eatingHabits?.beverages || 0) * 2.0) + 
+                          ((data.eatingHabits?.sweets || 0) * 1.8);
+    
+    const eatingScore = Math.max(0, Math.min(10, (healthyFoods - unhealthyFoods + 15) / 3));
 
-    // Calculate physical activity score using helper function
-    const totalActivity = ((data.physicalActivity?.ptFrequency || 0) * (data.physicalActivity?.ptDuration || 0)) + 
-                         getActivityValue(data.physicalActivity?.yoga) + 
-                         getActivityValue(data.physicalActivity?.exercise) + 
-                         getActivityValue(data.physicalActivity?.indoorGames) + 
-                         getActivityValue(data.physicalActivity?.outdoorGames) + 
-                         getActivityValue(data.physicalActivity?.playAfterSchool) + 
-                         getActivityValue(data.physicalActivity?.cycling) + 
-                         getActivityValue(data.physicalActivity?.walking);
-    const activityScore = Math.min(10, totalActivity / 42); // 420 minutes per week = 10 points
+    // Enhanced physical activity score with PT participation
+    const ptScore = data.physicalActivity?.participation ? 
+                   ((data.physicalActivity?.ptFrequency || 0) * (data.physicalActivity?.ptDuration || 0)) / 10 : 0;
+    
+    const totalActivity = ptScore + 
+                         getActivityValue(data.physicalActivity?.yoga) / 100 + 
+                         getActivityValue(data.physicalActivity?.exercise) / 100 + 
+                         getActivityValue(data.physicalActivity?.indoorGames) / 100 + 
+                         getActivityValue(data.physicalActivity?.outdoorGames) / 100 + 
+                         getActivityValue(data.physicalActivity?.playAfterSchool) / 100 + 
+                         getActivityValue(data.physicalActivity?.cycling) / 100 + 
+                         getActivityValue(data.physicalActivity?.walking) / 100;
+    
+    const activityScore = Math.min(10, totalActivity / 5); // Adjusted scoring scale
 
-    // Calculate sedentary score (lower is better)
-    const sedentaryTotal = (data.sedentaryBehavior?.tvTime || 0) + 
-                          (data.sedentaryBehavior?.mobileTime || 0) + 
-                          (data.sedentaryBehavior?.schoolReading || 0) + 
-                          (data.sedentaryBehavior?.nonSchoolReading || 0);
-    const sedentaryScore = Math.max(0, 10 - (sedentaryTotal * 0.8));
+    // Enhanced sedentary behavior scoring with screen time emphasis
+    const screenTime = ((data.sedentaryBehavior?.tvTime || 0) * 1.5) + 
+                      ((data.sedentaryBehavior?.mobileTime || 0) * 2.0);
+    
+    const otherSedentary = (data.sedentaryBehavior?.schoolReading || 0) + 
+                          (data.sedentaryBehavior?.nonSchoolReading || 0) + 
+                          (data.sedentaryBehavior?.indoorGamesTime || 0) + 
+                          (data.sedentaryBehavior?.tuitionTime || 0);
+    
+    const sedentaryScore = Math.max(0, 10 - ((screenTime * 1.2) + (otherSedentary * 0.8)));
 
-    // Calculate mental health score
-    const mentalHealthIssues = (data.mentalHealth?.difficultyWalking || 0) + 
-                              (data.mentalHealth?.difficultyRunning || 0) + 
-                              (data.mentalHealth?.difficultySports || 0) + 
-                              (data.mentalHealth?.difficultyAttention || 0) + 
-                              (data.mentalHealth?.forgetThings || 0) + 
-                              (data.mentalHealth?.troubleKeepingUp || 0) + 
-                              (data.mentalHealth?.feelLonely || 0) + 
-                              (data.mentalHealth?.wantEatLess || 0);
+    // Enhanced mental health scoring with weight perception
+    const bodyPerceptionPenalty = Math.abs((data.mentalHealth?.bodyPerception || 3) - 3) * 0.5;
+    const bullyingPenalty = data.mentalHealth?.bullyingExperience ? 2 : 0;
+    
+    const mentalHealthIssues = ((data.mentalHealth?.difficultyWalking || 0) * 1.2) + 
+                              ((data.mentalHealth?.difficultyRunning || 0) * 1.0) + 
+                              ((data.mentalHealth?.difficultySports || 0) * 1.0) + 
+                              ((data.mentalHealth?.difficultyAttention || 0) * 1.5) + 
+                              ((data.mentalHealth?.forgetThings || 0) * 1.0) + 
+                              ((data.mentalHealth?.troubleKeepingUp || 0) * 1.3) + 
+                              ((data.mentalHealth?.feelLonely || 0) * 2.0) + 
+                              ((data.mentalHealth?.wantEatLess || 0) * 1.5) +
+                              bodyPerceptionPenalty + bullyingPenalty;
+    
     const mentalScore = Math.max(0, 10 - (mentalHealthIssues * 0.3));
 
-    // Calculate sleep score
-    const sleepIssues = (data.sleepQuality?.difficultyFallingAsleep || 0) + 
-                       (data.sleepQuality?.wakeUpDuringSleep || 0) + 
-                       (data.sleepQuality?.wakeUpFromNoise || 0) + 
-                       (data.sleepQuality?.difficultyGettingBackToSleep || 0) + 
-                       (data.sleepQuality?.sleepinessInClasses || 0) + 
-                       (data.sleepQuality?.sleepHeadache || 0) + 
-                       (data.sleepQuality?.sleepIrritation || 0) + 
-                       (data.sleepQuality?.sleepLossOfInterest || 0) + 
-                       (data.sleepQuality?.sleepForgetfulness || 0);
-    const sleepScore = Math.max(0, 10 - (sleepIssues * 0.25));
+    // Enhanced sleep scoring with bedtime analysis
+    const calculateSleepDuration = () => {
+      if (data.sleepQuality?.bedtime && data.sleepQuality?.wakeupTime) {
+        const bedTime = new Date(`1970-01-01T${data.sleepQuality.bedtime}:00`);
+        const wakeTime = new Date(`1970-01-02T${data.sleepQuality.wakeupTime}:00`);
+        const duration = (wakeTime.getTime() - bedTime.getTime()) / (1000 * 60 * 60);
+        return duration;
+      }
+      return 8; // Default assumption
+    };
+
+    const sleepDuration = calculateSleepDuration();
+    const sleepDurationScore = sleepDuration >= 8 && sleepDuration <= 10 ? 2 : 
+                             (sleepDuration >= 7 && sleepDuration <= 11 ? 1 : 0);
+
+    const sleepIssues = ((data.sleepQuality?.difficultyFallingAsleep || 0) * 1.2) + 
+                       ((data.sleepQuality?.wakeUpDuringSleep || 0) * 1.0) + 
+                       ((data.sleepQuality?.wakeUpFromNoise || 0) * 0.8) + 
+                       ((data.sleepQuality?.difficultyGettingBackToSleep || 0) * 1.0) + 
+                       ((data.sleepQuality?.sleepinessInClasses || 0) * 1.5) + 
+                       ((data.sleepQuality?.sleepHeadache || 0) * 1.3) + 
+                       ((data.sleepQuality?.sleepIrritation || 0) * 1.2) + 
+                       ((data.sleepQuality?.sleepLossOfInterest || 0) * 1.4) + 
+                       ((data.sleepQuality?.sleepForgetfulness || 0) * 1.1);
+    
+    const sleepScore = Math.max(0, 10 - (sleepIssues * 0.25) + sleepDurationScore);
 
     return {
-      eatingHabitsScore: Math.round(eatingScore),
-      physicalActivityScore: Math.round(activityScore),
-      sedentaryScore: Math.round(sedentaryScore),
-      mentalHealthScore: Math.round(mentalScore),
-      sleepScore: Math.round(sleepScore)
+      eatingHabitsScore: Math.round(eatingScore * 10) / 10,
+      physicalActivityScore: Math.round(activityScore * 10) / 10,
+      sedentaryScore: Math.round(sedentaryScore * 10) / 10,
+      mentalHealthScore: Math.round(mentalScore * 10) / 10,
+      sleepScore: Math.round(sleepScore * 10) / 10
     };
   };
 
@@ -254,52 +285,62 @@ const AssessmentForm: React.FC = () => {
         assessmentData.socioDemographic?.weight || 0
       );
 
-      // Calculate scores
+      // Calculate enhanced scores
       const scores = calculateScores(assessmentData);
 
-      // Generate AI prediction with proper data structure
+      // Generate comprehensive AI prediction
       const aiPredictionData = {
         name: assessmentData.socioDemographic?.name || '',
         age: assessmentData.socioDemographic?.age || 0,
         gender: assessmentData.socioDemographic?.gender || 'male',
         bmi,
+        scores,
         eatingHabits: assessmentData.eatingHabits || {},
         physicalActivity: assessmentData.physicalActivity || {},
         sedentaryBehavior: assessmentData.sedentaryBehavior || {},
         sleepQuality: assessmentData.sleepQuality || {},
         mentalHealth: assessmentData.mentalHealth || {},
-        familyHistory: (assessmentData.socioDemographic?.familyObesity === 'yes') || 
-                      (assessmentData.socioDemographic?.familyDiabetes === 'yes') ||
-                      (assessmentData.socioDemographic?.familyHypertension === 'yes') ||
-                      (assessmentData.socioDemographic?.familyThyroid === 'yes')
+        familyHistory: {
+          obesity: assessmentData.socioDemographic?.familyObesity === 'yes',
+          diabetes: assessmentData.socioDemographic?.familyDiabetes === 'yes',
+          hypertension: assessmentData.socioDemographic?.familyHypertension === 'yes',
+          thyroid: assessmentData.socioDemographic?.familyThyroid === 'yes'
+        }
       };
 
       const aiPrediction = await generateObesityPrediction(aiPredictionData);
 
-      // Save to Firestore
+      // Save comprehensive assessment to Firestore
       const finalAssessment = {
         userId: currentUser?.uid || '',
         ...assessmentData,
         bmi,
         aiPrediction,
         completedAt: new Date(),
-        scores
+        scores,
+        metadata: {
+          version: '2.0',
+          formStructure: 'enhanced',
+          scoringAlgorithm: 'weighted'
+        }
       };
 
       await addDoc(collection(db, 'assessments'), finalAssessment);
 
       toast({
         title: "Assessment Completed!",
-        description: "Your health assessment has been successfully submitted."
+        description: "Your comprehensive health assessment has been successfully submitted.",
+        duration: 5000
       });
 
       navigate('/dashboard');
     } catch (error) {
       console.error('Error submitting assessment:', error);
       toast({
-        title: "Error",
-        description: "Failed to submit assessment. Please try again.",
-        variant: "destructive"
+        title: "Submission Error",
+        description: "Failed to submit assessment. Please check your connection and try again.",
+        variant: "destructive",
+        duration: 5000
       });
     } finally {
       setLoading(false);

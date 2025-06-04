@@ -23,25 +23,13 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
     { value: 3, label: 'Daily' }
   ];
 
-  const ActivityRadioGroup = ({ field, label }: { field: keyof SedentaryBehavior; label: string }) => (
-    <div className="space-y-3">
-      <Label className="text-sm font-medium">{label}</Label>
-      <RadioGroup
-        value={sedentaryBehavior[field]?.toString() || "0"}
-        onValueChange={(value) => handleChange(field, parseInt(value))}
-        className="flex space-x-6"
-      >
-        {frequencyOptions.map((option) => (
-          <div key={option.value} className="flex items-center space-x-2">
-            <RadioGroupItem value={option.value.toString()} id={`${String(field)}-${option.value}`} />
-            <Label htmlFor={`${String(field)}-${option.value}`} className="text-sm">
-              {option.label}
-            </Label>
-          </div>
-        ))}
-      </RadioGroup>
-    </div>
-  );
+  // Define timeOptions for screen time calculations
+  const timeOptions = [
+    { value: 0, label: 'Never' },
+    { value: 1, label: 'Less than 1 hour' },
+    { value: 2, label: '1-2 hours' },
+    { value: 3, label: '3+ hours' }
+  ];
 
   const screenTimeActivities = [
     { key: 'tvTime', label: 'Watching TV/Movies' },
@@ -215,7 +203,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Total Screen Time:</span>
-                <span className="font-bold">{timeOptions[Math.min(calculateTotalScreenTime(), 2)]?.label || '3+ hrs'}</span>
+                <span className="font-bold">{timeOptions[Math.min(calculateTotalScreenTime(), 3)]?.label || '3+ hrs'}</span>
               </div>
               <div className={`text-xs ${calculateTotalScreenTime() >= 4 ? 'text-red-600' : 'text-orange-600'}`}>
                 {calculateTotalScreenTime() >= 4 ? '⚠️ 4+ hrs is NOT recommended' : 'Recommended: Less than 2 hours for recreational screen time'}
@@ -232,7 +220,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Daily Total:</span>
-                <span className="font-bold">{timeOptions[Math.min(calculateTotalSedentaryTime(), 2)]?.label || '3+ hrs'}</span>
+                <span className="font-bold">{timeOptions[Math.min(calculateTotalSedentaryTime(), 3)]?.label || '3+ hrs'}</span>
               </div>
               <div className="text-xs text-blue-600">
                 Aim: Break sitting time every 60 minutes
