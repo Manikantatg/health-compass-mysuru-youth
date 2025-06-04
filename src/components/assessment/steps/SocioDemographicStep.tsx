@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -207,43 +206,64 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="brothers">Number of Brothers</Label>
-              <Input
-                id="brothers"
-                type="number"
-                min="0"
-                value={socioDemographic.brothers}
-                onChange={(e) => handleChange('brothers', parseInt(e.target.value) || 0)}
-              />
-            </div>
+          {/* Siblings Question */}
+          <div className="space-y-4">
+            <Label className="text-base font-medium">Do you have siblings?</Label>
+            <RadioGroup 
+              value={socioDemographic.hasSiblings} 
+              onValueChange={(value) => handleChange('hasSiblings', value)}
+              className="flex space-x-6"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="siblings-yes" />
+                <Label htmlFor="siblings-yes">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="siblings-no" />
+                <Label htmlFor="siblings-no">No</Label>
+              </div>
+            </RadioGroup>
 
-            <div>
-              <Label htmlFor="sisters">Number of Sisters</Label>
-              <Input
-                id="sisters"
-                type="number"
-                min="0"
-                value={socioDemographic.sisters}
-                onChange={(e) => handleChange('sisters', parseInt(e.target.value) || 0)}
-              />
-            </div>
+            {socioDemographic.hasSiblings === 'yes' && (
+              <div className="grid grid-cols-3 gap-4 mt-4">
+                <div>
+                  <Label htmlFor="brothers">Number of Brothers</Label>
+                  <Input
+                    id="brothers"
+                    type="number"
+                    min="0"
+                    value={socioDemographic.brothers}
+                    onChange={(e) => handleChange('brothers', parseInt(e.target.value) || 0)}
+                  />
+                </div>
 
-            <div>
-              <Label htmlFor="birthOrder">Birth Order</Label>
-              <Select value={socioDemographic.birthOrder?.toString()} onValueChange={(value) => handleChange('birthOrder', parseInt(value))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">First Child</SelectItem>
-                  <SelectItem value="2">Middle Child</SelectItem>
-                  <SelectItem value="999">Last Child</SelectItem>
-                  <SelectItem value="0">Only Child</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <div>
+                  <Label htmlFor="sisters">Number of Sisters</Label>
+                  <Input
+                    id="sisters"
+                    type="number"
+                    min="0"
+                    value={socioDemographic.sisters}
+                    onChange={(e) => handleChange('sisters', parseInt(e.target.value) || 0)}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="birthOrder">Birth Order</Label>
+                  <Select value={socioDemographic.birthOrder?.toString()} onValueChange={(value) => handleChange('birthOrder', parseInt(value))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">First Child</SelectItem>
+                      <SelectItem value="2">Middle Child</SelectItem>
+                      <SelectItem value="999">Last Child</SelectItem>
+                      <SelectItem value="0">Only Child</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
           </div>
 
           <div>

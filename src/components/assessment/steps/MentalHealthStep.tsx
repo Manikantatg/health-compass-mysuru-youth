@@ -20,7 +20,7 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('mentalHealth', { [field]: value });
   };
 
-  const bodyPerceptionLabels = ['Very Underweight', 'Underweight', 'Normal', 'Overweight', 'Very Overweight'];
+  const bodyPerceptionLabels = ['Very underweight', 'Slightly underweight', 'About the right weight', 'Slightly overweight', 'Very overweight'];
   const frequencyLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
   const bodyImageSatisfactionLabels = ['Very dissatisfied', 'Dissatisfied', 'Neutral', 'Satisfied', 'Very satisfied'];
 
@@ -66,165 +66,63 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         <p className="text-gray-600">This section assesses students' perceptions of their mental health and body image</p>
       </div>
 
-      {/* Body Image Perception - Current vs Desired */}
+      {/* Q1: Body Weight Perception */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Body Image Perception</CardTitle>
-          <CardDescription>How you see and feel about your body</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Current Body Image Perception */}
-          <div className="space-y-4">
-            <Label className="text-base font-medium">Q1: Please rate your current perception of your body image</Label>
-            <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
-            <RadioGroup
-              value={mentalHealth.currentBodyImageSatisfaction?.toString() || "3"}
-              onValueChange={(value) => handleChange('currentBodyImageSatisfaction', parseInt(value))}
-              className="space-y-2"
-            >
-              {bodyImageSatisfactionLabels.map((label, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <RadioGroupItem value={(index + 1).toString()} id={`current-${index}`} />
-                  <Label htmlFor={`current-${index}`} className="cursor-pointer">{label}</Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-
-          {/* Desired Body Image Perception */}
-          <div className="space-y-4">
-            <Label className="text-base font-medium">Q2: Please rate your desired perception of your body image</Label>
-            <p className="text-sm text-gray-600">(How would you ideally like to perceive your body?)</p>
-            <RadioGroup
-              value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "4"}
-              onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', parseInt(value))}
-              className="space-y-2"
-            >
-              {bodyImageSatisfactionLabels.map((label, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <RadioGroupItem value={(index + 1).toString()} id={`desired-${index}`} />
-                  <Label htmlFor={`desired-${index}`} className="cursor-pointer">{label}</Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Body Perception */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Body Weight Perception</CardTitle>
-          <CardDescription>How do you perceive your current body weight?</CardDescription>
+          <CardTitle className="text-lg">Q1: How do you describe your weight?</CardTitle>
+          <CardDescription>Please select the option that best describes how you view your current weight</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <Label className="text-sm font-medium">I think my body weight is:</Label>
-              <span className="text-sm text-gray-600 font-medium">
-                {bodyPerceptionLabels[mentalHealth.bodyPerception - 1]}
-              </span>
-            </div>
-            <Slider
-              value={[mentalHealth.bodyPerception]}
-              onValueChange={(value) => handleChange('bodyPerception', value[0])}
-              max={5}
-              min={1}
-              step={1}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>Very Underweight</span>
-              <span>Very Overweight</span>
-            </div>
-          </div>
+          <RadioGroup
+            value={mentalHealth.bodyPerception?.toString() || "3"}
+            onValueChange={(value) => handleChange('bodyPerception', parseInt(value))}
+            className="space-y-2"
+          >
+            {bodyPerceptionLabels.map((label, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <RadioGroupItem value={(index + 1).toString()} id={`weight-${index}`} />
+                <Label htmlFor={`weight-${index}`} className="cursor-pointer">
+                  {String.fromCharCode(65 + index)}. {label}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
         </CardContent>
       </Card>
 
-      {/* Body Image Visual Reference Chart */}
+      {/* Q2: Weight Goals */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Body Image Reference Chart</CardTitle>
-          <CardDescription>Select the body image that best represents how you see yourself currently</CardDescription>
+          <CardTitle className="text-lg">Q2: What are you trying to do about your weight?</CardTitle>
+          <CardDescription>Select your current weight goal</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {/* Body Shape Icons Grid */}
-            <div className="grid grid-cols-9 gap-2">
-              {bodyImageOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => handleChange('bodyImageSelection', option.value)}
-                  className={`p-3 text-xs border rounded-md transition-all duration-200 ${
-                    mentalHealth.bodyImageSelection === option.value
-                      ? 'bg-blue-100 border-blue-500 shadow-md'
-                      : 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300'
-                  }`}
-                >
-                  {/* SVG Body Shape Icons */}
-                  <div className="w-8 h-12 mx-auto mb-1">
-                    <svg viewBox="0 0 24 48" className="w-full h-full">
-                      {/* Simple body shape representation */}
-                      <ellipse 
-                        cx="12" 
-                        cy="8" 
-                        rx={2 + (option.value - 1) * 0.3} 
-                        ry="3" 
-                        fill="currentColor" 
-                        opacity="0.7"
-                      />
-                      <rect 
-                        x={12 - (3 + (option.value - 1) * 0.5)} 
-                        y="11" 
-                        width={6 + (option.value - 1) * 1} 
-                        height="20" 
-                        rx="2" 
-                        fill="currentColor" 
-                        opacity="0.7"
-                      />
-                      <ellipse 
-                        cx="12" 
-                        cy="35" 
-                        rx={2 + (option.value - 1) * 0.4} 
-                        ry="8" 
-                        fill="currentColor" 
-                        opacity="0.7"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-xs">{option.value}</span>
-                </button>
-              ))}
+          <RadioGroup
+            value={mentalHealth.weightGoal || "maintain"}
+            onValueChange={(value) => handleChange('weightGoal', value)}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="lose" id="weight-lose" />
+              <Label htmlFor="weight-lose" className="cursor-pointer">A. Lose weight</Label>
             </div>
-            
-            <div className="text-center text-sm text-gray-600 mt-2">
-              <p>Select the body shape that best represents how you see yourself (1 = Very Thin, 9 = Very Fuller)</p>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="gain" id="weight-gain" />
+              <Label htmlFor="weight-gain" className="cursor-pointer">B. Gain weight</Label>
             </div>
-
-            <Select 
-              value={mentalHealth.bodyImageSelection.toString()} 
-              onValueChange={(value) => handleChange('bodyImageSelection', parseInt(value))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select body image that represents you" />
-              </SelectTrigger>
-              <SelectContent>
-                {bodyImageOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value.toString()}>
-                    {option.value}. {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="maintain" id="weight-maintain" />
+              <Label htmlFor="weight-maintain" className="cursor-pointer">C. Stay the same weight</Label>
+            </div>
+          </RadioGroup>
         </CardContent>
       </Card>
 
-      {/* Bullying Experience */}
+      {/* Q3: Bullying Experience */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Social Experience</CardTitle>
-          <CardDescription>Your experience with bullying or teasing</CardDescription>
+          <CardTitle className="text-lg">Q3: Are you being bullied for weight by friends or family?</CardTitle>
+          <CardDescription>Your experience with bullying or teasing about weight</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center space-x-2">
@@ -234,7 +132,7 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               onCheckedChange={(checked) => handleChange('bullyingExperience', checked)}
             />
             <Label htmlFor="bullyingExperience">
-              I have experienced bullying or teasing about my appearance or weight
+              Yes, I have experienced bullying or teasing about my weight
             </Label>
           </div>
           {mentalHealth.bullyingExperience && (
@@ -247,30 +145,10 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         </CardContent>
       </Card>
 
-      {/* Weight Goal */}
+      {/* Q4: Mental Health Screening */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Weight Goals</CardTitle>
-          <CardDescription>What would you like to do about your weight?</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Select value={mentalHealth.weightGoal} onValueChange={(value) => handleChange('weightGoal', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select your weight goal" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="lose">I want to lose weight</SelectItem>
-              <SelectItem value="gain">I want to gain weight</SelectItem>
-              <SelectItem value="maintain">I want to maintain my current weight</SelectItem>
-            </SelectContent>
-          </Select>
-        </CardContent>
-      </Card>
-
-      {/* Mental Health and Wellbeing Questions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Mental Health and Wellbeing</CardTitle>
+          <CardTitle className="text-lg">Q4: Mental Health and Wellbeing</CardTitle>
           <CardDescription>Please rate how often you experience these situations (Last 15 Days)</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -282,6 +160,88 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
           <FrequencySlider field="troubleKeepingUp" label="I have trouble keeping up with my work or studies" />
           <FrequencySlider field="feelLonely" label="I feel lonely and not interested in my work" />
           <FrequencySlider field="wantEatLess" label="I feel I want to eat less to lose weight" />
+        </CardContent>
+      </Card>
+
+      {/* Q5: Body Image Visual Reference Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Q5: Body Image Perception (Current & Future)</CardTitle>
+          <CardDescription>Select the body image that best represents how you see yourself currently</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="relative">
+            {/* Floating Body Image Reference Chart */}
+            <div className="float-right w-1/3 ml-6 mb-4 rounded-xl shadow-lg overflow-hidden">
+              <img 
+                src="/lovable-uploads/f412f968-159e-4161-b48b-d6cf61b6d187.png" 
+                alt="Body Image Reference Chart"
+                className="w-full h-auto"
+              />
+              <div className="p-2 bg-gray-50 text-xs text-center text-gray-600">
+                Body Image Reference Chart
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Current Body Image Perception */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">How do you currently perceive your body image?</Label>
+                <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
+                <RadioGroup
+                  value={mentalHealth.currentBodyImageSatisfaction?.toString() || "3"}
+                  onValueChange={(value) => handleChange('currentBodyImageSatisfaction', parseInt(value))}
+                  className="space-y-2"
+                >
+                  {bodyImageSatisfactionLabels.map((label, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <RadioGroupItem value={(index + 1).toString()} id={`current-${index}`} />
+                      <Label htmlFor={`current-${index}`} className="cursor-pointer">{label}</Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+
+              {/* Desired Body Image Perception */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">How would you ideally like to perceive your body image?</Label>
+                <p className="text-sm text-gray-600">(How would you ideally like to see your body?)</p>
+                <RadioGroup
+                  value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "4"}
+                  onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', parseInt(value))}
+                  className="space-y-2"
+                >
+                  {bodyImageSatisfactionLabels.map((label, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <RadioGroupItem value={(index + 1).toString()} id={`desired-${index}`} />
+                      <Label htmlFor={`desired-${index}`} className="cursor-pointer">{label}</Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+
+              {/* Body Shape Selection */}
+              <div className="space-y-4 clear-both">
+                <Label className="text-base font-medium">Body Shape Selection</Label>
+                <p className="text-sm text-gray-600">Select the number from the reference chart that best represents your current body shape</p>
+                <Select 
+                  value={mentalHealth.bodyImageSelection?.toString() || "5"} 
+                  onValueChange={(value) => handleChange('bodyImageSelection', parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select body image that represents you" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {bodyImageOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value.toString()}>
+                        {option.value}. {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -299,10 +259,10 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               <strong>Desired Body Image:</strong> {bodyImageSatisfactionLabels[(mentalHealth.desiredBodyImageSatisfaction || 4) - 1]}
             </p>
             <p className="text-sm">
-              <strong>Body Weight Perception:</strong> {bodyPerceptionLabels[mentalHealth.bodyPerception - 1]}
+              <strong>Body Weight Perception:</strong> {bodyPerceptionLabels[(mentalHealth.bodyPerception || 3) - 1]}
             </p>
             <p className="text-sm">
-              <strong>Weight Goal:</strong> {mentalHealth.weightGoal.charAt(0).toUpperCase() + mentalHealth.weightGoal.slice(1)} weight
+              <strong>Weight Goal:</strong> {mentalHealth.weightGoal?.charAt(0).toUpperCase() + (mentalHealth.weightGoal?.slice(1) || 'maintain')} weight
             </p>
             <p className="text-sm">
               <strong>Body Image Selection:</strong> {bodyImageOptions.find(opt => opt.value === mentalHealth.bodyImageSelection)?.label || 'Not selected'}

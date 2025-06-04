@@ -43,7 +43,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
     { key: 'exercise', label: 'Exercise' },
     { key: 'indoorGames', label: 'Indoor Games (e.g., Chess, Carrom, Ludo, Table Tennis)' },
     { key: 'outdoorGames', label: 'Outdoor Games (e.g., Kho-Kho, Kabaddi, Cricket, Football, Lagori, Badminton)' },
-    { key: 'playAfterSchool', label: 'Play/Household Chores' },
+    { key: 'playAfterSchool', label: 'Playing after school hours/household works' },
     { key: 'cycling', label: 'Bicycle (Self-transport)' },
     { key: 'walking', label: 'Walking' },
   ];
@@ -126,7 +126,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
           </div>
 
           {physicalActivity.participation && (
-            <div className="grid grid-cols-2 gap-4 mt-4">
+            <div className="grid grid-cols-3 gap-4 mt-4">
               <div>
                 <Label htmlFor="ptFrequency">PT Classes per Week</Label>
                 <Select
@@ -145,21 +145,27 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
               </div>
               <div>
                 <Label htmlFor="ptDuration">Duration per Class (minutes)</Label>
+                <Input
+                  type="number"
+                  min="10"
+                  max="120"
+                  value={physicalActivity.ptDuration || 30}
+                  onChange={(e) => handleChange('ptDuration', parseInt(e.target.value) || 30)}
+                  placeholder="30"
+                />
+              </div>
+              <div>
+                <Label htmlFor="ptActivityType">Activity Type</Label>
                 <Select
-                  value={physicalActivity.ptDuration?.toString() || "30"}
-                  onValueChange={(value) => handleChange('ptDuration', parseInt(value) || 30)}
+                  value={physicalActivity.ptActivityType || "outdoor"}
+                  onValueChange={(value) => handleChange('ptActivityType', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select duration" />
+                    <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="10">10 minutes</SelectItem>
-                    <SelectItem value="20">20 minutes</SelectItem>
-                    <SelectItem value="30">30 minutes</SelectItem>
-                    <SelectItem value="45">45 minutes</SelectItem>
-                    <SelectItem value="60">60 minutes</SelectItem>
-                    <SelectItem value="90">90 minutes</SelectItem>
-                    <SelectItem value="120">120 minutes</SelectItem>
+                    <SelectItem value="indoor">Indoor</SelectItem>
+                    <SelectItem value="outdoor">Outdoor</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

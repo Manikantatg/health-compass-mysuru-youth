@@ -41,7 +41,7 @@ export interface EatingHabits {
   vegetables: number;
   fruits: number;
   milkProducts: number;
-  nonVeg: number;
+  nonVeg: number; // Updated label: "Non-Vegetarian Foods"
   // Updated eating habits
   snacks: number; // Replaces junkFood
   beverages: number; // Replaces softDrinks and energyDrinks
@@ -55,6 +55,7 @@ export interface EatingHabits {
 export interface PhysicalActivity {
   ptFrequency: number; // 0-7 days
   ptDuration: number; // minutes
+  ptActivityType?: string; // New field: 'indoor' | 'outdoor'
   participation: boolean;
   // New school activities
   scouts?: boolean;
@@ -80,7 +81,7 @@ export interface SedentaryBehavior {
   tvTime: number;
   mobileTime: number;
   schoolReading: number;
-  nonSchoolReading: number; // Now includes "(hobbies)" in label
+  nonSchoolReading: number; // Updated label with examples
   indoorGamesTime: number;
   outdoorGamesTime: number;
   tuitionTime: number;

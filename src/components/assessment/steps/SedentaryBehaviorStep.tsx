@@ -16,10 +16,11 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('sedentaryBehavior', { [field]: value });
   };
 
-  const timeOptions = [
-    { value: 0, label: '0-1 hrs' },
-    { value: 1, label: '2-3 hrs' },
-    { value: 2, label: '3+ hrs' }
+  const frequencyOptions = [
+    { value: 0, label: 'Never' },
+    { value: 1, label: 'Occasionally' },
+    { value: 2, label: 'Weekly' },
+    { value: 3, label: 'Daily' }
   ];
 
   const ActivityRadioGroup = ({ field, label }: { field: keyof SedentaryBehavior; label: string }) => (
@@ -30,7 +31,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
         onValueChange={(value) => handleChange(field, parseInt(value))}
         className="flex space-x-6"
       >
-        {timeOptions.map((option) => (
+        {frequencyOptions.map((option) => (
           <div key={option.value} className="flex items-center space-x-2">
             <RadioGroupItem value={option.value.toString()} id={`${String(field)}-${option.value}`} />
             <Label htmlFor={`${String(field)}-${option.value}`} className="text-sm">
@@ -48,13 +49,13 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
   ];
 
   const readingActivities = [
-    { key: 'schoolReading', label: 'Reading – School Related' },
-    { key: 'nonSchoolReading', label: 'Reading – Non-School Related' }
+    { key: 'schoolReading', label: 'Reading and writing – school related (Homework, textbook, notes, assignments, projects)' },
+    { key: 'nonSchoolReading', label: 'Non-school related – reading/writing (Books, comics, personal articles)' }
   ];
 
   const otherActivities = [
-    { key: 'indoorGamesTime', label: 'Indoor Games' },
-    { key: 'outdoorGamesTime', label: 'Outdoor Games' },
+    { key: 'indoorGamesTime', label: 'Playing indoor games – (Carrom, Pacchi, Ludo, Chess, Snake & Ladder)' },
+    { key: 'outdoorGamesTime', label: 'Playing outdoor games – (Antyakshari, Damsharas, Business Games)' },
     { key: 'tuitionTime', label: 'Tuition Classes' }
   ];
 
@@ -69,15 +70,15 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Step 4: Screen Time & Sedentary Behavior</h3>
-        <p className="text-gray-600">Track your screen-based and sedentary activities (Last 7 Days)</p>
+        <h3 className="text-lg font-semibold">Step 4: Sedentary Behavior Activities and Screen-Based Activities (Last 7 Days)</h3>
+        <p className="text-gray-600">Track your screen-based and sedentary activities</p>
       </div>
 
       {/* Screen-Based Activities */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Screen-Based Activities (Last 7 Days)</CardTitle>
-          <CardDescription>How much time do you spend on these activities daily?</CardDescription>
+          <CardDescription>How often do you engage in these activities?</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="overflow-x-auto">
@@ -85,7 +86,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Spent (Select One)</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Frequency (Select One)</th>
                 </tr>
               </thead>
               <tbody>
@@ -98,7 +99,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
                         onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
                         className="flex space-x-4"
                       >
-                        {timeOptions.map((option) => (
+                        {frequencyOptions.map((option) => (
                           <div key={option.value} className="flex items-center space-x-2">
                             <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
                             <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
@@ -116,11 +117,11 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
         </CardContent>
       </Card>
 
-      {/* Reading Activities */}
+      {/* Reading & Writing Activities */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Reading & Writing Activities</CardTitle>
-          <CardDescription>Time spent on reading and writing activities per day</CardDescription>
+          <CardDescription>Time spent on reading and writing activities</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="overflow-x-auto">
@@ -128,7 +129,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Spent (Select One)</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Frequency (Select One)</th>
                 </tr>
               </thead>
               <tbody>
@@ -141,7 +142,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
                         onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
                         className="flex space-x-4"
                       >
-                        {timeOptions.map((option) => (
+                        {frequencyOptions.map((option) => (
                           <div key={option.value} className="flex items-center space-x-2">
                             <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
                             <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
@@ -159,7 +160,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
         </CardContent>
       </Card>
 
-      {/* Other Activities */}
+      {/* Other Sedentary Activities */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Other Sedentary Activities</CardTitle>
@@ -171,7 +172,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Spent (Select One)</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Frequency (Select One)</th>
                 </tr>
               </thead>
               <tbody>
@@ -184,7 +185,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
                         onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
                         className="flex space-x-4"
                       >
-                        {timeOptions.map((option) => (
+                        {frequencyOptions.map((option) => (
                           <div key={option.value} className="flex items-center space-x-2">
                             <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
                             <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
