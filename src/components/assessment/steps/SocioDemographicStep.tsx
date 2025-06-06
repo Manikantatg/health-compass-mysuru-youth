@@ -206,7 +206,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             </div>
           </div>
 
-          {/* Siblings Question */}
+          {/* Updated Siblings Question */}
           <div className="space-y-4">
             <Label className="text-base font-medium">Do you have siblings?</Label>
             <RadioGroup 
@@ -250,17 +250,30 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
                 <div>
                   <Label htmlFor="birthOrder">Birth Order</Label>
-                  <Select value={socioDemographic.birthOrder?.toString()} onValueChange={(value) => handleChange('birthOrder', parseInt(value))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">First Child</SelectItem>
-                      <SelectItem value="2">Middle Child</SelectItem>
-                      <SelectItem value="999">Last Child</SelectItem>
-                      <SelectItem value="0">Only Child</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    id="birthOrder"
+                    type="number"
+                    min="1"
+                    value={socioDemographic.birthOrder}
+                    onChange={(e) => handleChange('birthOrder', parseInt(e.target.value) || 1)}
+                    placeholder="Enter birth order"
+                  />
+                </div>
+              </div>
+            )}
+
+            {socioDemographic.hasSiblings === 'no' && (
+              <div className="mt-4">
+                <div>
+                  <Label htmlFor="birthOrderOnly">Birth Order</Label>
+                  <Input
+                    id="birthOrderOnly"
+                    type="number"
+                    value={1}
+                    disabled
+                    className="bg-gray-100"
+                  />
+                  <p className="text-sm text-gray-600 mt-1">Only child - Birth order is 1</p>
                 </div>
               </div>
             )}

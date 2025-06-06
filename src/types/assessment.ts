@@ -41,12 +41,18 @@ export interface EatingHabits {
   vegetables: number;
   fruits: number;
   milkProducts: number;
-  nonVeg: number; // Updated label: "Non-Vegetarian Foods"
-  // Updated eating habits
-  snacks: number; // Replaces junkFood
-  beverages: number; // Replaces softDrinks and energyDrinks
-  sweets: number; // Keep existing
-  // Legacy fields for backward compatibility - all required for type safety
+  // Updated protein foods
+  chicken: number;
+  fish: number;
+  eggs: number;
+  seafood: number;
+  leanMeats: number;
+  // Processed foods
+  snacks: number;
+  beverages: number;
+  sweets: number;
+  // Legacy fields for backward compatibility
+  nonVeg: number;
   junkFood: number;
   softDrinks: number;
   energyDrinks: number;
@@ -77,11 +83,11 @@ export interface PhysicalActivity {
 }
 
 export interface SedentaryBehavior {
-  // Updated to use 0-3 scale (Never, Occasionally, Weekly, Daily)
+  // Updated to use 0-4 scale (Never, < 1 Hr/day, 1–2 Hr/day, 2–3 Hr/day, > 3 Hr/day)
   tvTime: number;
   mobileTime: number;
   schoolReading: number;
-  nonSchoolReading: number; // Updated label with examples
+  nonSchoolReading: number;
   indoorGamesTime: number;
   outdoorGamesTime: number;
   tuitionTime: number;
@@ -97,10 +103,10 @@ export interface MentalHealth {
   bullyingExperience: boolean;
   weightGoal: 'lose' | 'gain' | 'maintain';
   bodyImageSelection: number; // 1-9 scale
-  // New body image satisfaction fields
-  currentBodyImageSatisfaction?: number; // 1-5 scale (Very dissatisfied to Very satisfied)
-  desiredBodyImageSatisfaction?: number; // 1-5 scale (Very dissatisfied to Very satisfied)
-  // New mental health questions (0-4 scale: Never, Rarely, Sometimes, Often, Almost Always)
+  // Updated body image satisfaction fields to use numbers
+  currentBodyImageSatisfaction?: number; // 1-9 scale from body chart
+  desiredBodyImageSatisfaction?: number; // 1-9 scale from body chart
+  // Mental health questions (0-4 scale: Never, Rarely, Sometimes, Often, Almost Always)
   difficultyWalking: number;
   difficultyRunning: number;
   difficultySports: number;
@@ -114,11 +120,11 @@ export interface MentalHealth {
 }
 
 export interface SleepQuality {
-  // New sleep time fields
+  // Sleep time fields
   bedtime?: string; // HH:MM format
   wakeupTime?: string; // HH:MM format
   sleepDuration?: number; // auto-computed in minutes
-  // Updated sleep questions (0-4 scale: Never, Rarely, Sometimes, Often, Almost Always)
+  // Sleep questions (0-4 scale: Never, Rarely, Sometimes, Often, Almost Always)
   difficultyFallingAsleep: number;
   wakeUpDuringSleep: number;
   wakeUpFromNoise: number;
@@ -138,7 +144,7 @@ export interface HealthScores {
   sedentaryScore: number;
   mentalHealthScore: number;
   sleepScore: number;
-  // New AI-generated score
+  // AI-generated score
   aiScore?: number;
 }
 
@@ -159,7 +165,7 @@ export interface AssessmentData {
     riskPercentage: number;
     recommendations: string[];
     explanation: string;
-    // New AI analysis fields
+    // AI analysis fields
     strengths?: string[];
     topRecommendations?: string[];
   };

@@ -1,10 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MentalHealth } from '../../../types/assessment';
 
@@ -15,6 +15,8 @@ interface Props {
 
 const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
   const mentalHealth = data.mentalHealth as MentalHealth;
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleChange = (field: keyof MentalHealth, value: any) => {
     updateData('mentalHealth', { [field]: value });
@@ -22,19 +24,6 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
 
   const bodyPerceptionLabels = ['Very underweight', 'Slightly underweight', 'About the right weight', 'Slightly overweight', 'Very overweight'];
   const frequencyLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
-  const bodyImageSatisfactionLabels = ['Very dissatisfied', 'Dissatisfied', 'Neutral', 'Satisfied', 'Very satisfied'];
-
-  const bodyImageOptions = [
-    { value: 1, label: 'Very Thin' },
-    { value: 2, label: 'Thin' },
-    { value: 3, label: 'Slightly Thin' },
-    { value: 4, label: 'Normal (Thin)' },
-    { value: 5, label: 'Normal (Average)' },
-    { value: 6, label: 'Normal (Fuller)' },
-    { value: 7, label: 'Slightly Fuller' },
-    { value: 8, label: 'Fuller' },
-    { value: 9, label: 'Very Fuller' }
-  ];
 
   const FrequencySlider = ({ field, label }: { field: keyof MentalHealth; label: string }) => (
     <div className="space-y-3">
@@ -58,6 +47,29 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
       </div>
     </div>
   );
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left - imagePosition.x;
+    const offsetY = e.clientY - rect.top - imagePosition.y;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      setImagePosition({
+        x: moveEvent.clientX - rect.left - offsetX,
+        y: moveEvent.clientY - rect.top - offsetY
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
 
   return (
     <div className="space-y-6">
@@ -167,78 +179,68 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Q5: Body Image Perception (Current & Future)</CardTitle>
-          <CardDescription>Select the body image that best represents how you see yourself currently</CardDescription>
+          <CardDescription>Use the body image reference chart to select numbers</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="relative">
-            {/* Floating Body Image Reference Chart */}
-            <div className="float-right w-1/3 ml-6 mb-4 rounded-xl shadow-lg overflow-hidden">
+          <div className="relative min-h-[400px] border-2 border-dashed border-gray-300 rounded-lg p-4">
+            {/* Draggable Body Image Reference Chart */}
+            <div
+              className={`absolute w-80 rounded-xl shadow-lg overflow-hidden bg-white cursor-move ${isDragging ? 'z-50' : 'z-10'}`}
+              style={{
+                left: imagePosition.x,
+                top: imagePosition.y,
+                transform: 'translate(0, 0)'
+              }}
+              onMouseDown={handleMouseDown}
+            >
               <img 
-                src="/lovable-uploads/f412f968-159e-4161-b48b-d6cf61b6d187.png" 
+                src="https://www.researchgate.net/publication/325991284/figure/fig1/AS:961371055337473@1606220129184/Body-somatotypes-This-figure-shows-the-body-somatotypes-from-which-participants-were.gif" 
                 alt="Body Image Reference Chart"
                 className="w-full h-auto"
+                draggable={false}
               />
               <div className="p-2 bg-gray-50 text-xs text-center text-gray-600">
-                Body Image Reference Chart
+                Body Image Reference Chart (Drag to move)
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 pt-4">
               {/* Current Body Image Perception */}
               <div className="space-y-4">
-                <Label className="text-base font-medium">How do you currently perceive your body image?</Label>
+                <Label className="text-base font-medium">1. How do you currently perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
-                <RadioGroup
-                  value={mentalHealth.currentBodyImageSatisfaction?.toString() || "3"}
-                  onValueChange={(value) => handleChange('currentBodyImageSatisfaction', parseInt(value))}
-                  className="space-y-2"
-                >
-                  {bodyImageSatisfactionLabels.map((label, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem value={(index + 1).toString()} id={`current-${index}`} />
-                      <Label htmlFor={`current-${index}`} className="cursor-pointer">{label}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="currentBodyImage" className="text-sm">Enter the number:</Label>
+                  <Input
+                    id="currentBodyImage"
+                    type="number"
+                    min="1"
+                    max="9"
+                    value={mentalHealth.currentBodyImageSatisfaction || ''}
+                    onChange={(e) => handleChange('currentBodyImageSatisfaction', parseInt(e.target.value) || 0)}
+                    className="w-20"
+                    placeholder="1-9"
+                  />
+                </div>
               </div>
 
               {/* Desired Body Image Perception */}
               <div className="space-y-4">
-                <Label className="text-base font-medium">How would you ideally like to perceive your body image?</Label>
+                <Label className="text-base font-medium">2. How do you desire to perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How would you ideally like to see your body?)</p>
-                <RadioGroup
-                  value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "4"}
-                  onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', parseInt(value))}
-                  className="space-y-2"
-                >
-                  {bodyImageSatisfactionLabels.map((label, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <RadioGroupItem value={(index + 1).toString()} id={`desired-${index}`} />
-                      <Label htmlFor={`desired-${index}`} className="cursor-pointer">{label}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </div>
-
-              {/* Body Shape Selection */}
-              <div className="space-y-4 clear-both">
-                <Label className="text-base font-medium">Body Shape Selection</Label>
-                <p className="text-sm text-gray-600">Select the number from the reference chart that best represents your current body shape</p>
-                <Select 
-                  value={mentalHealth.bodyImageSelection?.toString() || "5"} 
-                  onValueChange={(value) => handleChange('bodyImageSelection', parseInt(value))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select body image that represents you" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {bodyImageOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value.toString()}>
-                        {option.value}. {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="desiredBodyImage" className="text-sm">Enter the number:</Label>
+                  <Input
+                    id="desiredBodyImage"
+                    type="number"
+                    min="1"
+                    max="9"
+                    value={mentalHealth.desiredBodyImageSatisfaction || ''}
+                    onChange={(e) => handleChange('desiredBodyImageSatisfaction', parseInt(e.target.value) || 0)}
+                    className="w-20"
+                    placeholder="1-9"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -253,19 +255,16 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         <CardContent>
           <div className="space-y-2">
             <p className="text-sm">
-              <strong>Current Body Image:</strong> {bodyImageSatisfactionLabels[(mentalHealth.currentBodyImageSatisfaction || 3) - 1]}
+              <strong>Current Body Image (Number):</strong> {mentalHealth.currentBodyImageSatisfaction || 'Not selected'}
             </p>
             <p className="text-sm">
-              <strong>Desired Body Image:</strong> {bodyImageSatisfactionLabels[(mentalHealth.desiredBodyImageSatisfaction || 4) - 1]}
+              <strong>Desired Body Image (Number):</strong> {mentalHealth.desiredBodyImageSatisfaction || 'Not selected'}
             </p>
             <p className="text-sm">
               <strong>Body Weight Perception:</strong> {bodyPerceptionLabels[(mentalHealth.bodyPerception || 3) - 1]}
             </p>
             <p className="text-sm">
               <strong>Weight Goal:</strong> {mentalHealth.weightGoal?.charAt(0).toUpperCase() + (mentalHealth.weightGoal?.slice(1) || 'maintain')} weight
-            </p>
-            <p className="text-sm">
-              <strong>Body Image Selection:</strong> {bodyImageOptions.find(opt => opt.value === mentalHealth.bodyImageSelection)?.label || 'Not selected'}
             </p>
             <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
               <p className="text-xs text-blue-800">

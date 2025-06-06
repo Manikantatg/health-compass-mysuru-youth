@@ -16,19 +16,12 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('sedentaryBehavior', { [field]: value });
   };
 
-  const frequencyOptions = [
-    { value: 0, label: 'Never' },
-    { value: 1, label: 'Occasionally' },
-    { value: 2, label: 'Weekly' },
-    { value: 3, label: 'Daily' }
-  ];
-
-  // Define timeOptions for screen time calculations
   const timeOptions = [
     { value: 0, label: 'Never' },
-    { value: 1, label: 'Less than 1 hour' },
-    { value: 2, label: '1-2 hours' },
-    { value: 3, label: '3+ hours' }
+    { value: 1, label: '< 1 Hr/day' },
+    { value: 2, label: '1–2 Hr/day' },
+    { value: 3, label: '2–3 Hr/day' },
+    { value: 4, label: '> 3 Hr/day' }
   ];
 
   const screenTimeActivities = [
@@ -58,7 +51,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Step 4: Sedentary Behavior Activities and Screen-Based Activities (Last 7 Days)</h3>
+        <h3 className="text-lg font-semibold">Sedentary Behaviour Activities (Last 7 Days)</h3>
         <p className="text-gray-600">Track your screen-based and sedentary activities</p>
       </div>
 
@@ -74,7 +67,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Frequency (Select One)</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Duration (Select One)</th>
                 </tr>
               </thead>
               <tbody>
@@ -87,7 +80,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
                         onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
                         className="flex space-x-4"
                       >
-                        {frequencyOptions.map((option) => (
+                        {timeOptions.map((option) => (
                           <div key={option.value} className="flex items-center space-x-2">
                             <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
                             <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
@@ -117,7 +110,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Frequency (Select One)</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Duration (Select One)</th>
                 </tr>
               </thead>
               <tbody>
@@ -130,7 +123,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
                         onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
                         className="flex space-x-4"
                       >
-                        {frequencyOptions.map((option) => (
+                        {timeOptions.map((option) => (
                           <div key={option.value} className="flex items-center space-x-2">
                             <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
                             <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
@@ -160,7 +153,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Frequency (Select One)</th>
+                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Duration (Select One)</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,7 +166,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
                         onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
                         className="flex space-x-4"
                       >
-                        {frequencyOptions.map((option) => (
+                        {timeOptions.map((option) => (
                           <div key={option.value} className="flex items-center space-x-2">
                             <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
                             <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
@@ -193,9 +186,9 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
 
       {/* Summary Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className={`${calculateTotalScreenTime() >= 4 ? 'bg-red-50 border-red-200' : 'bg-orange-50 border-orange-200'}`}>
+        <Card className={`${calculateTotalScreenTime() >= 6 ? 'bg-red-50 border-red-200' : 'bg-orange-50 border-orange-200'}`}>
           <CardHeader>
-            <CardTitle className={`text-lg ${calculateTotalScreenTime() >= 4 ? 'text-red-900' : 'text-orange-900'}`}>
+            <CardTitle className={`text-lg ${calculateTotalScreenTime() >= 6 ? 'text-red-900' : 'text-orange-900'}`}>
               Daily Screen Time (Computed)
             </CardTitle>
           </CardHeader>
@@ -203,10 +196,10 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Total Screen Time:</span>
-                <span className="font-bold">{timeOptions[Math.min(calculateTotalScreenTime(), 3)]?.label || '3+ hrs'}</span>
+                <span className="font-bold">{timeOptions[Math.min(calculateTotalScreenTime(), 4)]?.label || '> 3 Hr/day'}</span>
               </div>
-              <div className={`text-xs ${calculateTotalScreenTime() >= 4 ? 'text-red-600' : 'text-orange-600'}`}>
-                {calculateTotalScreenTime() >= 4 ? '⚠️ 4+ hrs is NOT recommended' : 'Recommended: Less than 2 hours for recreational screen time'}
+              <div className={`text-xs ${calculateTotalScreenTime() >= 6 ? 'text-red-600' : 'text-orange-600'}`}>
+                {calculateTotalScreenTime() >= 6 ? '⚠️ > 6 hrs is NOT recommended' : 'Recommended: Less than 2 hours for recreational screen time'}
               </div>
             </div>
           </CardContent>
@@ -220,7 +213,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Daily Total:</span>
-                <span className="font-bold">{timeOptions[Math.min(calculateTotalSedentaryTime(), 3)]?.label || '3+ hrs'}</span>
+                <span className="font-bold">{timeOptions[Math.min(calculateTotalSedentaryTime(), 4)]?.label || '> 3 Hr/day'}</span>
               </div>
               <div className="text-xs text-blue-600">
                 Aim: Break sitting time every 60 minutes

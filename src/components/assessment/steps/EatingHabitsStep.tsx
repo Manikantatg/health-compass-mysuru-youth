@@ -29,13 +29,11 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
         { key: 'vegetables', label: 'Vegetables' },
         { key: 'fruits', label: 'Fruits' },
         { key: 'milkProducts', label: 'Milk & Dairy Products' },
-      ]
-    },
-    {
-      title: 'Protein Foods',
-      description: 'How often do you consume protein-rich foods? (Last 15 Days)',
-      items: [
-        { key: 'nonVeg', label: 'Non-Vegetarian Foods' },
+        { key: 'chicken', label: 'Chicken' },
+        { key: 'fish', label: 'Fish' },
+        { key: 'eggs', label: 'Eggs' },
+        { key: 'seafood', label: 'Seafood' },
+        { key: 'leanMeats', label: 'Lean Meats' },
       ]
     },
     {
@@ -75,7 +73,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Eating Habits Assessment</h3>
+        <h3 className="text-lg font-semibold">Eating Habits Assessment (Last 15 Days)</h3>
         <p className="text-gray-600">Rate how often you consume these foods on a scale from Never to Always</p>
       </div>
 
@@ -107,9 +105,9 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <h4 className="font-medium text-green-700 mb-2">Healthy Foods Score</h4>
               <div className="space-y-1">
-                {['cereals', 'pulses', 'vegetables', 'fruits', 'milkProducts'].map((key) => (
+                {['cereals', 'pulses', 'vegetables', 'fruits', 'milkProducts', 'chicken', 'fish', 'eggs', 'seafood', 'leanMeats'].map((key) => (
                   <div key={key} className="flex justify-between text-sm">
-                    <span className="capitalize">{key}:</span>
+                    <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
                     <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]}</span>
                   </div>
                 ))}
