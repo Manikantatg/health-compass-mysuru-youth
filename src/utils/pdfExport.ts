@@ -8,34 +8,13 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
     let currentY = 20;
 
-    // Helper function to add new page if needed
-    const checkPageBreak = (requiredHeight: number) => {
-      if (currentY + requiredHeight > pageHeight - 40) {
-        doc.addPage();
-        currentY = 20;
-        // Add page number to footer
-        const pageNum = doc.getNumberOfPages();
-        doc.setTextColor(128, 128, 128);
-        doc.setFontSize(10);
-        doc.text(`Page ${pageNum}`, pageWidth - 30, pageHeight - 20);
-        doc.setTextColor(0, 0, 0);
-      }
-    };
-
-    // Header with premium branding
-    doc.setFillColor(63, 81, 181); // Primary indigo color
-    doc.rect(0, 0, pageWidth, 60, 'F');
-    
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(28);
+    // Header
+    doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
-    doc.text('HealthPredict', pageWidth / 2, 25, { align: 'center' });
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Student Wellness Report', pageWidth / 2, 35, { align: 'center' });
+    doc.text('HealthPredict - Student Wellness Report', pageWidth / 2, currentY, { align: 'center' });
+    currentY += 10;
     
     // Generation timestamp
     const now = new Date();
@@ -49,26 +28,22 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
       minute: '2-digit',
       hour12: true 
     });
-    doc.setFontSize(11);
-    doc.text(`Generated on: ${dateStr} at ${timeStr}`, pageWidth / 2, 48, { align: 'center' });
-
-    currentY = 75;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Generated on: ${dateStr} at ${timeStr}`, pageWidth / 2, currentY, { align: 'center' });
+    currentY += 20;
 
     // Student Profile Section
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(18);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('Student Profile', 20, currentY);
-    currentY += 12;
+    currentY += 8;
 
-    doc.setFillColor(250, 250, 250);
-    doc.rect(15, currentY - 5, pageWidth - 30, 65, 'F');
-    
-    doc.setFontSize(12);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
     const studentInfo = [
       `Name: ${assessmentData.socioDemographic.name || 'N/A'}`,
-      `Age: ${assessmentData.socioDemographic.age || 'N/A'} years old`,
+      `Age: ${assessmentData.socioDemographic.age || 'N/A'} years`,
       `Gender: ${(assessmentData.socioDemographic.gender || 'N/A').charAt(0).toUpperCase() + (assessmentData.socioDemographic.gender || '').slice(1)}`,
       `Class: ${assessmentData.socioDemographic.class || 'N/A'}-${assessmentData.socioDemographic.section || 'N/A'}`,
       `School: ${assessmentData.socioDemographic.schoolName || 'N/A'}`,
@@ -76,151 +51,130 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     ];
 
     studentInfo.forEach((info, index) => {
-      doc.text(info, 25, currentY + (index * 8));
+      doc.text(info, 20, currentY + (index * 5));
     });
 
-    currentY += studentInfo.length * 8 + 20;
+    currentY += studentInfo.length * 5 + 15;
+
+    // Add separator line
+    doc.setLineWidth(0.5);
+    doc.line(20, currentY, pageWidth - 20, currentY);
+    currentY += 10;
 
     // Health Risk Summary
-    checkPageBreak(50);
     const riskLevel = assessmentData.aiPrediction?.riskLevel || 'Medium';
-    const riskColors = {
-      'Low': [102, 187, 106],
-      'Medium': [255, 160, 0],
-      'High': [239, 83, 80]
-    };
-    const riskColor = riskColors[riskLevel as keyof typeof riskColors] || [255, 160, 0];
-    
-    doc.setFontSize(18);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('Health Risk Summary', 20, currentY);
+    currentY += 8;
+
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Overall Risk Level: ${riskLevel.toUpperCase()} RISK`, 20, currentY);
     currentY += 15;
 
-    // Risk level indicator
-    doc.setFillColor(riskColor[0], riskColor[1], riskColor[2]);
-    doc.rect(20, currentY, pageWidth - 40, 25, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Overall Risk Level: ${riskLevel.toUpperCase()} RISK`, pageWidth / 2, currentY + 16, { align: 'center' });
-
-    // Calculate overall health score
-    const totalScore = calculateOverallHealthScore(assessmentData);
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(12);
-    doc.text(`Overall Health Score: ${totalScore.toFixed(1)} / 12 (${Math.round((totalScore / 12) * 100)}%)`, pageWidth / 2, currentY + 8, { align: 'center' });
-
-    currentY += 35;
+    // Add separator line
+    doc.line(20, currentY, pageWidth - 20, currentY);
+    currentY += 10;
 
     // Health Insights Section
-    checkPageBreak(80);
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(18);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('Health Insights', 20, currentY);
-    currentY += 15;
+    currentY += 10;
 
     // BMI Analysis
     const bmiCategory = getBMICategory(assessmentData.bmi || 0);
     const bmiAnalysis = getBMIAnalysis(assessmentData.bmi || 0, bmiCategory);
-    
-    addHealthInsight(doc, 'BMI', `BMI Value: ${(assessmentData.bmi || 0).toFixed(1)} - ${bmiCategory}`, bmiAnalysis);
+    addHealthInsight(doc, '1. BMI', `Value: ${(assessmentData.bmi || 0).toFixed(1)} (${bmiCategory})`, bmiAnalysis);
 
     // Nutrition Analysis
     const nutritionScore = getDietScore(assessmentData.eatingHabits);
     const nutritionAnalysis = getDietAnalysis(nutritionScore);
-    addHealthInsight(doc, 'Nutrition', nutritionAnalysis.assessment, nutritionAnalysis.action);
+    addHealthInsight(doc, '2. Nutrition', nutritionAnalysis.assessment, nutritionAnalysis.action);
 
     // Physical Activity Analysis
     const activityScore = getPhysicalActivityScore(assessmentData.physicalActivity);
     const activityAnalysis = getActivityAnalysis(activityScore);
-    addHealthInsight(doc, 'Activity', activityAnalysis.assessment, activityAnalysis.action);
+    addHealthInsight(doc, '3. Physical Activity', activityAnalysis.assessment, activityAnalysis.action);
 
     // Screen Time Analysis
     const screenScore = getScreenScore(assessmentData.sedentaryBehavior);
     const screenAnalysis = getScreenTimeAnalysis(screenScore);
-    addHealthInsight(doc, 'Screen Time', screenAnalysis.assessment, screenAnalysis.action);
+    addHealthInsight(doc, '4. Screen Time', screenAnalysis.assessment, screenAnalysis.action);
 
     // Sleep Analysis
     const sleepScore = getSleepScore(assessmentData.sleepQuality);
     const sleepAnalysis = getSleepAnalysis(sleepScore);
-    addHealthInsight(doc, 'Sleep', sleepAnalysis.assessment, sleepAnalysis.action);
+    addHealthInsight(doc, '5. Sleep', sleepAnalysis.assessment, sleepAnalysis.action);
 
     // Mental Health Analysis
     const mentalScore = getMentalHealthScore(assessmentData.mentalHealth);
     const mentalAnalysis = getMentalHealthAnalysis(mentalScore);
-    addHealthInsight(doc, 'Mental Health', mentalAnalysis.assessment, mentalAnalysis.action);
+    addHealthInsight(doc, '6. Mental Health', mentalAnalysis.assessment, mentalAnalysis.action);
+
+    // Add separator line
+    doc.setLineWidth(0.5);
+    doc.line(20, currentY, pageWidth - 20, currentY);
+    currentY += 10;
 
     // Recommended Actions
-    checkPageBreak(60);
-    doc.setFontSize(18);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('Recommended Actions', 20, currentY);
-    currentY += 15;
+    currentY += 8;
 
-    const recommendations = assessmentData.aiPrediction?.recommendations || getDefaultRecommendations();
-    
-    doc.setFillColor(245, 248, 255);
-    doc.rect(15, currentY - 5, pageWidth - 30, recommendations.length * 10 + 15, 'F');
+    const recommendations = [
+      'Perform physical activity for at least 60 minutes daily',
+      'Eat more fruits, vegetables, and whole grains',
+      'Reduce recreational screen time to under 2 hours per day',
+      'Sleep 8 to 9 hours every night with a consistent bedtime',
+      'Focus on positive body image and stress management'
+    ];
 
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    recommendations.slice(0, 6).forEach((rec, index) => {
-      checkPageBreak(12);
-      const bullet = '•';
-      const recLines = doc.splitTextToSize(`${bullet} ${rec}`, pageWidth - 50);
-      recLines.forEach((line: string, lineIndex: number) => {
-        doc.text(line, 25, currentY + (lineIndex * 5));
-      });
-      currentY += recLines.length * 5 + 3;
+    recommendations.forEach((rec, index) => {
+      doc.text(`• ${rec}`, 20, currentY + (index * 5));
     });
 
-    currentY += 15;
+    currentY += recommendations.length * 5 + 15;
 
-    // Footer with branding and confidentiality
-    const footerY = pageHeight - 35;
-    doc.setTextColor(128, 128, 128);
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Confidential Health Report | For Medical Use Only', 20, footerY);
-    doc.text('Powered by HealthPredict AI | www.healthpredict.com', pageWidth - 20, footerY, { align: 'right' });
-    doc.text('2025 Doutly Technologies | All Rights Reserved', pageWidth / 2, footerY + 8, { align: 'center' });
+    // Add separator line
+    doc.line(20, currentY, pageWidth - 20, currentY);
+    currentY += 10;
 
-    // Generate clean filename with proper encoding
+    // Footer
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Confidential Health Report - For Medical Use Only', pageWidth / 2, currentY, { align: 'center' });
+
+    // Helper function to add health insights
+    function addHealthInsight(doc: any, title: string, status: string, action: string) {
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, 20, currentY);
+      currentY += 5;
+      
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Status: ${status}`, 25, currentY);
+      currentY += 4;
+      
+      if (action) {
+        doc.text(`Action: ${action}`, 25, currentY);
+        currentY += 4;
+      }
+      
+      currentY += 3;
+    }
+
+    // Generate clean filename
     const cleanName = (assessmentData.socioDemographic.name || 'student').replace(/[^a-zA-Z0-9]/g, '');
     const dateStr2 = now.toLocaleDateString('en-US').replace(/\//g, '-');
     const filename = `HealthPredict_${cleanName}_${dateStr2}.pdf`;
     
-    // Save with proper encoding
+    // Save the PDF
     doc.save(filename);
-
-    // Helper function to add health insights
-    function addHealthInsight(doc: any, title: string, assessment: string, action: string) {
-      checkPageBreak(20);
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`${title}:`, 25, currentY);
-      
-      doc.setFont('helvetica', 'normal');
-      const assessmentLines = doc.splitTextToSize(assessment, pageWidth - 70);
-      assessmentLines.forEach((line: string, index: number) => {
-        doc.text(line, 35, currentY + (index * 5));
-      });
-      currentY += assessmentLines.length * 5;
-      
-      if (action) {
-        doc.setFontSize(10);
-        doc.setTextColor(80, 80, 80);
-        const actionLines = doc.splitTextToSize(`Action: ${action}`, pageWidth - 70);
-        actionLines.forEach((line: string, index: number) => {
-          doc.text(line, 35, currentY + (index * 4));
-        });
-        currentY += actionLines.length * 4;
-      }
-      
-      doc.setTextColor(0, 0, 0);
-      currentY += 8;
-    }
 
     return true;
   } catch (error) {
@@ -230,17 +184,6 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
 };
 
 // Helper functions for analysis
-function calculateOverallHealthScore(data: AssessmentData): number {
-  const bmiScore = getBMIScore(data.bmi || 0);
-  const dietScore = getDietScore(data.eatingHabits);
-  const activityScore = getPhysicalActivityScore(data.physicalActivity);
-  const screenScore = getScreenScore(data.sedentaryBehavior);
-  const sleepScore = getSleepScore(data.sleepQuality);
-  const mentalScore = getMentalHealthScore(data.mentalHealth);
-  
-  return bmiScore + dietScore + activityScore + screenScore + sleepScore + mentalScore;
-}
-
 function getBMICategory(bmi: number): string {
   if (bmi < 18.5) return 'Underweight';
   if (bmi < 25) return 'Normal Weight';
@@ -248,17 +191,11 @@ function getBMICategory(bmi: number): string {
   return 'Obese';
 }
 
-function getBMIScore(bmi: number): number {
-  if (bmi >= 18.5 && bmi < 25) return 2;
-  if (bmi >= 17 && bmi < 30) return 1;
-  return 0;
-}
-
 function getBMIAnalysis(bmi: number, category: string): string {
-  if (category === 'Normal Weight') return 'Healthy weight range maintained.';
-  if (category === 'Underweight') return 'Consider consulting a nutritionist for healthy weight gain.';
-  if (category === 'Overweight') return 'Moderate lifestyle changes recommended.';
-  return 'Consult pediatric advisor for comprehensive weight management.';
+  if (category === 'Normal Weight') return 'Healthy weight range maintained';
+  if (category === 'Underweight') return 'Consult a nutritionist for healthy weight gain';
+  if (category === 'Overweight') return 'Moderate lifestyle changes recommended';
+  return 'Consult pediatric advisor for comprehensive weight management';
 }
 
 function getDietScore(eatingHabits: any): number {
@@ -269,16 +206,16 @@ function getDietScore(eatingHabits: any): number {
 
 function getDietAnalysis(score: number) {
   if (score >= 1.5) return {
-    assessment: 'Excellent balance of grains, proteins, fruits, dairy.',
-    action: 'Continue current healthy eating patterns.'
+    assessment: 'Excellent nutritional balance maintained',
+    action: 'Continue current healthy eating patterns'
   };
   if (score >= 1) return {
-    assessment: 'Good nutrition habits with room for improvement.',
-    action: 'Increase fruits and vegetables, reduce processed foods.'
+    assessment: 'Good nutrition habits with room for improvement',
+    action: 'Increase fruits and vegetables, reduce processed foods'
   };
   return {
-    assessment: 'Dietary habits need significant improvement.',
-    action: 'Consult a nutritionist for meal planning guidance.'
+    assessment: 'Dietary habits need significant improvement',
+    action: 'Consult a nutritionist for meal planning guidance'
   };
 }
 
@@ -301,16 +238,16 @@ function getPhysicalActivityScore(physicalActivity: any): number {
 
 function getActivityAnalysis(score: number) {
   if (score >= 1.5) return {
-    assessment: 'Meets recommended 60 mins/day.',
-    action: 'Maintain current activity levels.'
+    assessment: 'Meets recommended 60 minutes per day',
+    action: 'Maintain current activity levels'
   };
   if (score >= 1) return {
-    assessment: 'Good activity level with room for improvement.',
-    action: 'Increase frequency or duration of activities.'
+    assessment: 'Good activity level with room for improvement',
+    action: 'Increase frequency or duration of activities'
   };
   return {
-    assessment: 'Below recommended activity levels.',
-    action: 'Engage in physical activity daily (walking, yoga, sports).'
+    assessment: 'Below recommended activity levels',
+    action: 'Engage in at least 60 minutes of physical activity daily'
   };
 }
 
@@ -323,16 +260,16 @@ function getScreenScore(sedentaryBehavior: any): number {
 
 function getScreenTimeAnalysis(score: number) {
   if (score >= 1.5) return {
-    assessment: 'Excellent screen time management within healthy limits.',
-    action: 'Continue current screen time habits.'
+    assessment: 'Excellent screen time management within healthy limits',
+    action: 'Continue current screen time habits'
   };
   if (score >= 1) return {
-    assessment: 'Moderate screen time within acceptable range.',
-    action: 'Consider reducing by 30 minutes daily.'
+    assessment: 'Moderate screen time within acceptable range',
+    action: 'Consider reducing by 30 minutes daily'
   };
   return {
-    assessment: 'Excessive screen time detected.',
-    action: 'Reduce to under 2 hrs gradually, replace with physical activities.'
+    assessment: 'Excessive screen time detected',
+    action: 'Gradually reduce to under 2 hours per day'
   };
 }
 
@@ -343,16 +280,16 @@ function getSleepScore(sleepQuality: any): number {
 
 function getSleepAnalysis(score: number) {
   if (score >= 1.5) return {
-    assessment: 'Excellent sleep quality supporting optimal development.',
-    action: 'Maintain current sleep schedule.'
+    assessment: 'Excellent sleep quality supporting optimal development',
+    action: 'Maintain current sleep schedule'
   };
   if (score >= 1) return {
-    assessment: 'Good sleep quality with minor issues.',
-    action: 'Follow consistent bedtime routine.'
+    assessment: 'Good sleep quality with minor issues',
+    action: 'Follow consistent bedtime routine'
   };
   return {
-    assessment: 'Poor sleep quality reported.',
-    action: 'Improve bedtime hygiene, seek guidance if persistent.'
+    assessment: 'Poor sleep quality',
+    action: 'Improve bedtime routine and sleep hygiene'
   };
 }
 
@@ -364,27 +301,15 @@ function getMentalHealthScore(mentalHealth: any): number {
 
 function getMentalHealthAnalysis(score: number) {
   if (score >= 1.5) return {
-    assessment: 'Positive mental health and healthy body image.',
-    action: 'Continue building self-confidence and social connections.'
+    assessment: 'Positive mental health and healthy body image',
+    action: 'Continue building self-confidence and social connections'
   };
   if (score >= 1) return {
-    assessment: 'Generally good mental health with some areas for support.',
-    action: 'Practice mindfulness and maintain positive relationships.'
+    assessment: 'Generally good mental health with some areas for support',
+    action: 'Practice mindfulness and maintain positive relationships'
   };
   return {
-    assessment: 'Emotional stress signs identified.',
-    action: 'Seek guidance/counseling support, talk to trusted adults.'
+    assessment: 'Signs of emotional stress',
+    action: 'Seek guidance or counseling, talk to trusted adults'
   };
-}
-
-function getDefaultRecommendations(): string[] {
-  return [
-    'Engage in physical activity daily (e.g., walking, yoga, sports)',
-    'Increase fruit and vegetable servings to 5-7 daily',
-    'Follow a consistent sleep schedule (8-10 hrs/night)',
-    'Reduce screen time gradually to under 2 hours daily',
-    'Consider mindfulness or talk therapy for emotional wellness',
-    'Stay hydrated with 6-8 glasses of water daily',
-    'Schedule regular health check-ups and follow medical advice'
-  ];
 }
