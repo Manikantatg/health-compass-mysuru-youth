@@ -16,6 +16,7 @@ const StudentDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [assessmentData, setAssessmentData] = useState<AssessmentData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
 
   const handlePhoneVerification = (data: AssessmentData) => {
     console.log('Phone verification successful, setting assessment data:', data);
@@ -23,20 +24,34 @@ const StudentDashboard: React.FC = () => {
   };
 
   const handleDownloadPDF = async () => {
-    if (!assessmentData) return;
+    if (!assessmentData) {
+      toast({
+        title: "Error",
+        description: "No assessment data available to generate report.",
+        variant: "destructive"
+      });
+      return;
+    }
     
+    setDownloadLoading(true);
     try {
+      console.log('Starting PDF generation...');
       await generateHealthReportPDF(assessmentData);
       toast({
         title: "Success!",
-        description: "Your health report has been downloaded successfully."
+        description: "Your health report has been downloaded successfully. Check your Downloads folder.",
+        duration: 5000
       });
     } catch (error) {
+      console.error('PDF generation failed:', error);
       toast({
-        title: "Error",
-        description: "Failed to generate PDF report. Please try again.",
-        variant: "destructive"
+        title: "Download Error",
+        description: "Failed to generate PDF report. Please check your internet connection and try again.",
+        variant: "destructive",
+        duration: 5000
       });
+    } finally {
+      setDownloadLoading(false);
     }
   };
 
@@ -247,11 +262,26 @@ const StudentDashboard: React.FC = () => {
               <div className="border-t pt-6 text-center">
                 <Button
                   onClick={handleDownloadPDF}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center space-x-2 mx-auto transform hover:scale-105 transition-all duration-200"
+                  disabled={downloadLoading || !assessmentData}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center space-x-2 mx-auto transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Download className="w-5 h-5" />
-                  <span>📥 Download Full Health Report as PDF</span>
+                  {downloadLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                      <span>Generating PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-5 h-5" />
+                      <span>📥 Download Full Health Report as PDF</span>
+                    </>
+                  )}
                 </Button>
+                {downloadLoading && (
+                  <p className="text-sm text-gray-600 mt-2">
+                    Please wait while we generate your personalized health report...
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>

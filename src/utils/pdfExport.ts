@@ -2,235 +2,236 @@
 import { AssessmentData } from '../types/assessment';
 
 export const generateHealthReportPDF = async (assessmentData: AssessmentData) => {
-  // Import jsPDF dynamically to avoid SSR issues
-  const { default: jsPDF } = await import('jspdf');
-  
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  let currentY = 20;
+  try {
+    // Import jsPDF dynamically to avoid SSR issues
+    const { default: jsPDF } = await import('jspdf');
+    
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let currentY = 20;
 
-  // Helper function to add new page if needed
-  const checkPageBreak = (requiredHeight: number) => {
-    if (currentY + requiredHeight > pageHeight - 40) {
-      doc.addPage();
-      currentY = 20;
-      // Add page number to footer
-      const pageNum = doc.getNumberOfPages();
-      doc.setTextColor(128, 128, 128);
-      doc.setFontSize(10);
-      doc.text(`Page ${pageNum}`, pageWidth - 30, pageHeight - 20);
-      doc.setTextColor(0, 0, 0);
-    }
-  };
+    // Helper function to add new page if needed
+    const checkPageBreak = (requiredHeight: number) => {
+      if (currentY + requiredHeight > pageHeight - 40) {
+        doc.addPage();
+        currentY = 20;
+        // Add page number to footer
+        const pageNum = doc.getNumberOfPages();
+        doc.setTextColor(128, 128, 128);
+        doc.setFontSize(10);
+        doc.text(`Page ${pageNum}`, pageWidth - 30, pageHeight - 20);
+        doc.setTextColor(0, 0, 0);
+      }
+    };
 
-  // Header with premium branding
-  doc.setFillColor(63, 81, 181); // Primary indigo color
-  doc.rect(0, 0, pageWidth, 60, 'F');
-  
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(28);
-  doc.setFont('helvetica', 'bold');
-  doc.text('HealthPredict', pageWidth / 2, 25, { align: 'center' });
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Student Wellness Report', pageWidth / 2, 35, { align: 'center' });
-  
-  // Generation timestamp
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('en-IN', { 
-    day: 'numeric', 
-    month: 'long', 
-    year: 'numeric' 
-  });
-  const timeStr = now.toLocaleTimeString('en-IN', { 
-    hour: 'numeric', 
-    minute: '2-digit',
-    hour12: true 
-  });
-  doc.setFontSize(11);
-  doc.text(`Generated on: ${dateStr} at ${timeStr}`, pageWidth / 2, 48, { align: 'center' });
-
-  currentY = 75;
-
-  // Student Profile Section
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text('👤 Student Profile', 20, currentY);
-  currentY += 12;
-
-  doc.setFillColor(250, 250, 250);
-  doc.rect(15, currentY - 5, pageWidth - 30, 65, 'F');
-  
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
-  const studentInfo = [
-    `Name: ${assessmentData.socioDemographic.name}`,
-    `Age: ${assessmentData.socioDemographic.age} years old`,
-    `Gender: ${assessmentData.socioDemographic.gender.charAt(0).toUpperCase() + assessmentData.socioDemographic.gender.slice(1)}`,
-    `Class: ${assessmentData.socioDemographic.class}-${assessmentData.socioDemographic.section}`,
-    `School: ${assessmentData.socioDemographic.schoolName}`,
-    `Assessment Date: ${new Date(assessmentData.completedAt).toLocaleDateString('en-IN')}`
-  ];
-
-  studentInfo.forEach((info, index) => {
-    doc.text(info, 25, currentY + (index * 8));
-  });
-
-  currentY += studentInfo.length * 8 + 20;
-
-  // Health Risk Summary
-  checkPageBreak(50);
-  const riskLevel = assessmentData.aiPrediction?.riskLevel || 'Medium';
-  const riskColors = {
-    'Low': [102, 187, 106],
-    'Medium': [255, 160, 0],
-    'High': [239, 83, 80]
-  };
-  const riskColor = riskColors[riskLevel as keyof typeof riskColors];
-  
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text('📊 Health Risk Summary', 20, currentY);
-  currentY += 15;
-
-  // Risk level indicator
-  doc.setFillColor(riskColor[0], riskColor[1], riskColor[2]);
-  doc.rect(20, currentY, pageWidth - 40, 25, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  doc.text(`Overall Risk Level: ${riskLevel.toUpperCase()} RISK`, pageWidth / 2, currentY + 16, { align: 'center' });
-
-  // Calculate overall health score
-  const totalScore = calculateOverallHealthScore(assessmentData);
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(12);
-  doc.text(`Overall Health Score: ${totalScore.toFixed(1)} / 12 (${Math.round((totalScore / 12) * 100)}%)`, pageWidth / 2, currentY + 8, { align: 'center' });
-
-  currentY += 35;
-
-  // Health Insights Section
-  checkPageBreak(80);
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text('🧠 Health Insights', 20, currentY);
-  currentY += 15;
-
-  // BMI Analysis
-  const bmiCategory = getBMICategory(assessmentData.bmi);
-  const bmiAnalysis = getBMIAnalysis(assessmentData.bmi, bmiCategory);
-  
-  addHealthInsight(doc, '📌 BMI', `BMI Value: ${assessmentData.bmi.toFixed(1)} – ${bmiCategory}`, bmiAnalysis);
-
-  // Nutrition Analysis
-  const nutritionScore = getDietScore(assessmentData.eatingHabits);
-  const nutritionAnalysis = getDietAnalysis(nutritionScore);
-  addHealthInsight(doc, '🍎 Nutrition', nutritionAnalysis.assessment, nutritionAnalysis.action);
-
-  // Physical Activity Analysis
-  const activityScore = getPhysicalActivityScore(assessmentData.physicalActivity);
-  const activityAnalysis = getActivityAnalysis(activityScore);
-  addHealthInsight(doc, '🏃 Activity', activityAnalysis.assessment, activityAnalysis.action);
-
-  // Screen Time Analysis
-  const screenScore = getScreenScore(assessmentData.sedentaryBehavior);
-  const screenAnalysis = getScreenTimeAnalysis(screenScore);
-  addHealthInsight(doc, '📱 Screen Time', screenAnalysis.assessment, screenAnalysis.action);
-
-  // Sleep Analysis
-  const sleepScore = getSleepScore(assessmentData.sleepQuality);
-  const sleepAnalysis = getSleepAnalysis(sleepScore);
-  addHealthInsight(doc, '😴 Sleep', sleepAnalysis.assessment, sleepAnalysis.action);
-
-  // Mental Health Analysis
-  const mentalScore = getMentalHealthScore(assessmentData.mentalHealth);
-  const mentalAnalysis = getMentalHealthAnalysis(mentalScore);
-  addHealthInsight(doc, '😊 Mental Health', mentalAnalysis.assessment, mentalAnalysis.action);
-
-  // Recommended Actions
-  checkPageBreak(60);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
-  doc.text('✅ Recommended Actions', 20, currentY);
-  currentY += 15;
-
-  const recommendations = assessmentData.aiPrediction?.recommendations || getDefaultRecommendations();
-  
-  doc.setFillColor(245, 248, 255);
-  doc.rect(15, currentY - 5, pageWidth - 30, recommendations.length * 10 + 15, 'F');
-
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-  recommendations.slice(0, 6).forEach((rec, index) => {
-    checkPageBreak(12);
-    const bullet = '•';
-    const recLines = doc.splitTextToSize(`${bullet} ${rec}`, pageWidth - 50);
-    recLines.forEach((line: string, lineIndex: number) => {
-      doc.text(line, 25, currentY + (lineIndex * 5));
-    });
-    currentY += recLines.length * 5 + 3;
-  });
-
-  currentY += 15;
-
-  // Footer with branding and confidentiality
-  const footerY = pageHeight - 35;
-  doc.setTextColor(128, 128, 128);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
-  doc.text('🔒 Confidential Health Report | For Medical Use Only', 20, footerY);
-  doc.text('Powered by HealthPredict AI | www.healthpredict.in', pageWidth - 20, footerY, { align: 'right' });
-  doc.text('© 2025 Doutly Technologies | All Rights Reserved', pageWidth / 2, footerY + 8, { align: 'center' });
-
-  // Watermark
-  doc.setTextColor(230, 230, 230);
-  doc.setFontSize(60);
-  doc.setFont('helvetica', 'bold');
-  doc.text('HEALTHPREDICT', pageWidth / 2, pageHeight / 2, { 
-    align: 'center',
-    angle: 45
-  });
-
-  // Generate clean filename
-  const cleanName = assessmentData.socioDemographic.name.replace(/[^a-zA-Z0-9]/g, '');
-  const dateStr2 = now.toLocaleDateString('en-GB').replace(/\//g, '');
-  doc.save(`healthpredict_${cleanName}_${dateStr2}.pdf`);
-
-  // Helper function to add health insights
-  function addHealthInsight(doc: any, icon: string, assessment: string, action: string) {
-    checkPageBreak(20);
-    doc.setFontSize(12);
+    // Header with premium branding
+    doc.setFillColor(63, 81, 181); // Primary indigo color
+    doc.rect(0, 0, pageWidth, 60, 'F');
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(28);
     doc.setFont('helvetica', 'bold');
-    doc.text(icon, 25, currentY);
-    
+    doc.text('HealthPredict', pageWidth / 2, 25, { align: 'center' });
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'normal');
-    const assessmentLines = doc.splitTextToSize(assessment, pageWidth - 70);
-    assessmentLines.forEach((line: string, index: number) => {
-      doc.text(line, 35, currentY + (index * 5));
+    doc.text('Student Wellness Report', pageWidth / 2, 35, { align: 'center' });
+    
+    // Generation timestamp
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
     });
-    currentY += assessmentLines.length * 5;
-    
-    if (action) {
-      doc.setFontSize(10);
-      doc.setTextColor(80, 80, 80);
-      const actionLines = doc.splitTextToSize(`Action: ${action}`, pageWidth - 70);
-      actionLines.forEach((line: string, index: number) => {
-        doc.text(line, 35, currentY + (index * 4));
-      });
-      currentY += actionLines.length * 4;
-    }
-    
+    const timeStr = now.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true 
+    });
+    doc.setFontSize(11);
+    doc.text(`Generated on: ${dateStr} at ${timeStr}`, pageWidth / 2, 48, { align: 'center' });
+
+    currentY = 75;
+
+    // Student Profile Section
     doc.setTextColor(0, 0, 0);
-    currentY += 8;
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Student Profile', 20, currentY);
+    currentY += 12;
+
+    doc.setFillColor(250, 250, 250);
+    doc.rect(15, currentY - 5, pageWidth - 30, 65, 'F');
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    const studentInfo = [
+      `Name: ${assessmentData.socioDemographic.name || 'N/A'}`,
+      `Age: ${assessmentData.socioDemographic.age || 'N/A'} years old`,
+      `Gender: ${(assessmentData.socioDemographic.gender || 'N/A').charAt(0).toUpperCase() + (assessmentData.socioDemographic.gender || '').slice(1)}`,
+      `Class: ${assessmentData.socioDemographic.class || 'N/A'}-${assessmentData.socioDemographic.section || 'N/A'}`,
+      `School: ${assessmentData.socioDemographic.schoolName || 'N/A'}`,
+      `Assessment Date: ${new Date(assessmentData.completedAt).toLocaleDateString('en-US') || 'N/A'}`
+    ];
+
+    studentInfo.forEach((info, index) => {
+      doc.text(info, 25, currentY + (index * 8));
+    });
+
+    currentY += studentInfo.length * 8 + 20;
+
+    // Health Risk Summary
+    checkPageBreak(50);
+    const riskLevel = assessmentData.aiPrediction?.riskLevel || 'Medium';
+    const riskColors = {
+      'Low': [102, 187, 106],
+      'Medium': [255, 160, 0],
+      'High': [239, 83, 80]
+    };
+    const riskColor = riskColors[riskLevel as keyof typeof riskColors] || [255, 160, 0];
+    
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Health Risk Summary', 20, currentY);
+    currentY += 15;
+
+    // Risk level indicator
+    doc.setFillColor(riskColor[0], riskColor[1], riskColor[2]);
+    doc.rect(20, currentY, pageWidth - 40, 25, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Overall Risk Level: ${riskLevel.toUpperCase()} RISK`, pageWidth / 2, currentY + 16, { align: 'center' });
+
+    // Calculate overall health score
+    const totalScore = calculateOverallHealthScore(assessmentData);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.text(`Overall Health Score: ${totalScore.toFixed(1)} / 12 (${Math.round((totalScore / 12) * 100)}%)`, pageWidth / 2, currentY + 8, { align: 'center' });
+
+    currentY += 35;
+
+    // Health Insights Section
+    checkPageBreak(80);
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Health Insights', 20, currentY);
+    currentY += 15;
+
+    // BMI Analysis
+    const bmiCategory = getBMICategory(assessmentData.bmi || 0);
+    const bmiAnalysis = getBMIAnalysis(assessmentData.bmi || 0, bmiCategory);
+    
+    addHealthInsight(doc, 'BMI', `BMI Value: ${(assessmentData.bmi || 0).toFixed(1)} - ${bmiCategory}`, bmiAnalysis);
+
+    // Nutrition Analysis
+    const nutritionScore = getDietScore(assessmentData.eatingHabits);
+    const nutritionAnalysis = getDietAnalysis(nutritionScore);
+    addHealthInsight(doc, 'Nutrition', nutritionAnalysis.assessment, nutritionAnalysis.action);
+
+    // Physical Activity Analysis
+    const activityScore = getPhysicalActivityScore(assessmentData.physicalActivity);
+    const activityAnalysis = getActivityAnalysis(activityScore);
+    addHealthInsight(doc, 'Activity', activityAnalysis.assessment, activityAnalysis.action);
+
+    // Screen Time Analysis
+    const screenScore = getScreenScore(assessmentData.sedentaryBehavior);
+    const screenAnalysis = getScreenTimeAnalysis(screenScore);
+    addHealthInsight(doc, 'Screen Time', screenAnalysis.assessment, screenAnalysis.action);
+
+    // Sleep Analysis
+    const sleepScore = getSleepScore(assessmentData.sleepQuality);
+    const sleepAnalysis = getSleepAnalysis(sleepScore);
+    addHealthInsight(doc, 'Sleep', sleepAnalysis.assessment, sleepAnalysis.action);
+
+    // Mental Health Analysis
+    const mentalScore = getMentalHealthScore(assessmentData.mentalHealth);
+    const mentalAnalysis = getMentalHealthAnalysis(mentalScore);
+    addHealthInsight(doc, 'Mental Health', mentalAnalysis.assessment, mentalAnalysis.action);
+
+    // Recommended Actions
+    checkPageBreak(60);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Recommended Actions', 20, currentY);
+    currentY += 15;
+
+    const recommendations = assessmentData.aiPrediction?.recommendations || getDefaultRecommendations();
+    
+    doc.setFillColor(245, 248, 255);
+    doc.rect(15, currentY - 5, pageWidth - 30, recommendations.length * 10 + 15, 'F');
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    recommendations.slice(0, 6).forEach((rec, index) => {
+      checkPageBreak(12);
+      const bullet = '•';
+      const recLines = doc.splitTextToSize(`${bullet} ${rec}`, pageWidth - 50);
+      recLines.forEach((line: string, lineIndex: number) => {
+        doc.text(line, 25, currentY + (lineIndex * 5));
+      });
+      currentY += recLines.length * 5 + 3;
+    });
+
+    currentY += 15;
+
+    // Footer with branding and confidentiality
+    const footerY = pageHeight - 35;
+    doc.setTextColor(128, 128, 128);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Confidential Health Report | For Medical Use Only', 20, footerY);
+    doc.text('Powered by HealthPredict AI | www.healthpredict.com', pageWidth - 20, footerY, { align: 'right' });
+    doc.text('2025 Doutly Technologies | All Rights Reserved', pageWidth / 2, footerY + 8, { align: 'center' });
+
+    // Generate clean filename with proper encoding
+    const cleanName = (assessmentData.socioDemographic.name || 'student').replace(/[^a-zA-Z0-9]/g, '');
+    const dateStr2 = now.toLocaleDateString('en-US').replace(/\//g, '-');
+    const filename = `HealthPredict_${cleanName}_${dateStr2}.pdf`;
+    
+    // Save with proper encoding
+    doc.save(filename);
+
+    // Helper function to add health insights
+    function addHealthInsight(doc: any, title: string, assessment: string, action: string) {
+      checkPageBreak(20);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${title}:`, 25, currentY);
+      
+      doc.setFont('helvetica', 'normal');
+      const assessmentLines = doc.splitTextToSize(assessment, pageWidth - 70);
+      assessmentLines.forEach((line: string, index: number) => {
+        doc.text(line, 35, currentY + (index * 5));
+      });
+      currentY += assessmentLines.length * 5;
+      
+      if (action) {
+        doc.setFontSize(10);
+        doc.setTextColor(80, 80, 80);
+        const actionLines = doc.splitTextToSize(`Action: ${action}`, pageWidth - 70);
+        actionLines.forEach((line: string, index: number) => {
+          doc.text(line, 35, currentY + (index * 4));
+        });
+        currentY += actionLines.length * 4;
+      }
+      
+      doc.setTextColor(0, 0, 0);
+      currentY += 8;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    throw new Error('Failed to generate PDF report. Please try again.');
   }
 };
 
 // Helper functions for analysis
 function calculateOverallHealthScore(data: AssessmentData): number {
-  const bmiScore = getBMIScore(data.bmi);
+  const bmiScore = getBMIScore(data.bmi || 0);
   const dietScore = getDietScore(data.eatingHabits);
   const activityScore = getPhysicalActivityScore(data.physicalActivity);
   const screenScore = getScreenScore(data.sedentaryBehavior);
@@ -261,8 +262,8 @@ function getBMIAnalysis(bmi: number, category: string): string {
 }
 
 function getDietScore(eatingHabits: any): number {
-  const healthy = (eatingHabits.fruits + eatingHabits.vegetables + eatingHabits.cereals + eatingHabits.pulses) / 4;
-  const unhealthy = (eatingHabits.snacks + eatingHabits.sweets + eatingHabits.beverages) / 3;
+  const healthy = ((eatingHabits?.fruits || 0) + (eatingHabits?.vegetables || 0) + (eatingHabits?.cereals || 0) + (eatingHabits?.pulses || 0)) / 4;
+  const unhealthy = ((eatingHabits?.snacks || 0) + (eatingHabits?.sweets || 0) + (eatingHabits?.beverages || 0)) / 3;
   return Math.max(0, Math.min(2, 2 - (unhealthy - healthy)));
 }
 
@@ -283,15 +284,15 @@ function getDietAnalysis(score: number) {
 
 function getPhysicalActivityScore(physicalActivity: any): number {
   const getActivityMinutes = (activity: any): number => {
-    if (typeof activity === 'object' && activity.days && activity.minutes) {
+    if (typeof activity === 'object' && activity?.days && activity?.minutes) {
       return activity.days * activity.minutes;
     }
     return Number(activity) || 0;
   };
 
-  const totalMinutes = getActivityMinutes(physicalActivity.yoga) + 
-                      getActivityMinutes(physicalActivity.exercise) + 
-                      getActivityMinutes(physicalActivity.outdoorGames);
+  const totalMinutes = getActivityMinutes(physicalActivity?.yoga) + 
+                      getActivityMinutes(physicalActivity?.exercise) + 
+                      getActivityMinutes(physicalActivity?.outdoorGames);
   
   if (totalMinutes >= 420) return 2;
   if (totalMinutes >= 180) return 1;
@@ -314,7 +315,7 @@ function getActivityAnalysis(score: number) {
 }
 
 function getScreenScore(sedentaryBehavior: any): number {
-  const totalScreenTime = sedentaryBehavior.tvTime + sedentaryBehavior.mobileTime;
+  const totalScreenTime = (sedentaryBehavior?.tvTime || 0) + (sedentaryBehavior?.mobileTime || 0);
   if (totalScreenTime <= 1) return 2;
   if (totalScreenTime <= 2) return 1;
   return 0;
@@ -330,13 +331,13 @@ function getScreenTimeAnalysis(score: number) {
     action: 'Consider reducing by 30 minutes daily.'
   };
   return {
-    assessment: 'Excessive (>5 hrs/day) screen time.',
+    assessment: 'Excessive screen time detected.',
     action: 'Reduce to under 2 hrs gradually, replace with physical activities.'
   };
 }
 
 function getSleepScore(sleepQuality: any): number {
-  const sleepIssues = (sleepQuality.difficultyFallingAsleep + sleepQuality.wakeUpDuringSleep) / 2;
+  const sleepIssues = ((sleepQuality?.difficultyFallingAsleep || 0) + (sleepQuality?.wakeUpDuringSleep || 0)) / 2;
   return Math.max(0, 2 - sleepIssues);
 }
 
@@ -350,14 +351,14 @@ function getSleepAnalysis(score: number) {
     action: 'Follow consistent bedtime routine.'
   };
   return {
-    assessment: 'Poor sleep reported.',
+    assessment: 'Poor sleep quality reported.',
     action: 'Improve bedtime hygiene, seek guidance if persistent.'
   };
 }
 
 function getMentalHealthScore(mentalHealth: any): number {
-  const bodyImageScore = Math.max(0, 2 - (mentalHealth.bodyPerception - 1));
-  const bullyingPenalty = mentalHealth.bullyingExperience ? 0.5 : 0;
+  const bodyImageScore = Math.max(0, 2 - Math.abs((mentalHealth?.bodyPerception || 3) - 3));
+  const bullyingPenalty = mentalHealth?.bullyingExperience ? 0.5 : 0;
   return Math.max(0, bodyImageScore - bullyingPenalty);
 }
 
@@ -380,7 +381,7 @@ function getDefaultRecommendations(): string[] {
   return [
     'Engage in physical activity daily (e.g., walking, yoga, sports)',
     'Increase fruit and vegetable servings to 5-7 daily',
-    'Follow a consistent sleep schedule (8–10 hrs/night)',
+    'Follow a consistent sleep schedule (8-10 hrs/night)',
     'Reduce screen time gradually to under 2 hours daily',
     'Consider mindfulness or talk therapy for emotional wellness',
     'Stay hydrated with 6-8 glasses of water daily',
