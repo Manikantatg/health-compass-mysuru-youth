@@ -2,7 +2,6 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EatingHabits } from '../../../types/assessment';
 
@@ -18,23 +17,6 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('eatingHabits', { [field]: value });
   };
 
-  const handleNonVegChange = (value: string) => {
-    let numericValue = 0;
-    switch (value) {
-      case 'never': numericValue = 0; break;
-      case 'rarely': numericValue = 1; break;
-      case 'always': numericValue = 4; break;
-    }
-    updateData('eatingHabits', { nonVeg: numericValue });
-  };
-
-  const getNonVegValue = () => {
-    const value = eatingHabits.nonVeg || 0;
-    if (value === 0) return 'never';
-    if (value <= 1) return 'rarely';
-    return 'always';
-  };
-
   const scaleLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
 
   const foodCategories = [
@@ -47,6 +29,11 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
         { key: 'vegetables', label: 'Vegetables' },
         { key: 'fruits', label: 'Fruits' },
         { key: 'milkProducts', label: 'Milk & Dairy Products' },
+        { key: 'chicken', label: 'Chicken' },
+        { key: 'fish', label: 'Fish' },
+        { key: 'eggs', label: 'Eggs' },
+        { key: 'seafood', label: 'Seafood' },
+        { key: 'leanMeats', label: 'Lean Meats' },
       ]
     },
     {
@@ -91,7 +78,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
       </div>
 
       {foodCategories.map((category, categoryIndex) => (
-        <Card key={categoryIndex} style={{ backgroundColor: '#D0EBE4' }}>
+        <Card key={categoryIndex}>
           <CardHeader>
             <CardTitle className="text-lg">{category.title}</CardTitle>
             <CardDescription>{category.description}</CardDescription>
@@ -104,39 +91,6 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
                 label={item.label}
               />
             ))}
-            
-            {/* Non-Vegetarian Foods Question - Only in Healthy Foods section */}
-            {categoryIndex === 0 && (
-              <div className="space-y-4 pt-4 border-t border-gray-200">
-                <div className="space-y-3">
-                  <Label className="text-base font-medium" style={{ fontSize: '16px', fontFamily: 'Inter, Poppins, sans-serif' }}>
-                    Do you consume Non-Vegetarian Foods?
-                  </Label>
-                  <p className="text-sm text-gray-600 italic mb-4">
-                    Examples: Chicken, Fish, Eggs, Mutton, Prawns, Seafood, Lean Meats
-                  </p>
-                  
-                  <RadioGroup
-                    value={getNonVegValue()}
-                    onValueChange={handleNonVegChange}
-                    className="space-y-2"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="never" id="nonveg-never" />
-                      <Label htmlFor="nonveg-never" className="cursor-pointer">Never</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="rarely" id="nonveg-rarely" />
-                      <Label htmlFor="nonveg-rarely" className="cursor-pointer">Rarely</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="always" id="nonveg-always" />
-                      <Label htmlFor="nonveg-always" className="cursor-pointer">Always</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       ))}
@@ -151,16 +105,12 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <h4 className="font-medium text-green-700 mb-2">Healthy Foods Score</h4>
               <div className="space-y-1">
-                {['cereals', 'pulses', 'vegetables', 'fruits', 'milkProducts'].map((key) => (
+                {['cereals', 'pulses', 'vegetables', 'fruits', 'milkProducts', 'chicken', 'fish', 'eggs', 'seafood', 'leanMeats'].map((key) => (
                   <div key={key} className="flex justify-between text-sm">
                     <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
                     <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]}</span>
                   </div>
                 ))}
-                <div className="flex justify-between text-sm">
-                  <span>Non-Vegetarian Foods:</span>
-                  <span>{getNonVegValue().charAt(0).toUpperCase() + getNonVegValue().slice(1)}</span>
-                </div>
               </div>
             </div>
             <div>

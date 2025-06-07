@@ -60,13 +60,18 @@ const AssessmentForm: React.FC = () => {
       vegetables: 2,
       fruits: 2,
       milkProducts: 2,
-      // Consolidated non-vegetarian foods
-      nonVeg: 1,
+      // New protein foods
+      chicken: 1,
+      fish: 1,
+      eggs: 1,
+      seafood: 1,
+      leanMeats: 1,
       // Processed foods
       snacks: 1,
       beverages: 1,
       sweets: 1,
       // Legacy fields for backward compatibility
+      nonVeg: 1,
       junkFood: 1,
       softDrinks: 1,
       energyDrinks: 1,

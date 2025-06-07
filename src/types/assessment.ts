@@ -41,18 +41,18 @@ export interface EatingHabits {
   vegetables: number;
   fruits: number;
   milkProducts: number;
-  // Consolidated non-vegetarian foods (replaces individual items)
-  nonVeg: number; // 0 = Never, 1 = Rarely, 4 = Always
+  // Updated protein foods
+  chicken: number;
+  fish: number;
+  eggs: number;
+  seafood: number;
+  leanMeats: number;
   // Processed foods
   snacks: number;
   beverages: number;
   sweets: number;
-  // Legacy fields for backward compatibility (deprecated individual items)
-  chicken?: number;
-  fish?: number;
-  eggs?: number;
-  seafood?: number;
-  leanMeats?: number;
+  // Legacy fields for backward compatibility
+  nonVeg: number;
   junkFood: number;
   softDrinks: number;
   energyDrinks: number;
