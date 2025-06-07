@@ -1,5 +1,5 @@
 
-import { AssessmentData } from '../types/assessment';
+import { AssessmentData, HealthScores } from '../types/assessment';
 
 export const generateHealthReportPDF = async (assessmentData: AssessmentData) => {
   try {
@@ -110,14 +110,21 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     currentY = addText('Health Score Breakdown', 20, currentY);
     currentY += 10;
 
-    // Fix: Properly handle scores with default values
-    const scores = assessmentData.scores || {};
+    // Fix: Properly type the scores object with HealthScores interface
+    const scores: HealthScores = assessmentData.scores || {
+      eatingHabitsScore: 0,
+      physicalActivityScore: 0,
+      sedentaryScore: 0,
+      mentalHealthScore: 0,
+      sleepScore: 0
+    };
+    
     const scoreItems = [
-      { label: 'Eating Habits', score: scores.eatingHabitsScore || 0 },
-      { label: 'Physical Activity', score: scores.physicalActivityScore || 0 },
-      { label: 'Screen Time Management', score: scores.sedentaryScore || 0 },
-      { label: 'Mental Health', score: scores.mentalHealthScore || 0 },
-      { label: 'Sleep Quality', score: scores.sleepScore || 0 }
+      { label: 'Eating Habits', score: scores.eatingHabitsScore },
+      { label: 'Physical Activity', score: scores.physicalActivityScore },
+      { label: 'Screen Time Management', score: scores.sedentaryScore },
+      { label: 'Mental Health', score: scores.mentalHealthScore },
+      { label: 'Sleep Quality', score: scores.sleepScore }
     ];
 
     doc.setTextColor(0, 0, 0);
