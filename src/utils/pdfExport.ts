@@ -29,7 +29,7 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     // Header
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(24);
-    doc.setTextColor(63, 81, 181); // #3F51B5
+    doc.setTextColor(63, 81, 181);
     currentY = addText('HealthPredict', pageWidth / 2, currentY, { align: 'center' });
     currentY += 8;
     
@@ -52,7 +52,7 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
-    currentY = addText(`Report Generated: ${dateStr}, ${timeStr}`, pageWidth / 2, currentY, { align: 'center' });
+    currentY = addText(`Report Generated: ${dateStr} at ${timeStr}`, pageWidth / 2, currentY, { align: 'center' });
     currentY += 15;
 
     // Separator line
@@ -71,14 +71,17 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
+    
+    // Safe data extraction with null checks
+    const socioDemo = assessmentData.socioDemographic || {};
     const studentInfo = [
-      `Name: ${assessmentData.socioDemographic.name || 'N/A'}`,
-      `Age: ${assessmentData.socioDemographic.age || 'N/A'} years`,
-      `Gender: ${(assessmentData.socioDemographic.gender || 'N/A').charAt(0).toUpperCase() + (assessmentData.socioDemographic.gender || '').slice(1)}`,
-      `Class: ${assessmentData.socioDemographic.class || 'N/A'}-${assessmentData.socioDemographic.section || 'N/A'}`,
-      `School: ${assessmentData.socioDemographic.schoolName || 'N/A'}`,
-      `Assessment Date: ${new Date(assessmentData.completedAt).toLocaleDateString('en-GB') || 'N/A'}`,
-      `BMI: ${assessmentData.bmi?.toFixed(1) || 'N/A'} (${getBMICategory(assessmentData.bmi || 0)})`
+      `Name: ${socioDemo.name || 'Not Provided'}`,
+      `Age: ${socioDemo.age || 'Not Provided'} years`,
+      `Gender: ${socioDemo.gender ? socioDemo.gender.charAt(0).toUpperCase() + socioDemo.gender.slice(1) : 'Not Provided'}`,
+      `Class: ${socioDemo.class || 'Not Provided'}-${socioDemo.section || 'Not Provided'}`,
+      `School: ${socioDemo.schoolName || 'Not Provided'}`,
+      `Assessment Date: ${assessmentData.completedAt ? new Date(assessmentData.completedAt).toLocaleDateString('en-GB') : 'Not Available'}`,
+      `BMI: ${assessmentData.bmi ? assessmentData.bmi.toFixed(1) : 'Not Calculated'} (${getBMICategory(assessmentData.bmi || 0)})`
     ];
 
     studentInfo.forEach((info) => {
@@ -110,14 +113,16 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     currentY = addText('Health Score Breakdown', 20, currentY);
     currentY += 10;
 
-    // Fix: Properly type the scores object with HealthScores interface
-    const scores: HealthScores = assessmentData.scores || {
+    // Safe scores handling
+    const defaultScores: HealthScores = {
       eatingHabitsScore: 0,
       physicalActivityScore: 0,
       sedentaryScore: 0,
       mentalHealthScore: 0,
       sleepScore: 0
     };
+    
+    const scores: HealthScores = { ...defaultScores, ...assessmentData.scores };
     
     const scoreItems = [
       { label: 'Eating Habits', score: scores.eatingHabitsScore },
@@ -183,10 +188,11 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     currentY += 4;
     currentY = addText('to support comprehensive student health and wellness monitoring.', pageWidth / 2, currentY, { align: 'center' });
 
-    // Generate filename
-    const cleanName = (assessmentData.socioDemographic.name || 'student').replace(/[^a-zA-Z0-9]/g, '_');
+    // Generate safe filename
+    const cleanName = (socioDemo.name || 'student').replace(/[^a-zA-Z0-9]/g, '_');
     const dateStr2 = now.toISOString().split('T')[0];
-    const filename = `healthpredict_${cleanName}_${dateStr2}.pdf`;
+    const timeStamp = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+    const filename = `healthpredict_${cleanName}_${dateStr2}_${timeStamp}.pdf`;
     
     // Save the PDF
     doc.save(filename);
@@ -194,7 +200,7 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     return true;
   } catch (error) {
     console.error('PDF generation error:', error);
-    throw new Error('Failed to generate PDF report. Please try again.');
+    throw new Error('Failed to generate PDF report. Please check your data and try again.');
   }
 };
 

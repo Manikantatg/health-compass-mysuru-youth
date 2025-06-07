@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { AssessmentData } from '../../types/assessment';
 import { Users, TrendingUp, Activity, BarChart3, Download, Plus, ArrowRight } from 'lucide-react';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Area, AreaChart } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Area, AreaChart, ScatterChart, Scatter } from 'recharts';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -81,20 +80,42 @@ const AdminDashboard: React.FC = () => {
 
   const getSchoolData = () => {
     const schools = assessments.reduce((acc, assessment) => {
-      const school = assessment.socioDemographic.schoolName;
+      const school = assessment.socioDemographic.schoolName || 'Unknown School';
+      const submissionDate = assessment.completedAt || new Date();
+      
       if (!acc[school]) {
-        acc[school] = { name: school, students: 0, avgBMI: 0, totalBMI: 0, highRisk: 0 };
+        acc[school] = { 
+          name: school, 
+          students: 0, 
+          avgBMI: 0, 
+          totalBMI: 0, 
+          highRisk: 0,
+          lastSubmission: submissionDate,
+          submissions: []
+        };
       }
+      
       acc[school].students += 1;
-      acc[school].totalBMI += assessment.bmi;
+      acc[school].totalBMI += assessment.bmi || 0;
       acc[school].avgBMI = Number((acc[school].totalBMI / acc[school].students).toFixed(1));
+      acc[school].submissions.push(submissionDate);
+      
       if (assessment.aiPrediction?.riskLevel === 'High') {
         acc[school].highRisk += 1;
       }
+      
+      // Update last submission if this one is more recent
+      if (submissionDate > acc[school].lastSubmission) {
+        acc[school].lastSubmission = submissionDate;
+      }
+      
       return acc;
     }, {} as Record<string, any>);
 
-    return Object.values(schools).slice(0, 6);
+    return Object.values(schools).slice(0, 6).map((school: any) => ({
+      ...school,
+      daysSinceLastSubmission: Math.floor((new Date().getTime() - school.lastSubmission.getTime()) / (1000 * 60 * 60 * 24))
+    }));
   };
 
   const getRecentAssessments = () => {
@@ -143,7 +164,7 @@ const AdminDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -151,8 +172,8 @@ const AdminDashboard: React.FC = () => {
         >
           <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent mx-auto"></div>
           <div className="space-y-2">
-            <p className="text-headline text-slate-900 dark:text-slate-100">Loading Dashboard</p>
-            <p className="text-caption">Preparing your health insights...</p>
+            <p className="text-headline text-foreground">Loading Dashboard</p>
+            <p className="text-caption text-muted-foreground">Preparing your health insights...</p>
           </div>
         </motion.div>
       </div>
@@ -160,7 +181,7 @@ const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header Section */}
         <motion.div
@@ -169,10 +190,10 @@ const AdminDashboard: React.FC = () => {
           className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0"
         >
           <div className="space-y-1">
-            <h1 className="text-hero text-slate-900 dark:text-slate-100">
+            <h1 className="text-hero text-foreground">
               Health Dashboard
             </h1>
-            <p className="text-subhead text-slate-600 dark:text-slate-400">
+            <p className="text-subhead text-muted-foreground">
               Real-time insights into student health metrics
             </p>
           </div>
@@ -209,10 +230,10 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-caption">Total Students</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                <p className="text-3xl font-bold text-foreground">
                   {stats.totalStudents.toLocaleString()}
                 </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                <p className="text-xs text-success">
                   +12% from last month
                 </p>
               </div>
@@ -226,10 +247,10 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-caption">Assessments</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                <p className="text-3xl font-bold text-foreground">
                   {stats.totalAssessments.toLocaleString()}
                 </p>
-                <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                <p className="text-xs text-success">
                   {stats.completionRate}% completion rate
                 </p>
               </div>
@@ -243,10 +264,10 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-caption">Average BMI</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                <p className="text-3xl font-bold text-foreground">
                   {stats.avgBMI}
                 </p>
-                <p className="text-xs text-amber-600 dark:text-amber-400">
+                <p className="text-xs text-warning">
                   Within normal range
                 </p>
               </div>
@@ -260,10 +281,10 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-caption">High Risk</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+                <p className="text-3xl font-bold text-foreground">
                   {stats.riskDistribution.High || 0}
                 </p>
-                <p className="text-xs text-red-600 dark:text-red-400">
+                <p className="text-xs text-destructive">
                   Requires attention
                 </p>
               </div>
@@ -284,8 +305,8 @@ const AdminDashboard: React.FC = () => {
           >
             <Card className="card-premium">
               <CardHeader className="pb-3">
-                <CardTitle className="text-headline">Risk Distribution</CardTitle>
-                <CardDescription className="text-caption">
+                <CardTitle className="text-headline text-foreground">Risk Distribution</CardTitle>
+                <CardDescription className="text-caption text-muted-foreground">
                   Current obesity risk levels across all students
                 </CardDescription>
               </CardHeader>
@@ -309,7 +330,14 @@ const AdminDashboard: React.FC = () => {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <Tooltip />
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '12px',
+                          color: 'hsl(var(--foreground))'
+                        }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
@@ -325,8 +353,8 @@ const AdminDashboard: React.FC = () => {
           >
             <Card className="card-premium">
               <CardHeader className="pb-3">
-                <CardTitle className="text-headline">Assessment Trends</CardTitle>
-                <CardDescription className="text-caption">
+                <CardTitle className="text-headline text-foreground">Assessment Trends</CardTitle>
+                <CardDescription className="text-caption text-muted-foreground">
                   Daily assessment completion over the last week
                 </CardDescription>
               </CardHeader>
@@ -336,34 +364,34 @@ const AdminDashboard: React.FC = () => {
                     <AreaChart data={trendData}>
                       <defs>
                         <linearGradient id="assessmentGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#4F46E5" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis 
                         dataKey="date" 
-                        stroke="#64748B"
+                        stroke="hsl(var(--muted-foreground))"
                         fontSize={12}
                         tickLine={false}
                       />
                       <YAxis 
-                        stroke="#64748B"
+                        stroke="hsl(var(--muted-foreground))"
                         fontSize={12}
                         tickLine={false}
                       />
                       <Tooltip 
                         contentStyle={{
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #E2E8F0',
+                          backgroundColor: 'hsl(var(--card))',
+                          border: '1px solid hsl(var(--border))',
                           borderRadius: '12px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          color: 'hsl(var(--foreground))'
                         }}
                       />
                       <Area
                         type="monotone"
                         dataKey="assessments"
-                        stroke="#4F46E5"
+                        stroke="hsl(var(--primary))"
                         strokeWidth={2}
                         fill="url(#assessmentGradient)"
                       />
@@ -377,7 +405,7 @@ const AdminDashboard: React.FC = () => {
 
         {/* School Performance & Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* School Performance */}
+          {/* School Performance - Updated with Scatter Chart */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -386,45 +414,61 @@ const AdminDashboard: React.FC = () => {
           >
             <Card className="card-premium">
               <CardHeader className="pb-3">
-                <CardTitle className="text-headline">School Performance</CardTitle>
-                <CardDescription className="text-caption">
-                  Health metrics comparison across institutions
+                <CardTitle className="text-headline text-foreground">School Performance Analysis</CardTitle>
+                <CardDescription className="text-caption text-muted-foreground">
+                  BMI vs Activity Level with submission timestamps
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={schoolData} layout="horizontal">
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                    <ScatterChart data={schoolData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                       <XAxis 
                         type="number"
-                        stroke="#64748B"
+                        dataKey="avgBMI"
+                        name="Average BMI"
+                        stroke="hsl(var(--muted-foreground))"
                         fontSize={12}
                         tickLine={false}
+                        domain={['dataMin - 1', 'dataMax + 1']}
                       />
                       <YAxis 
-                        type="category"
-                        dataKey="name"
-                        stroke="#64748B"
+                        type="number"
+                        dataKey="students"
+                        name="Number of Students"
+                        stroke="hsl(var(--muted-foreground))"
                         fontSize={12}
                         tickLine={false}
-                        width={100}
                       />
                       <Tooltip 
-                        contentStyle={{
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #E2E8F0',
-                          borderRadius: '12px',
-                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                        cursor={{ strokeDasharray: '3 3' }}
+                        content={({ active, payload }) => {
+                          if (active && payload && payload[0]) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+                                <p className="font-semibold text-foreground">{data.name}</p>
+                                <p className="text-sm text-muted-foreground">Students: {data.students}</p>
+                                <p className="text-sm text-muted-foreground">Avg BMI: {data.avgBMI}</p>
+                                <p className="text-sm text-muted-foreground">High Risk: {data.highRisk}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  Last submission: {data.daysSinceLastSubmission} days ago
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
                         }}
                       />
-                      <Bar 
-                        dataKey="avgBMI" 
-                        fill="#4F46E5" 
-                        radius={[0, 6, 6, 0]}
-                        name="Average BMI"
+                      <Scatter 
+                        dataKey="students" 
+                        fill="hsl(var(--primary))"
+                        fillOpacity={0.6}
+                        stroke="hsl(var(--primary))"
+                        strokeWidth={1}
                       />
-                    </BarChart>
+                    </ScatterChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
@@ -439,31 +483,31 @@ const AdminDashboard: React.FC = () => {
           >
             <Card className="card-premium">
               <CardHeader className="pb-3">
-                <CardTitle className="text-headline">Recent Activity</CardTitle>
-                <CardDescription className="text-caption">
+                <CardTitle className="text-headline text-foreground">Recent Activity</CardTitle>
+                <CardDescription className="text-caption text-muted-foreground">
                   Latest health assessments
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {recentAssessments.map((assessment, index) => (
-                  <div key={assessment.id} className="flex items-center space-x-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                  <div key={assessment.id} className="flex items-center space-x-3 p-3 rounded-lg bg-surface">
                     <div className={`w-2 h-2 rounded-full ${
-                      assessment.risk === 'Low' ? 'bg-emerald-500' :
-                      assessment.risk === 'Medium' ? 'bg-amber-500' : 'bg-red-500'
+                      assessment.risk === 'Low' ? 'bg-success' :
+                      assessment.risk === 'Medium' ? 'bg-warning' : 'bg-destructive'
                     }`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                      <p className="text-sm font-medium text-foreground truncate">
                         {assessment.name}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      <p className="text-xs text-muted-foreground truncate">
                         {assessment.school}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-medium text-slate-900 dark:text-slate-100">
+                      <p className="text-xs font-medium text-foreground">
                         BMI {assessment.bmi}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-muted-foreground">
                         {assessment.date.toLocaleDateString()}
                       </p>
                     </div>
