@@ -113,7 +113,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
                     Do you consume Non-Vegetarian Foods?
                   </Label>
                   <p className="text-sm text-gray-600 italic mb-4">
-                    Examples of non-vegetarian foods include: Chicken, Fish, Eggs, Mutton, Prawns, Seafood, Lean Meats
+                    Examples: Chicken, Fish, Eggs, Mutton, Prawns, Seafood, Lean Meats
                   </p>
                   
                   <RadioGroup

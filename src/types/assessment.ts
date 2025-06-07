@@ -1,3 +1,4 @@
+
 export interface SocioDemographic {
   schoolName: string;
   name: string;
@@ -46,7 +47,7 @@ export interface EatingHabits {
   snacks: number;
   beverages: number;
   sweets: number;
-  // Legacy fields for backward compatibility (removed individual items)
+  // Legacy fields for backward compatibility (deprecated individual items)
   chicken?: number;
   fish?: number;
   eggs?: number;
