@@ -1,4 +1,3 @@
-
 export interface SocioDemographic {
   schoolName: string;
   name: string;
@@ -41,17 +40,18 @@ export interface EatingHabits {
   vegetables: number;
   fruits: number;
   milkProducts: number;
-  // Updated protein foods
-  chicken: number;
-  fish: number;
-  eggs: number;
-  seafood: number;
-  leanMeats: number;
+  // New consolidated non-veg field
+  nonVegConsumption: number; // 0 = Never, 1 = Rarely, 2 = Always
   // Processed foods
   snacks: number;
   beverages: number;
   sweets: number;
   // Legacy fields for backward compatibility
+  chicken: number;
+  fish: number;
+  eggs: number;
+  seafood: number;
+  leanMeats: number;
   nonVeg: number;
   junkFood: number;
   softDrinks: number;

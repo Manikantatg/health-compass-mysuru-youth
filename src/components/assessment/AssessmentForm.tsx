@@ -60,17 +60,18 @@ const AssessmentForm: React.FC = () => {
       vegetables: 2,
       fruits: 2,
       milkProducts: 2,
-      // New protein foods
-      chicken: 1,
-      fish: 1,
-      eggs: 1,
-      seafood: 1,
-      leanMeats: 1,
+      // New consolidated non-veg field
+      nonVegConsumption: 1, // Default to rarely
       // Processed foods
       snacks: 1,
       beverages: 1,
       sweets: 1,
       // Legacy fields for backward compatibility
+      chicken: 1,
+      fish: 1,
+      eggs: 1,
+      seafood: 1,
+      leanMeats: 1,
       nonVeg: 1,
       junkFood: 1,
       softDrinks: 1,
@@ -175,11 +176,7 @@ const AssessmentForm: React.FC = () => {
                         ((data.eatingHabits?.vegetables || 0) * 2.0) + 
                         ((data.eatingHabits?.fruits || 0) * 1.8) + 
                         ((data.eatingHabits?.milkProducts || 0) * 1.3) +
-                        ((data.eatingHabits?.chicken || 0) * 1.0) +
-                        ((data.eatingHabits?.fish || 0) * 1.2) +
-                        ((data.eatingHabits?.eggs || 0) * 1.1) +
-                        ((data.eatingHabits?.seafood || 0) * 1.2) +
-                        ((data.eatingHabits?.leanMeats || 0) * 1.0);
+                        ((data.eatingHabits?.nonVegConsumption || 0) * 1.0); // Include new field
     
     const unhealthyFoods = ((data.eatingHabits?.snacks || 0) * 1.5) + 
                           ((data.eatingHabits?.beverages || 0) * 2.0) + 

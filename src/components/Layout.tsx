@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, User, Activity, Settings, Menu, X, FileText, BarChart3, Plus, Moon, Sun, Database } from 'lucide-react';
+import { LogOut, User, Activity, Menu, X, FileText, BarChart3, Plus, Moon, Sun, Database, Lightbulb } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -27,14 +27,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     document.documentElement.classList.toggle('dark');
   };
 
-  // Different nav items based on user role
+  // Updated nav items based on user role - removed View Data and Reports, added Insights
   const navItems = userProfile?.role === 'admin' 
     ? [
         { icon: Activity, label: 'Dashboard', path: '/dashboard' },
         { icon: Database, label: 'Data', path: '/data' },
         { icon: FileText, label: 'Assessments', path: '/assessment' },
-        { icon: BarChart3, label: 'Reports', path: '/admin' },
-        { icon: Settings, label: 'Admin', path: '/profile' }
+        { icon: Lightbulb, label: 'Insights', path: '/insights' },
+        { icon: User, label: 'Admin', path: '/profile' }
       ]
     : [
         { icon: Activity, label: 'Dashboard', path: '/dashboard' },
@@ -42,17 +42,17 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       ];
 
   return (
-    <div className="min-h-screen bg-background font-inter">
+    <div className="min-h-screen bg-[#FAFAFA] font-['Inter']">
       {/* Navigation */}
-      <nav className="border-b border-border/50 sticky top-0 z-50 backdrop-blur-xl bg-background/90">
+      <nav className="border-b border-gray-200 sticky top-0 z-50 backdrop-blur-xl bg-white/90">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center space-x-3">
-                <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center">
-                  <Activity className="h-6 w-6 text-primary-foreground" />
+                <div className="w-10 h-10 bg-[#3F51B5] rounded-2xl flex items-center justify-center">
+                  <Activity className="h-6 w-6 text-white" />
                 </div>
-                <h1 className="text-2xl font-semibold text-foreground tracking-tight">
+                <h1 className="text-2xl font-semibold text-[#3F51B5] tracking-tight">
                   HealthPredict
                 </h1>
               </div>
@@ -63,8 +63,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     onClick={() => navigate(item.path)}
                     className={`${
                       location.pathname === item.path
-                        ? 'bg-primary text-primary-foreground shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                        ? 'bg-[#3F51B5] text-white shadow-sm'
+                        : 'text-gray-600 hover:text-[#3F51B5] hover:bg-[#D0EBE4]/30'
                     } relative flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -80,7 +80,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {/* New Assessment Button */}
               <Button
                 onClick={() => navigate('/assessment')}
-                className="hidden md:flex bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-2 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                className="hidden md:flex bg-[#3F51B5] text-white hover:bg-[#3F51B5]/90 px-6 py-2 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 New Assessment
@@ -91,7 +91,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 onClick={toggleTheme}
                 variant="ghost"
                 size="icon"
-                className="rounded-lg hover:bg-accent"
+                className="rounded-lg hover:bg-[#D0EBE4]/30"
               >
                 {isDarkMode ? (
                   <Sun className="h-4 w-4" />
@@ -104,7 +104,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Button
                 onClick={handleLogout}
                 variant="ghost"
-                className="hidden md:flex items-center text-muted-foreground hover:text-foreground hover:bg-accent px-4 py-2 rounded-lg"
+                className="hidden md:flex items-center text-gray-600 hover:text-[#3F51B5] hover:bg-[#D0EBE4]/30 px-4 py-2 rounded-lg"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -134,7 +134,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl"
+              className="md:hidden border-t border-gray-200 bg-white/95 backdrop-blur-xl"
             >
               <div className="px-4 py-3 space-y-2">
                 {navItems.map((item) => (
@@ -146,8 +146,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     }}
                     className={`${
                       location.pathname === item.path
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                        ? 'bg-[#3F51B5]/10 text-[#3F51B5]'
+                        : 'text-gray-600 hover:bg-[#D0EBE4]/30 hover:text-[#3F51B5]'
                     } w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200`}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
@@ -162,7 +162,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     navigate('/assessment');
                     setIsMobileMenuOpen(false);
                   }}
-                  className="w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-primary text-primary-foreground"
+                  className="w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-[#3F51B5] text-white"
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                 >
@@ -173,7 +173,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <Button
                   onClick={handleLogout}
                   variant="ghost"
-                  className="w-full flex items-center justify-start px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  className="w-full flex items-center justify-start px-3 py-2 text-gray-600 hover:bg-[#D0EBE4]/30 hover:text-[#3F51B5]"
                 >
                   <LogOut className="h-4 w-4 mr-3" />
                   Logout
