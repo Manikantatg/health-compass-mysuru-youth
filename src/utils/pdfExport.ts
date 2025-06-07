@@ -110,6 +110,7 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     currentY = addText('Health Score Breakdown', 20, currentY);
     currentY += 10;
 
+    // Fix: Properly handle scores with default values
     const scores = assessmentData.scores || {};
     const scoreItems = [
       { label: 'Eating Habits', score: scores.eatingHabitsScore || 0 },
