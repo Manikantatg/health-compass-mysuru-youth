@@ -1,12 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line } from 'recharts';
-import { Brain, Activity, Moon, UtensilsCrossed, Monitor, Users, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { Users, Activity, TrendingUp, AlertTriangle, School, Heart } from 'lucide-react';
 import { exportAssessmentsPDF } from '../../utils/pdfExport';
 import { toast } from '@/hooks/use-toast';
 
@@ -57,78 +57,39 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const getBMIDistributionData = () => {
+  const getBMIData = () => {
     const underweight = assessments.filter(a => a.bmi < 18.5).length;
     const healthy = assessments.filter(a => a.bmi >= 18.5 && a.bmi < 25).length;
     const overweight = assessments.filter(a => a.bmi >= 25 && a.bmi < 30).length;
     const obese = assessments.filter(a => a.bmi >= 30).length;
 
     return [
-      { name: 'Underweight', value: underweight, color: '#82ca9d' },
-      { name: 'Healthy', value: healthy, color: '#a8e6cf' },
-      { name: 'Overweight', value: overweight, color: '#ffdac1' },
-      { name: 'Obese', value: obese, color: '#e29578' },
+      { name: 'Healthy Weight', value: healthy, color: '#22c55e', percentage: Math.round((healthy / assessments.length) * 100) },
+      { name: 'Underweight', value: underweight, color: '#3b82f6', percentage: Math.round((underweight / assessments.length) * 100) },
+      { name: 'Overweight', value: overweight, color: '#f59e0b', percentage: Math.round((overweight / assessments.length) * 100) },
+      { name: 'Obese', value: obese, color: '#ef4444', percentage: Math.round((obese / assessments.length) * 100) },
     ];
   };
 
-  const getRiskFactorsData = () => {
-    const sedentary = assessments.filter(a => a.sedentaryBehavior?.tvTime > 3 || a.sedentaryBehavior?.mobileTime > 3).length;
-    const poorDiet = assessments.filter(a => a.eatingHabits?.junkFood > 2 || a.eatingHabits?.softDrinks > 2).length;
-    const sleepIssues = assessments.filter(a => a.sleepQuality?.difficultyFallingAsleep > 2 || a.sleepQuality?.wakeUpDuringSleep > 2).length;
-    const mentalHealthIssues = assessments.filter(a => (a.mentalHealth?.bullyingExperience || false) || (a.mentalHealth?.feelLonely || 0) > 2).length;
-
-    return [
-      { name: 'Sedentary Lifestyle', count: sedentary },
-      { name: 'Poor Diet', count: poorDiet },
-      { name: 'Sleep Issues', count: sleepIssues },
-      { name: 'Mental Health Concerns', count: mentalHealthIssues },
-    ];
-  };
-
-  const getTrendsData = () => {
-    const monthlyData: { [key: string]: number } = {};
-    assessments.forEach(assessment => {
-      // Ensure completedAt is a proper Date object before calling toISOString
-      const completedAt = assessment.completedAt instanceof Date ? 
-        assessment.completedAt : 
-        new Date(assessment.completedAt);
-      const month = completedAt.toISOString().slice(0, 7);
-      monthlyData[month] = (monthlyData[month] || 0) + 1;
-    });
-
-    return Object.entries(monthlyData).map(([month, count]) => ({ month, count }));
-  };
-
-  // Simplified School Performance Analysis
-  const getSchoolPerformanceData = () => {
+  const getSchoolData = () => {
     const schoolStats = assessments.reduce((acc, assessment) => {
       const schoolName = assessment.socioDemographic?.schoolName || 'Unknown School';
       
       if (!acc[schoolName]) {
         acc[schoolName] = {
-          name: schoolName,
-          totalStudents: 0,
+          name: schoolName.length > 15 ? schoolName.substring(0, 15) + '...' : schoolName,
+          fullName: schoolName,
+          students: 0,
           averageBMI: 0,
-          healthyCount: 0,
-          atRiskCount: 0,
-          highRiskCount: 0
+          healthy: 0
         };
       }
       
-      acc[schoolName].totalStudents++;
+      acc[schoolName].students++;
+      acc[schoolName].averageBMI += assessment.bmi || 0;
       
-      const bmi = assessment.bmi || 0;
-      acc[schoolName].averageBMI += bmi;
-      
-      // Simple risk categorization
-      if (bmi < 18.5 || bmi > 25) {
-        if (bmi < 16 || bmi > 30) {
-          acc[schoolName].highRiskCount++;
-        } else {
-          acc[schoolName].atRiskCount++;
-        }
-      } else {
-        acc[schoolName].healthyCount++;
+      if (assessment.bmi >= 18.5 && assessment.bmi < 25) {
+        acc[schoolName].healthy++;
       }
       
       return acc;
@@ -136,11 +97,25 @@ const AdminDashboard: React.FC = () => {
 
     return Object.values(schoolStats).map((school: any) => ({
       ...school,
-      averageBMI: parseFloat((school.averageBMI / school.totalStudents).toFixed(1)),
-      healthyPercent: Math.round((school.healthyCount / school.totalStudents) * 100),
-      atRiskPercent: Math.round((school.atRiskCount / school.totalStudents) * 100),
-      highRiskPercent: Math.round((school.highRiskCount / school.totalStudents) * 100)
-    }));
+      averageBMI: parseFloat((school.averageBMI / school.students).toFixed(1)),
+      healthyRate: Math.round((school.healthy / school.students) * 100)
+    })).slice(0, 8); // Show top 8 schools
+  };
+
+  const getMonthlyTrends = () => {
+    const monthlyData: { [key: string]: number } = {};
+    assessments.forEach(assessment => {
+      const completedAt = assessment.completedAt instanceof Date ? 
+        assessment.completedAt : 
+        new Date(assessment.completedAt);
+      const month = completedAt.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+      monthlyData[month] = (monthlyData[month] || 0) + 1;
+    });
+
+    return Object.entries(monthlyData)
+      .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime())
+      .map(([month, count]) => ({ month, assessments: count }))
+      .slice(-6); // Last 6 months
   };
 
   const handleExportPDF = async () => {
@@ -173,186 +148,193 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
-  const schoolPerformanceData = getSchoolPerformanceData();
-  const bmiDistributionData = getBMIDistributionData();
-  const riskFactorsData = getRiskFactorsData();
-  const trendsData = getTrendsData();
+  const bmiData = getBMIData();
+  const schoolData = getSchoolData();
+  const trendsData = getMonthlyTrends();
+  const totalSchools = new Set(assessments.map(a => a.socioDemographic?.schoolName)).size;
+  const averageBMI = assessments.length > 0 ? 
+    (assessments.reduce((sum, a) => sum + (a.bmi || 0), 0) / assessments.length).toFixed(1) : '0';
+  const healthyStudents = assessments.filter(a => a.bmi >= 18.5 && a.bmi < 25).length;
+  const atRiskStudents = assessments.filter(a => a.bmi < 18.5 || a.bmi >= 25).length;
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Comprehensive health assessment analytics</p>
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={handleExportPDF} disabled={exporting}>
-            {exporting ? 'Exporting...' : 'Export PDF Report'}
+    <div className="min-h-screen bg-surface p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Health Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Comprehensive student health analytics</p>
+          </div>
+          <Button 
+            onClick={handleExportPDF} 
+            disabled={exporting}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            {exporting ? 'Exporting...' : 'Export Report'}
           </Button>
         </div>
-      </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{assessments.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Across {new Set(assessments.map(a => a.socioDemographic?.schoolName)).size} schools
-            </p>
-          </CardContent>
-        </Card>
+        {/* Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+              <Users className="h-5 w-5 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-700 dark:text-blue-400">{assessments.length}</div>
+              <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
+                From {totalSchools} schools
+              </p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average BMI</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {assessments.length > 0 ? 
-                (assessments.reduce((sum, a) => sum + (a.bmi || 0), 0) / assessments.length).toFixed(1) : 
-                '0'
-              }
-            </div>
-            <p className="text-xs text-muted-foreground">Overall student average</p>
-          </CardContent>
-        </Card>
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Healthy Students</CardTitle>
+              <Heart className="h-5 w-5 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-700 dark:text-green-400">{healthyStudents}</div>
+              <p className="text-xs text-green-600 dark:text-green-300 mt-1">
+                {Math.round((healthyStudents / Math.max(assessments.length, 1)) * 100)}% healthy weight
+              </p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">At Risk Students</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
-              {assessments.filter(a => {
-                const bmi = a.bmi || 0;
-                return bmi < 18.5 || bmi > 25;
-              }).length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {Math.round((assessments.filter(a => {
-                const bmi = a.bmi || 0;
-                return bmi < 18.5 || bmi > 25;
-              }).length / Math.max(assessments.length, 1)) * 100)}% of total
-            </p>
-          </CardContent>
-        </Card>
+          <Card className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 border-amber-200 dark:border-amber-800">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Average BMI</CardTitle>
+              <Activity className="h-5 w-5 text-amber-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-amber-700 dark:text-amber-400">{averageBMI}</div>
+              <p className="text-xs text-amber-600 dark:text-amber-300 mt-1">
+                Overall average
+              </p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Mental Health Issues</CardTitle>
-            <Brain className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              {assessments.filter(a => 
-                (a.mentalHealth?.bullyingExperience || false) ||
-                (a.mentalHealth?.feelLonely || 0) > 2
-              ).length}
-            </div>
-            <p className="text-xs text-muted-foreground">Students with concerns</p>
-          </CardContent>
-        </Card>
-      </div>
+          <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-200 dark:border-red-800">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Needs Attention</CardTitle>
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-700 dark:text-red-400">{atRiskStudents}</div>
+              <p className="text-xs text-red-600 dark:text-red-300 mt-1">
+                {Math.round((atRiskStudents / Math.max(assessments.length, 1)) * 100)}% need support
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Simple School Performance Chart */}
-        <Card>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* BMI Distribution */}
+          <Card className="bg-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
+                Weight Categories
+              </CardTitle>
+              <CardDescription>Student distribution by BMI categories</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={bmiData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={120}
+                    paddingAngle={2}
+                    dataKey="value"
+                  >
+                    {bmiData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value, name) => [`${value} students`, name]} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="grid grid-cols-2 gap-2 mt-4">
+                {bmiData.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-full" 
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {item.name}: {item.percentage}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* School Comparison */}
+          <Card className="bg-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <School className="h-5 w-5 text-primary" />
+                Schools Overview
+              </CardTitle>
+              <CardDescription>Student count by school</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={schoolData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                  <XAxis 
+                    dataKey="name" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    fontSize={11}
+                  />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name) => [`${value} students`, 'Students']}
+                    labelFormatter={(label) => {
+                      const school = schoolData.find(s => s.name === label);
+                      return school?.fullName || label;
+                    }}
+                  />
+                  <Bar dataKey="students" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Assessment Trends */}
+        <Card className="bg-card">
           <CardHeader>
-            <CardTitle>School Performance Overview</CardTitle>
-            <CardDescription>Health metrics comparison across schools</CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Assessment Activity
+            </CardTitle>
+            <CardDescription>Monthly assessment completion trends</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={schoolPerformanceData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="name" 
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
-                  fontSize={12}
-                />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="totalStudents" fill="#8884d8" name="Total Students" />
-                <Bar dataKey="healthyPercent" fill="#82ca9d" name="Healthy %" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* BMI Distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle>BMI Distribution</CardTitle>
-            <CardDescription>Student weight categories</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={bmiDistributionData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {bmiDistributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Risk Factors and Trends */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Risk Factors Analysis</CardTitle>
-            <CardDescription>Key health risk indicators</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={riskFactorsData} layout="horizontal">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis dataKey="name" type="category" width={120} />
-                <Tooltip />
-                <Bar dataKey="count" fill="#ff7300" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Assessment Trends</CardTitle>
-            <CardDescription>Monthly assessment completion</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={trendsData}>
-                <CartesianGrid strokeDasharray="3 3" />
+              <LineChart data={trendsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={2} />
+                <Tooltip formatter={(value) => [`${value} assessments`, 'Completed']} />
+                <Line 
+                  type="monotone" 
+                  dataKey="assessments" 
+                  stroke="#3b82f6" 
+                  strokeWidth={3}
+                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
+                  activeDot={{ r: 8, fill: '#1d4ed8' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
