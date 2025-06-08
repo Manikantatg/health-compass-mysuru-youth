@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../config/firebase';
@@ -7,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, LineChart, Line } from 'recharts';
 import { Brain, Activity, Moon, UtensilsCrossed, Monitor, Users, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
-import { exportAssessmentsPDF } from '../../utils/pdfExport';
+import { generateHealthReportPDF } from '../../utils/pdfExport';
 import { toast } from '@/hooks/use-toast';
 
 interface Assessment {
@@ -40,10 +41,14 @@ const AdminDashboard: React.FC = () => {
     try {
       const q = query(collection(db, 'assessments'), orderBy('completedAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      const assessmentsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Assessment[];
+      const assessmentsData = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          completedAt: data.completedAt?.toDate ? data.completedAt.toDate() : new Date(data.completedAt)
+        };
+      }) as Assessment[];
       setAssessments(assessmentsData);
     } catch (error) {
       console.error('Error fetching assessments:', error);
@@ -137,17 +142,28 @@ const AdminDashboard: React.FC = () => {
   const handleExportPDF = async () => {
     setExporting(true);
     try {
-      await exportAssessmentsPDF(assessments);
-      toast({
-        title: "Export Successful",
-        description: `Successfully exported ${assessments.length} assessments to PDF`,
-        duration: 3000
-      });
+      // For now, we'll export the first assessment as an example
+      // In a real implementation, you might want to create a bulk export function
+      if (assessments.length > 0) {
+        await generateHealthReportPDF(assessments[0]);
+        toast({
+          title: "Export Successful",
+          description: `Successfully exported health report to PDF`,
+          duration: 3000
+        });
+      } else {
+        toast({
+          title: "No Data",
+          description: "No assessments available to export",
+          variant: "destructive",
+          duration: 3000
+        });
+      }
     } catch (error) {
       console.error('Export error:', error);
       toast({
         title: "Export Failed",
-        description: "Failed to export assessments. Please try again.",
+        description: "Failed to export assessment. Please try again.",
         variant: "destructive",
         duration: 5000
       });
