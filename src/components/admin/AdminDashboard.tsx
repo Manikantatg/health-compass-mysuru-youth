@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../config/firebase';
@@ -21,7 +22,7 @@ interface Assessment {
   sleepQuality: any;
   bmi: number;
   aiPrediction: string;
-  completedAt: Date;
+  completedAt: any; // Can be Date or Firestore Timestamp
   scores: any;
   metadata: any;
 }
@@ -40,10 +41,15 @@ const AdminDashboard: React.FC = () => {
     try {
       const q = query(collection(db, 'assessments'), orderBy('completedAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      const assessmentsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Assessment[];
+      const assessmentsData = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          // Convert Firestore Timestamp to Date if needed
+          completedAt: data.completedAt?.toDate ? data.completedAt.toDate() : new Date(data.completedAt)
+        };
+      }) as Assessment[];
       setAssessments(assessmentsData);
     } catch (error) {
       console.error('Error fetching assessments:', error);
@@ -83,7 +89,12 @@ const AdminDashboard: React.FC = () => {
   const getTrendsData = () => {
     const monthlyData: { [key: string]: number } = {};
     assessments.forEach(assessment => {
-      const month = assessment.completedAt.toISOString().slice(0, 7);
+      // Ensure completedAt is a Date object before calling toISOString
+      const completedDate = assessment.completedAt instanceof Date 
+        ? assessment.completedAt 
+        : new Date(assessment.completedAt);
+      
+      const month = completedDate.toISOString().slice(0, 7);
       monthlyData[month] = (monthlyData[month] || 0) + 1;
     });
 
@@ -99,27 +110,20 @@ const AdminDashboard: React.FC = () => {
         acc[schoolName] = {
           name: schoolName,
           totalStudents: 0,
-          averageBMI: 0,
           healthyCount: 0,
-          atRiskCount: 0,
-          highRiskCount: 0
+          atRiskCount: 0
         };
       }
       
       acc[schoolName].totalStudents++;
       
       const bmi = assessment.bmi || 0;
-      acc[schoolName].averageBMI += bmi;
       
-      // Simple risk categorization
-      if (bmi < 18.5 || bmi > 25) {
-        if (bmi < 16 || bmi > 30) {
-          acc[schoolName].highRiskCount++;
-        } else {
-          acc[schoolName].atRiskCount++;
-        }
-      } else {
+      // Simple risk categorization - healthy vs at risk
+      if (bmi >= 18.5 && bmi <= 25) {
         acc[schoolName].healthyCount++;
+      } else {
+        acc[schoolName].atRiskCount++;
       }
       
       return acc;
@@ -127,10 +131,8 @@ const AdminDashboard: React.FC = () => {
 
     return Object.values(schoolStats).map((school: any) => ({
       ...school,
-      averageBMI: parseFloat((school.averageBMI / school.totalStudents).toFixed(1)),
       healthyPercent: Math.round((school.healthyCount / school.totalStudents) * 100),
-      atRiskPercent: Math.round((school.atRiskCount / school.totalStudents) * 100),
-      highRiskPercent: Math.round((school.highRiskCount / school.totalStudents) * 100)
+      atRiskPercent: Math.round((school.atRiskCount / school.totalStudents) * 100)
     }));
   };
 
@@ -255,11 +257,11 @@ const AdminDashboard: React.FC = () => {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Simple School Performance Chart */}
+        {/* Simplified School Performance Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>School Performance Overview</CardTitle>
-            <CardDescription>Health metrics comparison across schools</CardDescription>
+            <CardTitle>School Health Overview</CardTitle>
+            <CardDescription>Simple comparison of healthy vs at-risk students by school</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -270,12 +272,12 @@ const AdminDashboard: React.FC = () => {
                   angle={-45}
                   textAnchor="end"
                   height={80}
-                  fontSize={12}
+                  fontSize={10}
                 />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="totalStudents" fill="#8884d8" name="Total Students" />
-                <Bar dataKey="healthyPercent" fill="#82ca9d" name="Healthy %" />
+                <Bar dataKey="healthyCount" fill="#82ca9d" name="Healthy Students" />
+                <Bar dataKey="atRiskCount" fill="#ff7300" name="At Risk Students" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
