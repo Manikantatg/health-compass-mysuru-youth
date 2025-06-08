@@ -1,3 +1,4 @@
+
 import { AssessmentData, HealthScores, SocioDemographic } from '../types/assessment';
 
 export const generateHealthReportPDF = async (assessmentData: AssessmentData) => {
@@ -227,111 +228,6 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
   } catch (error) {
     console.error('PDF generation error:', error);
     throw new Error('Failed to generate PDF report. Please check your data and try again.');
-  }
-};
-
-export const exportAssessmentsPDF = async (assessments: any[]) => {
-  try {
-    const { default: jsPDF } = await import('jspdf');
-    
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    let currentY = 20;
-
-    // Helper function to add text with proper spacing and page breaks
-    const addText = (text: string, x: number, y: number, options?: any) => {
-      if (y > pageHeight - 20) {
-        doc.addPage();
-        y = 20;
-        currentY = 20;
-      }
-      doc.text(text, x, y, options);
-      return y;
-    };
-
-    // Header
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(24);
-    doc.setTextColor(63, 81, 181);
-    currentY = addText('HealthPredict', pageWidth / 2, currentY, { align: 'center' });
-    currentY += 8;
-    
-    doc.setFontSize(18);
-    currentY = addText('Bulk Assessment Report', pageWidth / 2, currentY, { align: 'center' });
-    currentY += 15;
-    
-    // Generation timestamp
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-GB', { 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
-    });
-    const timeStr = now.toLocaleTimeString('en-GB', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
-    });
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100, 100, 100);
-    currentY = addText(`Report Generated: ${dateStr} at ${timeStr}`, pageWidth / 2, currentY, { align: 'center' });
-    currentY += 15;
-
-    // Summary statistics
-    doc.setTextColor(63, 81, 181);
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    currentY = addText('Summary Statistics', 20, currentY);
-    currentY += 10;
-
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    
-    currentY = addText(`Total Assessments: ${assessments.length}`, 20, currentY);
-    currentY += 6;
-    
-    const avgBMI = assessments.reduce((sum, a) => sum + (a.bmi || 0), 0) / assessments.length;
-    currentY = addText(`Average BMI: ${avgBMI.toFixed(1)}`, 20, currentY);
-    currentY += 6;
-
-    const atRiskCount = assessments.filter(a => {
-      const bmi = a.bmi || 0;
-      return bmi < 18.5 || bmi > 25;
-    }).length;
-    currentY = addText(`Students At Risk: ${atRiskCount} (${Math.round((atRiskCount / assessments.length) * 100)}%)`, 20, currentY);
-    currentY += 15;
-
-    // Schools summary
-    const schools = [...new Set(assessments.map(a => a.socioDemographic?.schoolName).filter(Boolean))];
-    currentY = addText(`Schools Covered: ${schools.length}`, 20, currentY);
-    currentY += 10;
-
-    schools.slice(0, 10).forEach(school => {
-      const schoolAssessments = assessments.filter(a => a.socioDemographic?.schoolName === school);
-      currentY = addText(`• ${school}: ${schoolAssessments.length} students`, 25, currentY);
-      currentY += 5;
-    });
-
-    // Generate safe filename
-    const dateStr2 = now.toISOString().split('T')[0];
-    const timeStamp = now.toTimeString().split(' ')[0].replace(/:/g, '-');
-    const filename = `healthpredict_bulk_report_${dateStr2}_${timeStamp}.pdf`;
-    
-    // Save the PDF
-    doc.save(filename);
-
-    return true;
-  } catch (error) {
-    console.error('PDF bulk export error:', error);
-    throw new Error('Failed to generate bulk PDF report. Please check your data and try again.');
   }
 };
 
