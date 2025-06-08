@@ -2,7 +2,6 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EatingHabits } from '../../../types/assessment';
 
@@ -18,9 +17,8 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('eatingHabits', { [field]: value });
   };
 
-  const handleNonVegChange = (value: string) => {
-    const numValue = value === 'never' ? 0 : value === 'rarely' ? 1 : 2;
-    updateData('eatingHabits', { nonVegConsumption: numValue });
+  const handleNonVegChange = (value: number) => {
+    updateData('eatingHabits', { nonVegConsumption: value });
   };
 
   const scaleLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
@@ -102,24 +100,38 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
                     Examples include: Chicken, Fish, Mutton, Eggs, Seafood, Prawns, Lean Meats
                   </p>
                 </div>
-                <RadioGroup
-                  value={eatingHabits.nonVegConsumption === 0 ? 'never' : eatingHabits.nonVegConsumption === 1 ? 'rarely' : 'always'}
-                  onValueChange={handleNonVegChange}
-                  className="flex flex-row space-x-6"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="never" id="never" />
-                    <Label htmlFor="never">Never</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="rarely" id="rarely" />
-                    <Label htmlFor="rarely">Rarely</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="always" id="always" />
-                    <Label htmlFor="always">Always</Label>
-                  </div>
-                </RadioGroup>
+                <div className="flex gap-4">
+                  <span 
+                    className={`px-4 py-2 rounded-md cursor-pointer transition-colors ${
+                      eatingHabits.nonVegConsumption === 0 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                    }`}
+                    onClick={() => handleNonVegChange(0)}
+                  >
+                    Never
+                  </span>
+                  <span 
+                    className={`px-4 py-2 rounded-md cursor-pointer transition-colors ${
+                      eatingHabits.nonVegConsumption === 1 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                    }`}
+                    onClick={() => handleNonVegChange(1)}
+                  >
+                    Rarely
+                  </span>
+                  <span 
+                    className={`px-4 py-2 rounded-md cursor-pointer transition-colors ${
+                      eatingHabits.nonVegConsumption === 2 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                    }`}
+                    onClick={() => handleNonVegChange(2)}
+                  >
+                    Always
+                  </span>
+                </div>
               </div>
             )}
           </CardContent>
