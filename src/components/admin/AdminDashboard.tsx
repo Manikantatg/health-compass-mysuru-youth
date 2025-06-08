@@ -5,8 +5,8 @@ import { db } from '../../config/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Area, AreaChart } from 'recharts';
-import { Users, Activity, TrendingUp, AlertTriangle, School, Heart, Calendar, Clock } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { Users, Activity, TrendingUp, AlertTriangle, School, Heart } from 'lucide-react';
 import { exportAssessmentsPDF } from '../../utils/pdfExport';
 import { toast } from '@/hooks/use-toast';
 
@@ -45,6 +45,7 @@ const AdminDashboard: React.FC = () => {
         return {
           id: doc.id,
           ...data,
+          // Convert Firestore Timestamp to Date object
           completedAt: data.completedAt?.toDate ? data.completedAt.toDate() : new Date(data.completedAt)
         };
       }) as Assessment[];
@@ -98,7 +99,7 @@ const AdminDashboard: React.FC = () => {
       ...school,
       averageBMI: parseFloat((school.averageBMI / school.students).toFixed(1)),
       healthyRate: Math.round((school.healthy / school.students) * 100)
-    })).slice(0, 8);
+    })).slice(0, 8); // Show top 8 schools
   };
 
   const getMonthlyTrends = () => {
@@ -114,60 +115,7 @@ const AdminDashboard: React.FC = () => {
     return Object.entries(monthlyData)
       .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime())
       .map(([month, count]) => ({ month, assessments: count }))
-      .slice(-6);
-  };
-
-  const getDailyTrends = () => {
-    const dailyData: { [key: string]: number } = {};
-    const last30Days = Array.from({ length: 30 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      return date.toISOString().split('T')[0];
-    }).reverse();
-
-    assessments.forEach(assessment => {
-      const completedAt = assessment.completedAt instanceof Date ? 
-        assessment.completedAt : 
-        new Date(assessment.completedAt);
-      const day = completedAt.toISOString().split('T')[0];
-      dailyData[day] = (dailyData[day] || 0) + 1;
-    });
-
-    return last30Days.map(day => ({
-      day: new Date(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      assessments: dailyData[day] || 0
-    }));
-  };
-
-  const getCompletionRateTrends = () => {
-    const weeklyData: { [key: string]: { started: number; completed: number } } = {};
-    
-    assessments.forEach(assessment => {
-      const completedAt = assessment.completedAt instanceof Date ? 
-        assessment.completedAt : 
-        new Date(assessment.completedAt);
-      const weekStart = new Date(completedAt);
-      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-      const week = weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      
-      if (!weeklyData[week]) {
-        weeklyData[week] = { started: 0, completed: 0 };
-      }
-      
-      weeklyData[week].started++;
-      if (assessment.scores) {
-        weeklyData[week].completed++;
-      }
-    });
-
-    return Object.entries(weeklyData)
-      .slice(-8)
-      .map(([week, data]) => ({
-        week,
-        completionRate: data.started > 0 ? Math.round((data.completed / data.started) * 100) : 0,
-        started: data.started,
-        completed: data.completed
-      }));
+      .slice(-6); // Last 6 months
   };
 
   const handleExportPDF = async () => {
@@ -203,8 +151,6 @@ const AdminDashboard: React.FC = () => {
   const bmiData = getBMIData();
   const schoolData = getSchoolData();
   const trendsData = getMonthlyTrends();
-  const dailyData = getDailyTrends();
-  const completionData = getCompletionRateTrends();
   const totalSchools = new Set(assessments.map(a => a.socioDemographic?.schoolName)).size;
   const averageBMI = assessments.length > 0 ? 
     (assessments.reduce((sum, a) => sum + (a.bmi || 0), 0) / assessments.length).toFixed(1) : '0';
@@ -365,107 +311,34 @@ const AdminDashboard: React.FC = () => {
           </Card>
         </div>
 
-        {/* Assessment Activity Charts */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Monthly Assessment Trends - Bar Chart */}
-          <Card className="bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
-                Monthly Activity
-              </CardTitle>
-              <CardDescription>Assessment completion by month</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={trendsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(value) => [`${value} assessments`, 'Completed']} />
-                  <Bar 
-                    dataKey="assessments" 
-                    fill="#10b981" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Daily Assessment History - Area Chart */}
-          <Card className="bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-primary" />
-                Daily History (30 Days)
-              </CardTitle>
-              <CardDescription>Daily assessment activity trends</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <AreaChart data={dailyData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                  <XAxis 
-                    dataKey="day" 
-                    fontSize={10}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis />
-                  <Tooltip formatter={(value) => [`${value} assessments`, 'Completed']} />
-                  <Area 
-                    type="monotone" 
-                    dataKey="assessments" 
-                    stroke="#8b5cf6" 
-                    fill="#8b5cf6" 
-                    fillOpacity={0.3}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          {/* Completion Rate Trends */}
-          <Card className="bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                Completion Rate
-              </CardTitle>
-              <CardDescription>Weekly completion rate trends</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={completionData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                  <XAxis 
-                    dataKey="week" 
-                    fontSize={10}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis domain={[0, 100]} />
-                  <Tooltip 
-                    formatter={(value, name) => {
-                      if (name === 'completionRate') return [`${value}%`, 'Completion Rate'];
-                      return [value, name];
-                    }}
-                    labelFormatter={(label) => `Week of ${label}`}
-                  />
-                  <Bar 
-                    dataKey="completionRate" 
-                    fill="#f59e0b" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Assessment Trends */}
+        <Card className="bg-card">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Assessment Activity
+            </CardTitle>
+            <CardDescription>Monthly assessment completion trends</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={trendsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip formatter={(value) => [`${value} assessments`, 'Completed']} />
+                <Line 
+                  type="monotone" 
+                  dataKey="assessments" 
+                  stroke="#3b82f6" 
+                  strokeWidth={3}
+                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 6 }}
+                  activeDot={{ r: 8, fill: '#1d4ed8' }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
