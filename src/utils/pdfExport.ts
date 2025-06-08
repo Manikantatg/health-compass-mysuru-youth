@@ -1,4 +1,3 @@
-
 import { AssessmentData, HealthScores, SocioDemographic } from '../types/assessment';
 
 export const generateHealthReportPDF = async (assessmentData: AssessmentData) => {
@@ -228,6 +227,122 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
   } catch (error) {
     console.error('PDF generation error:', error);
     throw new Error('Failed to generate PDF report. Please check your data and try again.');
+  }
+};
+
+// Bulk export function for admin dashboard
+export const exportAssessmentsPDF = async (assessments: any[]) => {
+  try {
+    const { default: jsPDF } = await import('jspdf');
+    
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let currentY = 20;
+
+    // Helper function to add text with proper spacing and page breaks
+    const addText = (text: string, x: number, y: number, options?: any) => {
+      if (y > pageHeight - 20) {
+        doc.addPage();
+        y = 20;
+        currentY = 20;
+      }
+      doc.text(text, x, y, options);
+      return y;
+    };
+
+    // Header
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(24);
+    doc.setTextColor(63, 81, 181);
+    currentY = addText('HealthPredict', pageWidth / 2, currentY, { align: 'center' });
+    currentY += 8;
+    
+    doc.setFontSize(18);
+    currentY = addText('Bulk Assessment Report', pageWidth / 2, currentY, { align: 'center' });
+    currentY += 15;
+    
+    // Generation timestamp
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-GB', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+    const timeStr = now.toLocaleTimeString('en-GB', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    currentY = addText(`Report Generated: ${dateStr} at ${timeStr}`, pageWidth / 2, currentY, { align: 'center' });
+    currentY += 15;
+
+    // Summary
+    doc.setTextColor(63, 81, 181);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    currentY = addText('Assessment Summary', 20, currentY);
+    currentY += 10;
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    currentY = addText(`Total Assessments: ${assessments.length}`, 20, currentY);
+    currentY += 6;
+    
+    const avgBMI = assessments.length > 0 ? 
+      (assessments.reduce((sum, a) => sum + (a.bmi || 0), 0) / assessments.length).toFixed(1) : 
+      '0';
+    currentY = addText(`Average BMI: ${avgBMI}`, 20, currentY);
+    currentY += 15;
+
+    // Process each assessment
+    assessments.forEach((assessment, index) => {
+      if (currentY > pageHeight - 80) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      // Assessment header
+      doc.setTextColor(63, 81, 181);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      currentY = addText(`Assessment ${index + 1}`, 20, currentY);
+      currentY += 8;
+
+      // Student basic info
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      
+      const name = assessment.socioDemographic?.name || 'N/A';
+      const age = assessment.socioDemographic?.age || 'N/A';
+      const school = assessment.socioDemographic?.schoolName || 'N/A';
+      const bmi = assessment.bmi ? assessment.bmi.toFixed(1) : 'N/A';
+      
+      currentY = addText(`Name: ${name} | Age: ${age} | School: ${school} | BMI: ${bmi}`, 25, currentY);
+      currentY += 12;
+    });
+
+    // Generate filename
+    const timestamp = now.toISOString().split('T')[0];
+    const filename = `healthpredict_bulk_report_${timestamp}.pdf`;
+    
+    // Save the PDF
+    doc.save(filename);
+
+    return true;
+  } catch (error) {
+    console.error('Bulk PDF generation error:', error);
+    throw new Error('Failed to generate bulk PDF report. Please check your data and try again.');
   }
 };
 
