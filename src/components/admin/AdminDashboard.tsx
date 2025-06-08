@@ -40,10 +40,15 @@ const AdminDashboard: React.FC = () => {
     try {
       const q = query(collection(db, 'assessments'), orderBy('completedAt', 'desc'));
       const querySnapshot = await getDocs(q);
-      const assessmentsData = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Assessment[];
+      const assessmentsData = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          // Convert Firestore Timestamp to Date object
+          completedAt: data.completedAt?.toDate ? data.completedAt.toDate() : new Date(data.completedAt)
+        };
+      }) as Assessment[];
       setAssessments(assessmentsData);
     } catch (error) {
       console.error('Error fetching assessments:', error);
@@ -83,7 +88,11 @@ const AdminDashboard: React.FC = () => {
   const getTrendsData = () => {
     const monthlyData: { [key: string]: number } = {};
     assessments.forEach(assessment => {
-      const month = assessment.completedAt.toISOString().slice(0, 7);
+      // Ensure completedAt is a proper Date object before calling toISOString
+      const completedAt = assessment.completedAt instanceof Date ? 
+        assessment.completedAt : 
+        new Date(assessment.completedAt);
+      const month = completedAt.toISOString().slice(0, 7);
       monthlyData[month] = (monthlyData[month] || 0) + 1;
     });
 
