@@ -1,5 +1,5 @@
 
-import { AssessmentData, HealthScores, SocioDemographic } from '../types/assessment';
+import { AssessmentData, HealthScores } from '../types/assessment';
 
 export const generateHealthReportPDF = async (assessmentData: AssessmentData) => {
   try {
@@ -72,37 +72,8 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     
-    // Safe data extraction with proper typing
-    const socioDemo: SocioDemographic = assessmentData.socioDemographic || {
-      schoolName: '',
-      name: '',
-      age: 0,
-      gender: 'other',
-      class: '',
-      section: '',
-      height: 0,
-      weight: 0,
-      address: '',
-      hostelResident: false,
-      fatherName: '',
-      motherName: '',
-      fatherContact: '',
-      motherContact: '',
-      brothers: 0,
-      sisters: 0,
-      birthOrder: 0,
-      familyType: 'nuclear',
-      familyObesity: 'no',
-      familyDiabetes: 'no',
-      familyHypertension: 'no',
-      familyThyroid: 'no',
-      hasSiblings: 'no',
-      familyObesityHistory: false,
-      diabetesHistory: false,
-      bpHistory: false,
-      thyroidHistory: false
-    };
-    
+    // Safe data extraction with null checks
+    const socioDemo = assessmentData.socioDemographic || {};
     const studentInfo = [
       `Name: ${socioDemo.name || 'Not Provided'}`,
       `Age: ${socioDemo.age || 'Not Provided'} years`,
@@ -142,14 +113,16 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     currentY = addText('Health Score Breakdown', 20, currentY);
     currentY += 10;
 
-    // Safe scores handling with proper typing
-    const scores: HealthScores = assessmentData.scores || {
+    // Safe scores handling
+    const defaultScores: HealthScores = {
       eatingHabitsScore: 0,
       physicalActivityScore: 0,
       sedentaryScore: 0,
       mentalHealthScore: 0,
       sleepScore: 0
     };
+    
+    const scores: HealthScores = { ...defaultScores, ...assessmentData.scores };
     
     const scoreItems = [
       { label: 'Eating Habits', score: scores.eatingHabitsScore },

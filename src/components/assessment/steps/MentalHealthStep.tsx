@@ -7,7 +7,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MentalHealth } from '../../../types/assessment';
-import BodyImageSection from '../BodyImageSection';
 
 interface Props {
   data: any;
@@ -16,6 +15,8 @@ interface Props {
 
 const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
   const mentalHealth = data.mentalHealth as MentalHealth;
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleChange = (field: keyof MentalHealth, value: any) => {
     updateData('mentalHealth', { [field]: value });
@@ -46,6 +47,29 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
       </div>
     </div>
   );
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left - imagePosition.x;
+    const offsetY = e.clientY - rect.top - imagePosition.y;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      setImagePosition({
+        x: moveEvent.clientX - rect.left - offsetX,
+        y: moveEvent.clientY - rect.top - offsetY
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
 
   return (
     <div className="space-y-6">
@@ -151,19 +175,75 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         </CardContent>
       </Card>
 
-      {/* Q5: Body Image Section - Using the dedicated component */}
+      {/* Q5: Body Image Visual Reference Chart */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Q5: Body Image Perception (Current & Future)</CardTitle>
           <CardDescription>Use the body image reference chart to select numbers</CardDescription>
         </CardHeader>
         <CardContent>
-          <BodyImageSection
-            currentBodyImage={mentalHealth.currentBodyImageSatisfaction || 1}
-            desiredBodyImage={mentalHealth.desiredBodyImageSatisfaction || 1}
-            onCurrentChange={(value) => handleChange('currentBodyImageSatisfaction', value)}
-            onDesiredChange={(value) => handleChange('desiredBodyImageSatisfaction', value)}
-          />
+          <div className="relative min-h-[400px] border-2 border-dashed border-gray-300 rounded-lg p-4">
+            {/* Draggable Body Image Reference Chart */}
+            <div
+              className={`absolute w-80 rounded-xl shadow-lg overflow-hidden bg-white cursor-move ${isDragging ? 'z-50' : 'z-10'}`}
+              style={{
+                left: imagePosition.x,
+                top: imagePosition.y,
+                transform: 'translate(0, 0)'
+              }}
+              onMouseDown={handleMouseDown}
+            >
+              <img 
+                src="https://www.researchgate.net/publication/325991284/figure/fig1/AS:961371055337473@1606220129184/Body-somatotypes-This-figure-shows-the-body-somatotypes-from-which-participants-were.gif" 
+                alt="Body Image Reference Chart"
+                className="w-full h-auto"
+                draggable={false}
+              />
+              <div className="p-2 bg-gray-50 text-xs text-center text-gray-600">
+                Body Image Reference Chart (Drag to move)
+              </div>
+            </div>
+
+            <div className="space-y-6 pt-4">
+              {/* Current Body Image Perception */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">1. How do you currently perceive your body image?</Label>
+                <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="currentBodyImage" className="text-sm">Enter the number:</Label>
+                  <Input
+                    id="currentBodyImage"
+                    type="number"
+                    min="1"
+                    max="9"
+                    value={mentalHealth.currentBodyImageSatisfaction || ''}
+                    onChange={(e) => handleChange('currentBodyImageSatisfaction', parseInt(e.target.value) || 0)}
+                    className="w-20"
+                    placeholder="1-9"
+                  />
+                </div>
+              </div>
+
+              {/* Desired Body Image Perception */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">2. How do you desire to perceive your body image?</Label>
+                <p className="text-sm text-gray-600">(How would you ideally like to see your body?)</p>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="desiredBodyImage" className="text-sm">Enter the number:</Label>
+                  <Input
+                    id="desiredBodyImage"
+                    type="number"
+                    min="1"
+                    max="9"
+                    value={mentalHealth.desiredBodyImageSatisfaction || ''}
+                    onChange={(e) => handleChange('desiredBodyImageSatisfaction', parseInt(e.target.value) || 0)}
+                    className="w-20"
+                    placeholder="1-9"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
