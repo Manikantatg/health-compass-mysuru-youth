@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EatingHabits } from '../../../types/assessment';
@@ -23,7 +22,14 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('eatingHabits', { nonVegConsumption: numValue });
   };
 
-  const scaleLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Always'];
+  const scaleLabels = ['Never', 'Rarely', 'Sometimes', 'Very often', 'Almost always'];
+  const scaleOptions = [
+    { value: 0, label: 'Never' },
+    { value: 1, label: 'Rarely' },
+    { value: 2, label: 'Sometimes' },
+    { value: 3, label: 'Very often' },
+    { value: 4, label: 'Almost always' }
+  ];
 
   const foodCategories = [
     {
@@ -48,34 +54,31 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
     }
   ];
 
-  const ScaleSlider = ({ field, label }: { field: keyof EatingHabits; label: string }) => (
-    <div className="space-y-3">
-      <div className="flex justify-between items-center">
-        <Label className="text-sm font-medium">{label}</Label>
-        <span className="text-sm text-gray-600 font-medium">
-          {scaleLabels[eatingHabits[field]]}
-        </span>
-      </div>
-      <Slider
-        value={[eatingHabits[field]]}
-        onValueChange={(value) => handleChange(field, value[0])}
-        max={4}
-        min={0}
-        step={1}
-        className="w-full"
-      />
-      <div className="flex justify-between text-xs text-gray-500">
-        <span>Never</span>
-        <span>Always</span>
-      </div>
+  const RadioScale = ({ field, label }: { field: keyof EatingHabits; label: string }) => (
+    <div className="space-y-4">
+      <Label className="text-sm font-medium text-foreground">{label}</Label>
+      <RadioGroup
+        value={eatingHabits[field]?.toString() || '0'}
+        onValueChange={(value) => handleChange(field, parseInt(value))}
+        className="flex flex-wrap gap-4"
+      >
+        {scaleOptions.map((option) => (
+          <div key={option.value} className="flex items-center space-x-2">
+            <RadioGroupItem value={option.value.toString()} id={`${field}-${option.value}`} />
+            <Label htmlFor={`${field}-${option.value}`} className="text-sm cursor-pointer">
+              {option.label}
+            </Label>
+          </div>
+        ))}
+      </RadioGroup>
     </div>
   );
 
   return (
     <div className="space-y-6 font-['Inter']">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Eating Habits Assessment (Last 15 Days)</h3>
-        <p className="text-gray-600">Rate how often you consume these foods on a scale from Never to Always</p>
+        <h3 className="text-lg font-semibold">Nutrition Habits Assessment (Last 15 Days)</h3>
+        <p className="text-gray-600">Select how often you consume these foods</p>
       </div>
 
       {foodCategories.map((category, categoryIndex) => (
@@ -86,7 +89,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
           </CardHeader>
           <CardContent className="space-y-6">
             {category.items.map((item) => (
-              <ScaleSlider
+              <RadioScale
                 key={item.key}
                 field={item.key as keyof EatingHabits}
                 label={item.label}
@@ -129,12 +132,12 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
       {/* Summary Card */}
       <Card className="bg-blue-50">
         <CardHeader>
-          <CardTitle className="text-lg text-blue-900">Eating Habits Summary</CardTitle>
+          <CardTitle className="text-lg text-blue-900">Nutrition Summary</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h4 className="font-medium text-green-700 mb-2">Healthy Foods Score</h4>
+              <h4 className="font-medium text-green-700 mb-2">Healthy Foods</h4>
               <div className="space-y-1">
                 {['cereals', 'pulses', 'vegetables', 'fruits', 'milkProducts'].map((key) => (
                   <div key={key} className="flex justify-between text-sm">
@@ -149,7 +152,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
               </div>
             </div>
             <div>
-              <h4 className="font-medium text-orange-700 mb-2">Processed Foods Score</h4>
+              <h4 className="font-medium text-orange-700 mb-2">Processed Foods</h4>
               <div className="space-y-1">
                 {['snacks', 'beverages', 'sweets'].map((key) => (
                   <div key={key} className="flex justify-between text-sm">
