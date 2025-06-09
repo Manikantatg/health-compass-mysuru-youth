@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -69,9 +68,9 @@ const AuthForm: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex bg-background font-inter">
+    <div className="min-h-screen flex flex-col md:flex-row bg-background font-inter">
       {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
         <div className="w-full max-w-md">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -211,29 +210,29 @@ const AuthForm: React.FC = () => {
       </div>
 
       {/* Right Side - Illustration */}
-      <div className="flex-1 bg-gradient-to-br from-primary/5 via-secondary/10 to-info/5 flex items-center justify-center p-8 relative overflow-hidden">
+      <div className="hidden md:flex flex-1 bg-gradient-to-br from-primary/5 via-secondary/10 to-info/5 items-center justify-center p-8 relative overflow-hidden">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="max-w-lg text-center relative z-10"
+          className="max-w-xs lg:max-w-sm text-center relative z-10"
         >
           {/* Main Illustration */}
-          <div className="mb-12">
-            <div className="w-64 h-64 mx-auto bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center relative overflow-hidden backdrop-blur-sm border border-border/30">
-              <div className="w-48 h-48 bg-card/50 rounded-full flex items-center justify-center backdrop-blur-xl border border-border/50">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center">
-                    <Heart className="h-8 w-8 text-primary" />
+          <div className="mb-8">
+            <div className="w-48 h-48 lg:w-64 lg:h-64 mx-auto bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center relative overflow-hidden backdrop-blur-sm border border-border/30">
+              <div className="w-36 h-36 lg:w-48 lg:h-48 bg-card/50 rounded-full flex items-center justify-center backdrop-blur-xl border border-border/50">
+                <div className="grid grid-cols-2 gap-2 lg:gap-4">
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-primary/20 rounded-2xl flex items-center justify-center">
+                    <Heart className="h-6 w-6 lg:h-8 lg:w-8 text-primary" />
                   </div>
-                  <div className="w-16 h-16 bg-success/20 rounded-2xl flex items-center justify-center">
-                    <Activity className="h-8 w-8 text-success" />
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-success/20 rounded-2xl flex items-center justify-center">
+                    <Activity className="h-6 w-6 lg:h-8 lg:w-8 text-success" />
                   </div>
-                  <div className="w-16 h-16 bg-info/20 rounded-2xl flex items-center justify-center">
-                    <Brain className="h-8 w-8 text-info" />
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-info/20 rounded-2xl flex items-center justify-center">
+                    <Brain className="h-6 w-6 lg:h-8 lg:w-8 text-info" />
                   </div>
-                  <div className="w-16 h-16 bg-warning/20 rounded-2xl flex items-center justify-center">
-                    <Shield className="h-8 w-8 text-warning" />
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-warning/20 rounded-2xl flex items-center justify-center">
+                    <Shield className="h-6 w-6 lg:h-8 lg:w-8 text-warning" />
                   </div>
                 </div>
               </div>
@@ -247,11 +246,11 @@ const AuthForm: React.FC = () => {
                 {[0, 60, 120, 180, 240, 300].map((rotation, index) => (
                   <div
                     key={index}
-                    className="absolute w-8 h-8 bg-primary/10 rounded-full"
+                    className="absolute w-6 h-6 lg:w-8 lg:h-8 bg-primary/10 rounded-full"
                     style={{
-                      top: '50%',
-                      left: '50%',
-                      transform: `translate(-50%, -50%) rotate(${rotation}deg) translateY(-130px)`
+                      top: `calc(50% - ${index * 2}px)`,
+                      left: `calc(50% - ${index * 2}px)`,
+                      transform: `translate(-50%, -50%) rotate(${rotation}deg) translate(90px) rotate(-${rotation}deg)`,
                     }}
                   />
                 ))}
@@ -259,53 +258,28 @@ const AuthForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Content */}
-          <h2 className="text-4xl font-bold text-foreground mb-6 tracking-tight">
-            AI-Powered Health Insights for Students
+          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            Your Health Journey Starts Here
           </h2>
-          <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
-            Get comprehensive health assessments, personalized recommendations, and track your wellness journey with our advanced AI technology.
+          <p className="text-lg text-muted-foreground mb-6">
+            Gain personalized insights and track your progress with ease.
           </p>
 
-          {/* Feature Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-                  className="p-4 bg-card/30 backdrop-blur-sm rounded-2xl border border-border/30 text-left"
-                >
-                  <Icon className={`h-6 w-6 ${feature.color} mb-2`} />
-                  <p className="text-sm font-medium text-foreground">{feature.text}</p>
-                </motion.div>
-              );
-            })}
+          <div className="space-y-4">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
+                className="flex items-center justify-center gap-3 text-lg text-foreground"
+              >
+                <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                <span>{feature.text}</span>
+              </motion.div>
+            ))}
           </div>
-
-          {/* Trust Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1 }}
-            className="flex items-center justify-center gap-3 p-4 bg-card/30 backdrop-blur-sm rounded-2xl border border-border/30"
-          >
-            <CheckCircle className="h-6 w-6 text-success" />
-            <span className="text-sm font-medium text-foreground">
-              Trusted by 1000+ students across Karnataka
-            </span>
-          </motion.div>
         </motion.div>
-
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }}></div>
-        </div>
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +14,7 @@ import Admin from "./pages/Admin";
 import Data from "./pages/Data";
 import Insights from "./pages/Insights";
 import Layout from "./components/Layout";
+import Splash from "./components/Splash";
 
 const queryClient = new QueryClient();
 
@@ -87,12 +87,10 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Splash Screen Route */}
+      <Route path="/" element={<Splash />} />
+
       {/* Public Routes */}
-      <Route path="/" element={
-        <PublicRoute>
-          <Index />
-        </PublicRoute>
-      } />
       <Route path="/auth" element={
         <PublicRoute>
           <AuthForm />

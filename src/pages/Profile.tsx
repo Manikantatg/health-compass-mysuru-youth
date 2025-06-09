@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +10,7 @@ import { db } from '../config/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Profile: React.FC = () => {
-  const { currentUser, userProfile } = useAuth();
+  const { currentUser, userProfile, handleLogout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -207,6 +206,15 @@ const Profile: React.FC = () => {
                 </Button>
               </div>
             </form>
+            {/* Logout Button */}
+            <div className="flex justify-center mt-6">
+              <Button
+                onClick={handleLogout}
+                className="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transform hover:scale-105 transition-all duration-200"
+              >
+                Log Out
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

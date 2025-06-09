@@ -1,21 +1,34 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AssessmentData } from '../../types/assessment';
-import { ChevronDown, ChevronUp, Download, User, School, Calendar, Activity } from 'lucide-react';
+import { ChevronDown, ChevronUp, Download, User, School, Calendar, Activity, Trash2, Edit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateHealthReportPDF } from '../../utils/pdfExport';
 import { toast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface PremiumStudentCardProps {
   assessment: AssessmentData;
   viewMode?: 'grid' | 'list';
+  onDelete: (id: string) => void;
+  onEdit: (assessment: AssessmentData) => void;
 }
 
-const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, viewMode = 'grid' }) => {
+const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, viewMode = 'grid', onDelete, onEdit }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const getRiskConfig = (riskLevel: string) => {
     switch (riskLevel?.toLowerCase()) {
@@ -195,6 +208,42 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
               <Download className="h-3 w-3 mr-1" />
               <span>PDF</span>
             </Button>
+            {/* Edit Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-none w-10"
+              onClick={() => onEdit(assessment)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            {/* Delete Button */}
+            <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="flex-none w-10"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete the student's assessment 
+                    data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => onDelete(assessment.id)} className="bg-red-600 hover:bg-red-700">
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 

@@ -1,15 +1,15 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { AssessmentData } from '../../types/assessment';
 import { Search, Filter, Download, Grid, List, Users, FileText, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PremiumStudentCard from './PremiumStudentCard';
+import { toast } from '@/hooks/use-toast';
 
 const DataDashboard: React.FC = () => {
   const [assessments, setAssessments] = useState<AssessmentData[]>([]);
@@ -44,6 +44,24 @@ const DataDashboard: React.FC = () => {
 
     fetchAssessments();
   }, []);
+
+  const handleDeleteAssessment = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'assessments', id));
+      setAssessments(prevAssessments => prevAssessments.filter(assessment => assessment.id !== id));
+      toast({
+        title: "Success",
+        description: "Assessment deleted successfully."
+      });
+    } catch (error) {
+      console.error('Error deleting assessment:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete assessment.",
+        variant: "destructive"
+      });
+    }
+  };
 
   const getFilteredAssessments = () => {
     return assessments.filter(assessment => {
@@ -332,7 +350,7 @@ const DataDashboard: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <PremiumStudentCard assessment={assessment} viewMode={viewMode} />
+                <PremiumStudentCard assessment={assessment} viewMode={viewMode} onDelete={handleDeleteAssessment} />
               </motion.div>
             ))}
           </motion.div>
