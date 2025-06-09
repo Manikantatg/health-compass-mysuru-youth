@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -41,7 +40,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
   const activities = [
     { key: 'yoga', label: 'Yoga' },
     { key: 'exercise', label: 'Exercise' },
-    { key: 'indoorGames', label: 'Indoor Games (e.g., Chess, Carrom, Ludo, Table Tennis)' },
+    { key: 'indoorGames', label: 'Indoor Games (e.g., Table Tennis, Badminton, Skipping Rope)' },
     { key: 'outdoorGames', label: 'Outdoor Games (e.g., Kho-Kho, Kabaddi, Cricket, Football, Lagori, Badminton)' },
     { key: 'playAfterSchool', label: 'Playing after school hours/household works' },
     { key: 'cycling', label: 'Bicycle (Self-transport)' },
@@ -85,6 +84,15 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
             onChange={(e) => handleActivityChange(activity.key, 'minutes', parseInt(e.target.value) || 0)}
             className="w-24"
             placeholder="0"
+            onKeyDown={(e) => {
+              // Allow continuous number entry
+              if (e.key === 'Enter') {
+                e.preventDefault();
+              }
+            }}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={4}
           />
         </td>
       </tr>

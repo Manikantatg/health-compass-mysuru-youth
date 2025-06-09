@@ -1,32 +1,38 @@
-
+import { jsPDF } from 'jspdf';
 import { AssessmentData, HealthScores } from '../types/assessment';
 
 export const generateHealthReportPDF = async (assessmentData: AssessmentData) => {
   try {
-    const { default: jsPDF } = await import('jspdf');
-    
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
+    const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
     let currentY = 20;
 
-    // Helper function to add text with proper spacing and page breaks
+    // Helper function for adding text with options
     const addText = (text: string, x: number, y: number, options?: any) => {
-      if (y > pageHeight - 20) {
+      if (y > doc.internal.pageSize.getHeight() - 20) {
         doc.addPage();
         y = 20;
-        currentY = 20;
       }
       doc.text(text, x, y, options);
       return y;
     };
 
-    // Header with new PediaPredict branding
+    // Add logo
+    doc.addImage(
+      'https://img.freepik.com/premium-vector/worried-man-with-obesity-clip-art-vector-illustration_136875-5657.jpg',
+      'JPEG',
+      20,
+      20,
+      30,
+      30
+    );
+
+    // Add title
+    doc.setFontSize(24);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Student Obesity Risk Report', 60, 40);
+
+    // Header with PediaPredict branding
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(26);
     doc.setTextColor(63, 81, 181);
@@ -103,13 +109,13 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     doc.setTextColor(63, 81, 181);
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    currentY = addText('Obesity Risk Report', 20, currentY);
+    currentY = addText('Student Obesity Risk Report', 20, currentY);
     currentY += 10;
 
     // Risk Level with color coding
-    const riskColor = riskLevel === 'High' ? [220, 53, 69] : 
+    const riskColor: [number, number, number] = riskLevel === 'High' ? [220, 53, 69] : 
                      riskLevel === 'Medium' ? [255, 193, 7] : [40, 167, 69];
-    doc.setTextColor(...riskColor);
+    doc.setTextColor(riskColor[0], riskColor[1], riskColor[2]);
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     currentY = addText(`OBESITY RISK LEVEL: ${riskLevel.toUpperCase()}`, 20, currentY);

@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Slider } from '@/components/ui/slider';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SleepQuality } from '../../../types/assessment';
 
@@ -35,28 +34,31 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
     return 0;
   };
 
-  const frequencyLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
+  const frequencyOptions = [
+    { value: 0, label: 'Never' },
+    { value: 1, label: 'Rarely' },
+    { value: 2, label: 'Sometimes' },
+    { value: 3, label: 'Often' },
+    { value: 4, label: 'Almost Always' }
+  ];
 
-  const FrequencySlider = ({ field, label }: { field: keyof SleepQuality; label: string }) => (
+  const FrequencyRadio = ({ field, label }: { field: keyof SleepQuality; label: string }) => (
     <div className="space-y-3">
-      <div className="flex justify-between items-center">
-        <Label className="text-sm font-medium">{label}</Label>
-        <span className="text-sm text-gray-600 font-medium">
-          {frequencyLabels[sleepQuality[field] as number]}
-        </span>
-      </div>
-      <Slider
-        value={[sleepQuality[field] as number]}
-        onValueChange={(value) => handleChange(field, value[0])}
-        max={4}
-        min={0}
-        step={1}
-        className="w-full"
-      />
-      <div className="flex justify-between text-xs text-gray-500">
-        <span>Never</span>
-        <span>Almost Always</span>
-      </div>
+      <Label className="text-sm font-medium">{label}</Label>
+      <RadioGroup
+        value={sleepQuality[field]?.toString() || "0"}
+        onValueChange={(value) => handleChange(field, parseInt(value))}
+        className="flex flex-wrap gap-4"
+      >
+        {frequencyOptions.map((option) => (
+          <div key={option.value} className="flex items-center space-x-2">
+            <RadioGroupItem value={option.value.toString()} id={`${field}-${option.value}`} />
+            <Label htmlFor={`${field}-${option.value}`} className="text-sm cursor-pointer">
+              {option.label}
+            </Label>
+          </div>
+        ))}
+      </RadioGroup>
     </div>
   );
 
@@ -119,19 +121,19 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
           <CardDescription>Rate how often you experience these sleep problems (Last 30 Days)</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <FrequencySlider 
+          <FrequencyRadio 
             field="difficultyFallingAsleep" 
             label="I have difficulty falling asleep (can't sleep within 30 minutes)" 
           />
-          <FrequencySlider 
+          <FrequencyRadio 
             field="wakeUpDuringSleep" 
             label="I wake up while sleeping (e.g., due to bad dreams)" 
           />
-          <FrequencySlider 
+          <FrequencyRadio 
             field="wakeUpFromNoise" 
             label="I wake up easily from noise" 
           />
-          <FrequencySlider 
+          <FrequencyRadio 
             field="difficultyGettingBackToSleep" 
             label="I have difficulty getting back to sleep once awake" 
           />
@@ -145,23 +147,23 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
           <CardDescription>How does poor sleep affect your daily activities? (Last 30 Days)</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <FrequencySlider 
+          <FrequencyRadio 
             field="sleepinessInClasses" 
             label="Sleepiness interferes with my classes" 
           />
-          <FrequencySlider 
+          <FrequencyRadio 
             field="sleepHeadache" 
             label="Poor sleep gives me a headache" 
           />
-          <FrequencySlider 
+          <FrequencyRadio 
             field="sleepIrritation" 
             label="Poor sleep makes me irritated" 
           />
-          <FrequencySlider 
+          <FrequencyRadio 
             field="sleepLossOfInterest" 
             label="Poor sleep makes me lose interest in work/studies" 
           />
-          <FrequencySlider 
+          <FrequencyRadio 
             field="sleepForgetfulness" 
             label="Poor sleep makes me forget things more easily" 
           />
@@ -186,9 +188,9 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <h4 className="font-medium mb-2">Sleep Quality Issues</h4>
               <div className="space-y-1 text-sm">
-                <p><strong>Difficulty Falling Asleep:</strong> {frequencyLabels[sleepQuality.difficultyFallingAsleep]}</p>
-                <p><strong>Wake Up During Sleep:</strong> {frequencyLabels[sleepQuality.wakeUpDuringSleep]}</p>
-                <p><strong>Daytime Sleepiness:</strong> {frequencyLabels[sleepQuality.sleepinessInClasses]}</p>
+                <p><strong>Difficulty Falling Asleep:</strong> {frequencyOptions[sleepQuality.difficultyFallingAsleep]?.label}</p>
+                <p><strong>Wake Up During Sleep:</strong> {frequencyOptions[sleepQuality.wakeUpDuringSleep]?.label}</p>
+                <p><strong>Daytime Sleepiness:</strong> {frequencyOptions[sleepQuality.sleepinessInClasses]?.label}</p>
               </div>
             </div>
           </div>

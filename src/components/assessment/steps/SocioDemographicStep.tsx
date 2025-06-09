@@ -63,8 +63,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 type="number"
                 min="6"
                 max="17"
-                value={socioDemographic.age}
+                value={socioDemographic.age || 0}
                 onChange={(e) => handleChange('age', parseInt(e.target.value) || 0)}
+                onKeyDown={(e) => {
+                  // Allow continuous number entry
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
 
@@ -111,9 +117,15 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Input
                 id="height"
                 type="number"
-                value={socioDemographic.height}
+                value={socioDemographic.height || 0}
                 onChange={(e) => handleChange('height', parseInt(e.target.value) || 0)}
                 placeholder="e.g., 150"
+                onKeyDown={(e) => {
+                  // Allow continuous number entry
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
 
@@ -122,9 +134,15 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Input
                 id="weight"
                 type="number"
-                value={socioDemographic.weight}
+                value={socioDemographic.weight || 0}
                 onChange={(e) => handleChange('weight', parseInt(e.target.value) || 0)}
                 placeholder="e.g., 45"
+                onKeyDown={(e) => {
+                  // Allow continuous number entry
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
           </div>
@@ -232,8 +250,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                     id="brothers"
                     type="number"
                     min="0"
-                    value={socioDemographic.brothers}
+                    value={socioDemographic.brothers || 0}
                     onChange={(e) => handleChange('brothers', parseInt(e.target.value) || 0)}
+                    onKeyDown={(e) => {
+                      // Allow continuous number entry
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                 </div>
 
@@ -243,21 +267,34 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                     id="sisters"
                     type="number"
                     min="0"
-                    value={socioDemographic.sisters}
+                    value={socioDemographic.sisters || 0}
                     onChange={(e) => handleChange('sisters', parseInt(e.target.value) || 0)}
+                    onKeyDown={(e) => {
+                      // Allow continuous number entry
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                 </div>
 
                 <div>
                   <Label htmlFor="birthOrder">Birth Order</Label>
-                  <Input
-                    id="birthOrder"
-                    type="number"
-                    min="1"
-                    value={socioDemographic.birthOrder}
-                    onChange={(e) => handleChange('birthOrder', parseInt(e.target.value) || 1)}
-                    placeholder="Enter birth order"
-                  />
+                  <Select
+                    value={socioDemographic.birthOrder?.toString() || "1"}
+                    onValueChange={(value) => handleChange('birthOrder', parseInt(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select birth order" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5].map((order) => (
+                        <SelectItem key={order} value={order.toString()}>
+                          {order}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             )}

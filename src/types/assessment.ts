@@ -41,7 +41,7 @@ export interface EatingHabits {
   fruits: number;
   milkProducts: number;
   // New consolidated non-veg field
-  nonVegConsumption: number; // 0 = Never, 1 = Rarely, 2 = Always
+  nonVegConsumption: number; // 0-4 scale: Never, Rarely, Sometimes, Very often, Almost always
   // Processed foods
   snacks: number;
   beverages: number;

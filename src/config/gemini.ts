@@ -44,7 +44,7 @@ Age: ${assessmentData.age || 'N/A'} years
 Gender: ${assessmentData.gender || 'N/A'}
 BMI: ${assessmentData.bmi || 0} kg/m²
 
-HEALTH SCORES:
+Obesity ScoreS:
 - BMI Health: ${bmiScore}/2
 - Nutrition: ${dietScore}/2
 - Physical Activity: ${activityScore}/2
@@ -60,7 +60,7 @@ Please provide your analysis in this EXACT format:
 ## 🔎 Obesity Risk: ${riskLevel.toUpperCase()}
 
 ### 📋 Summary:
-[2-3 sentences about overall health status and main concerns]
+[2-3 sentences about Obesity Risk Level status and main concerns]
 
 ### 🩺 Medical Analysis:
 - **BMI**: [Brief BMI analysis]

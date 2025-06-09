@@ -70,7 +70,7 @@ const Index: React.FC = () => {
   const howItWorks = [
     { step: '01', title: 'Sign Up', description: 'Quick & easy registration process' },
     { step: '02', title: 'Complete Assessment', description: 'Answer questions in just 5 minutes' },
-    { step: '03', title: 'Get Health Score', description: 'Receive instant AI-powered analysis' },
+    { step: '03', title: 'Get Obesity Score', description: 'Receive instant AI-powered analysis' },
     { step: '04', title: 'Follow Recommendations', description: 'Get personalized health improvement tips' }
   ];
 
@@ -534,7 +534,7 @@ const Index: React.FC = () => {
               <ul className="space-y-4">
                 <li className="flex items-center space-x-3 text-muted">
                   <Mail className="h-5 w-5 text-primary" />
-                  <span>info@healthpredict.in</span>
+                  <span>info@PediaPredict.in</span>
                 </li>
                 <li className="flex items-center space-x-3 text-muted">
                   <MapPin className="h-5 w-5 text-primary" />
@@ -561,7 +561,7 @@ const Index: React.FC = () => {
           </div>
           <div className="mt-16 pt-8 border-t border-muted text-center">
             <p className="text-muted">
-              © {new Date().getFullYear()} HealthPredict. All rights reserved.
+              © {new Date().getFullYear()} PediaPredict. All rights reserved.
             </p>
           </div>
         </div>

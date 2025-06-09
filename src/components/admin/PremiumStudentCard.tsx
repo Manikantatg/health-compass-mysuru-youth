@@ -55,7 +55,7 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
     // Calculate sleep score (0-25)
     const sleepScore = Math.max(0, 25 - (sleepQuality.difficultyFallingAsleep * 5));
     
-    // Calculate mental health score (0-25)
+    // Calculate mental Obesity Score (0-25)
     const mentalScore = Math.max(0, 25 - (mentalHealth.bodyPerception * 5));
     
     return Math.round(activityScore + dietScore + sleepScore + mentalScore);
@@ -138,7 +138,7 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
             <div className="space-y-1">
               <div className="flex items-center space-x-1 text-caption">
                 <Activity className="h-3 w-3" />
-                <span>Health Score</span>
+                <span>Obesity Score</span>
               </div>
               <p className="text-sm font-medium text-foreground">
                 {healthScore}/100
@@ -146,10 +146,10 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, vie
             </div>
           </div>
 
-          {/* Health Score Progress */}
+          {/* Obesity Score Progress */}
           <div className="space-y-2">
             <div className="flex justify-between text-caption">
-              <span>Overall Health</span>
+              <span>Obesity Risk Level</span>
               <span>{healthScore}%</span>
             </div>
             <div className="w-full bg-surface rounded-full h-2">

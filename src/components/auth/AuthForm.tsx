@@ -41,7 +41,7 @@ const AuthForm: React.FC = () => {
           schoolName: formData.schoolName,
           role: formData.role
         });
-        toast({ title: "Account created!", description: "Welcome to HealthPredict." });
+        toast({ title: "Account created!", description: "Welcome to PediaPredict." });
       }
       navigate('/dashboard');
     } catch (error: any) {
@@ -84,7 +84,7 @@ const AuthForm: React.FC = () => {
                   <Heart className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="text-3xl font-bold text-foreground tracking-tight">
-                  {isLogin ? 'Welcome Back' : 'Join HealthPredict'}
+                  {isLogin ? 'Welcome Back' : 'Join PediaPredict'}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground text-lg">
                   {isLogin 

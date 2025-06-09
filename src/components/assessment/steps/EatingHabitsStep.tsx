@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -100,28 +99,21 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
             {categoryIndex === 0 && (
               <div className="space-y-4 pt-4 border-t border-gray-200">
                 <div>
-                  <Label className="text-sm font-medium">Do you consume Non-Vegetarian Foods?</Label>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Examples include: Chicken, Fish, Mutton, Eggs, Seafood, Prawns, Lean Meats
-                  </p>
+                  <Label className="text-sm font-medium">Non-Vegetarian Foods?</Label>
                 </div>
                 <RadioGroup
-                  value={eatingHabits.nonVegConsumption === 0 ? 'never' : eatingHabits.nonVegConsumption === 1 ? 'rarely' : 'always'}
-                  onValueChange={handleNonVegChange}
-                  className="flex flex-row space-x-6"
+                  value={eatingHabits.nonVegConsumption?.toString() || '0'}
+                  onValueChange={(value) => handleChange('nonVegConsumption', parseInt(value))}
+                  className="flex flex-wrap gap-4"
                 >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="never" id="never" />
-                    <Label htmlFor="never">Never</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="rarely" id="rarely" />
-                    <Label htmlFor="rarely">Rarely</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="always" id="always" />
-                    <Label htmlFor="always">Always</Label>
-                  </div>
+                  {scaleOptions.map((option) => (
+                    <div key={option.value} className="flex items-center space-x-2">
+                      <RadioGroupItem value={option.value.toString()} id={`nonVeg-${option.value}`} />
+                      <Label htmlFor={`nonVeg-${option.value}`} className="text-sm cursor-pointer">
+                        {option.label}
+                      </Label>
+                    </div>
+                  ))}
                 </RadioGroup>
               </div>
             )}
@@ -147,7 +139,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
                 ))}
                 <div className="flex justify-between text-sm">
                   <span>Non-Veg Foods:</span>
-                  <span>{eatingHabits.nonVegConsumption === 0 ? 'Never' : eatingHabits.nonVegConsumption === 1 ? 'Rarely' : 'Always'}</span>
+                  <span>{scaleLabels[eatingHabits.nonVegConsumption]}</span>
                 </div>
               </div>
             </div>

@@ -53,7 +53,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <Activity className="h-6 w-6 text-white" />
                 </div>
                 <h1 className="text-2xl font-semibold text-[#3F51B5] tracking-tight">
-                  HealthPredict
+                  PediaPredict
                 </h1>
               </div>
               <div className="hidden md:ml-8 md:flex md:space-x-6">

@@ -287,11 +287,57 @@ const AssessmentForm: React.FC = () => {
   const submitAssessment = async () => {
     setLoading(true);
     try {
+      // Validate required fields
+      const requiredFields = {
+        'Personal Information': {
+          name: assessmentData.socioDemographic?.name,
+          age: assessmentData.socioDemographic?.age,
+          gender: assessmentData.socioDemographic?.gender,
+          height: assessmentData.socioDemographic?.height,
+          weight: assessmentData.socioDemographic?.weight
+        }
+      };
+
+      const missingFields = Object.entries(requiredFields).reduce((acc, [step, fields]) => {
+        const missing = Object.entries(fields)
+          .filter(([_, value]) => !value)
+          .map(([field]) => field);
+        if (missing.length > 0) {
+          acc[step] = missing;
+        }
+        return acc;
+      }, {} as Record<string, string[]>);
+
+      if (Object.keys(missingFields).length > 0) {
+        const errorMessage = Object.entries(missingFields)
+          .map(([step, fields]) => `${step}: ${fields.join(', ')}`)
+          .join('\n');
+        
+        toast({
+          title: "Missing Required Fields",
+          description: `Please fill in the following required fields:\n${errorMessage}`,
+          variant: "destructive",
+          duration: 5000
+        });
+        return;
+      }
+
       // Calculate BMI
       const bmi = calculateBMI(
         assessmentData.socioDemographic?.height || 0,
         assessmentData.socioDemographic?.weight || 0
       );
+
+      // Validate BMI range
+      if (bmi < 10 || bmi > 50) {
+        toast({
+          title: "Invalid BMI",
+          description: "Please check the height and weight values. The calculated BMI is outside the expected range.",
+          variant: "destructive",
+          duration: 5000
+        });
+        return;
+      }
 
       // Calculate enhanced scores
       const scores = calculateScores(assessmentData);
@@ -346,7 +392,7 @@ const AssessmentForm: React.FC = () => {
       console.error('Error submitting assessment:', error);
       toast({
         title: "Submission Error",
-        description: "Failed to submit assessment. Please check your connection and try again.",
+        description: error instanceof Error ? error.message : "Failed to submit assessment. Please check your connection and try again.",
         variant: "destructive",
         duration: 5000
       });
