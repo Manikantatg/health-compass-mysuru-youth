@@ -72,14 +72,14 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
     
-    // Safe data extraction with null checks
-    const socioDemo = assessmentData.socioDemographic || {};
+    // Safe data extraction with proper null checks
+    const socioDemo = assessmentData.socioDemographic;
     const studentInfo = [
-      `Name: ${socioDemo.name || 'Not Provided'}`,
-      `Age: ${socioDemo.age || 'Not Provided'} years`,
-      `Gender: ${socioDemo.gender ? socioDemo.gender.charAt(0).toUpperCase() + socioDemo.gender.slice(1) : 'Not Provided'}`,
-      `Class: ${socioDemo.class || 'Not Provided'}-${socioDemo.section || 'Not Provided'}`,
-      `School: ${socioDemo.schoolName || 'Not Provided'}`,
+      `Name: ${socioDemo?.name || 'Not Provided'}`,
+      `Age: ${socioDemo?.age || 'Not Provided'} years`,
+      `Gender: ${socioDemo?.gender ? socioDemo.gender.charAt(0).toUpperCase() + socioDemo.gender.slice(1) : 'Not Provided'}`,
+      `Class: ${socioDemo?.class || 'Not Provided'}-${socioDemo?.section || 'Not Provided'}`,
+      `School: ${socioDemo?.schoolName || 'Not Provided'}`,
       `Assessment Date: ${assessmentData.completedAt ? new Date(assessmentData.completedAt).toLocaleDateString('en-GB') : 'Not Available'}`,
       `BMI: ${assessmentData.bmi ? assessmentData.bmi.toFixed(1) : 'Not Calculated'} (${getBMICategory(assessmentData.bmi || 0)})`
     ];
@@ -189,7 +189,7 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     currentY = addText('to support comprehensive student health and wellness monitoring.', pageWidth / 2, currentY, { align: 'center' });
 
     // Generate safe filename
-    const cleanName = (socioDemo.name || 'student').replace(/[^a-zA-Z0-9]/g, '_');
+    const cleanName = (socioDemo?.name || 'student').replace(/[^a-zA-Z0-9]/g, '_');
     const dateStr2 = now.toISOString().split('T')[0];
     const timeStamp = now.toTimeString().split(' ')[0].replace(/:/g, '-');
     const filename = `healthpredict_${cleanName}_${dateStr2}_${timeStamp}.pdf`;
