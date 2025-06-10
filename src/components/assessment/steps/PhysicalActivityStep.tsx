@@ -58,14 +58,14 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
     }
     
     return (
-      <tr className="border-b">
-        <td className="py-3 px-4 text-sm font-medium">{activity.label}</td>
-        <td className="py-3 px-4">
+      <div className="grid grid-cols-3 items-center gap-4 py-3 border-b last:border-b-0">
+        <div className="text-sm font-medium col-span-1">{activity.label}</div>
+        <div className="col-span-1">
           <Select
             value={activityData.days?.toString() || "0"}
             onValueChange={(value) => handleActivityChange(activity.key, 'days', parseInt(value))}
           >
-            <SelectTrigger className="w-20">
+            <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -74,18 +74,17 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
               ))}
             </SelectContent>
           </Select>
-        </td>
-        <td className="py-3 px-4">
+        </div>
+        <div className="col-span-1">
           <Input
             type="number"
             min="0"
             max="420"
             value={activityData.minutes || 0}
             onChange={(e) => handleActivityChange(activity.key, 'minutes', parseInt(e.target.value) || 0)}
-            className="w-24"
+            className="w-full"
             placeholder="0"
             onKeyDown={(e) => {
-              // Allow continuous number entry
               if (e.key === 'Enter') {
                 e.preventDefault();
               }
@@ -94,8 +93,8 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
             pattern="[0-9]*"
             maxLength={4}
           />
-        </td>
-      </tr>
+        </div>
+      </div>
     );
   };
 
@@ -118,30 +117,30 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
       </div>
 
       {/* PT Participation */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Physical Training (PT) Participation</CardTitle>
-          <CardDescription>Do you participate in Physical Training classes?</CardDescription>
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Physical Training (PT) Participation</CardTitle>
+          <CardDescription className="text-muted-foreground text-sm">Do you participate in Physical Training classes?</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="px-0 space-y-4">
           <div className="flex items-center space-x-2">
             <Switch
               id="ptParticipation"
               checked={physicalActivity.participation}
               onCheckedChange={(checked) => handleChange('participation', checked)}
             />
-            <Label htmlFor="ptParticipation">I participate in PT (Physical Training) classes</Label>
+            <Label htmlFor="ptParticipation" className="text-sm font-medium">I participate in PT (Physical Training) classes</Label>
           </div>
 
           {physicalActivity.participation && (
-            <div className="grid grid-cols-3 gap-4 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
               <div>
-                <Label htmlFor="ptFrequency">PT Classes per Week</Label>
+                <Label htmlFor="ptFrequency" className="text-sm font-medium">PT Classes per Week</Label>
                 <Select
                   value={physicalActivity.ptFrequency?.toString() || "0"}
                   onValueChange={(value) => handleChange('ptFrequency', parseInt(value) || 0)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select days" />
                   </SelectTrigger>
                   <SelectContent>
@@ -152,7 +151,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="ptDuration">Duration per Class (minutes)</Label>
+                <Label htmlFor="ptDuration" className="text-sm font-medium">Duration per Class (minutes)</Label>
                 <Input
                   type="number"
                   min="10"
@@ -160,15 +159,16 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
                   value={physicalActivity.ptDuration || 30}
                   onChange={(e) => handleChange('ptDuration', parseInt(e.target.value) || 30)}
                   placeholder="30"
+                  className="mt-1"
                 />
               </div>
               <div>
-                <Label htmlFor="ptActivityType">Activity Type</Label>
+                <Label htmlFor="ptActivityType" className="text-sm font-medium">Activity Type</Label>
                 <Select
                   value={physicalActivity.ptActivityType || "outdoor"}
                   onValueChange={(value) => handleChange('ptActivityType', value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="mt-1">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -183,19 +183,19 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
       </Card>
 
       {/* School Activities */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Q4: School/College Activities</CardTitle>
-          <CardDescription>Are you involved in any of the following activities?</CardDescription>
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Q4: School/College Activities</CardTitle>
+          <CardDescription className="text-muted-foreground text-sm">Are you involved in any of the following activities?</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="px-0 space-y-3">
           <div className="flex items-center space-x-2">
             <Checkbox
               id="scouts"
               checked={physicalActivity.scouts || false}
               onCheckedChange={(checked) => handleChange('scouts', checked)}
             />
-            <Label htmlFor="scouts">Scouts and Guides</Label>
+            <Label htmlFor="scouts" className="text-sm font-medium">Scouts and Guides</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -203,7 +203,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
               checked={physicalActivity.ncc || false}
               onCheckedChange={(checked) => handleChange('ncc', checked)}
             />
-            <Label htmlFor="ncc">NCC</Label>
+            <Label htmlFor="ncc" className="text-sm font-medium">NCC</Label>
           </div>
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
@@ -212,14 +212,14 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
                 checked={physicalActivity.otherActivities || false}
                 onCheckedChange={(checked) => handleChange('otherActivities', checked)}
               />
-              <Label htmlFor="otherActivities">Others:</Label>
+              <Label htmlFor="otherActivities" className="text-sm font-medium">Others:</Label>
             </div>
             {physicalActivity.otherActivities && (
               <Input
                 placeholder="Please specify other activities"
                 value={physicalActivity.otherActivitiesDetail || ''}
                 onChange={(e) => handleChange('otherActivitiesDetail', e.target.value)}
-                className="ml-6"
+                className="ml-6 mt-1"
               />
             )}
           </div>
@@ -229,16 +229,16 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
               checked={physicalActivity.noActivities || false}
               onCheckedChange={(checked) => handleChange('noActivities', checked)}
             />
-            <Label htmlFor="noActivities">None</Label>
+            <Label htmlFor="noActivities" className="text-sm font-medium">None</Label>
           </div>
         </CardContent>
       </Card>
 
-      {/* Activity Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Q5: Weekly Physical Activities</CardTitle>
-          <CardDescription>
+      {/* Activity List */}
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Q5: Weekly Physical Activities</CardTitle>
+          <CardDescription className="text-muted-foreground text-sm">
             How many days per week do you engage in the following? 
             <br />
             <span className="text-sm text-blue-600">
@@ -246,45 +246,63 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
             </span>
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Days per Week (0-7)</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Minutes per Day (0-420)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activities.map((activity) => (
-                  <ActivityRow key={activity.key} activity={activity} />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+        <CardContent className="px-0 space-y-4">
+          {activities.map((activity) => (
+            <ActivityRow key={activity.key} activity={activity} />
+          ))}
 
-      {/* Activity Summary */}
-      <Card className="bg-green-50">
-        <CardHeader>
-          <CardTitle className="text-lg text-green-900">Physical Activity Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium mb-2">Weekly Activity Score</h4>
-              <p className="text-2xl font-bold text-green-700">
-                {calculateTotalActivityMinutes()} minutes
-              </p>
+          {/* Dance Input */}
+          <div className="grid grid-cols-3 items-center gap-4 py-3 border-b last:border-b-0">
+            <div className="text-sm font-medium col-span-1">Dance</div>
+            <div className="col-span-2">
+              <Input
+                type="number"
+                min="0"
+                max="420"
+                value={physicalActivity.dance || 0}
+                onChange={(e) => handleChange('dance', parseInt(e.target.value) || 0)}
+                className="w-full"
+                placeholder="Minutes per week"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
+              />
             </div>
-            <div>
-              <h4 className="font-medium mb-2">CDC Recommendation</h4>
-              <p className="text-sm text-gray-600">
-                420 minutes (60 minutes daily) of moderate to vigorous physical activity per week for children and adolescents.
-              </p>
+          </div>
+
+          {/* Swimming Input */}
+          <div className="grid grid-cols-3 items-center gap-4 py-3 border-b last:border-b-0">
+            <div className="text-sm font-medium col-span-1">Swimming</div>
+            <div className="col-span-2">
+              <Input
+                type="number"
+                min="0"
+                max="420"
+                value={physicalActivity.swimming || 0}
+                onChange={(e) => handleChange('swimming', parseInt(e.target.value) || 0)}
+                className="w-full"
+                placeholder="Minutes per week"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                  }
+                }}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
+              />
             </div>
+          </div>
+
+          <div className="p-3 bg-blue-50 rounded-lg">
+            <p className="text-sm font-medium text-blue-900">
+              Total Weekly Activity Minutes: <span className="text-lg">{calculateTotalActivityMinutes()}</span>
+            </p>
           </div>
         </CardContent>
       </Card>

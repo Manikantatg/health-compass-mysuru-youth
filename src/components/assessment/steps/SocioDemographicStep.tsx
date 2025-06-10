@@ -30,34 +30,36 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
   return (
     <div className="space-y-6">
       {/* Basic Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Basic Information</CardTitle>
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Basic Information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="px-0 space-y-4">
           <div>
-            <Label htmlFor="schoolName">School Name</Label>
+            <Label htmlFor="schoolName" className="text-sm font-medium">School Name</Label>
             <Input
               id="schoolName"
               value={socioDemographic.schoolName}
               onChange={(e) => handleChange('schoolName', e.target.value)}
               placeholder="Enter school name"
+              className="mt-1"
             />
           </div>
 
           <div>
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
             <Input
               id="name"
               value={socioDemographic.name}
               onChange={(e) => handleChange('name', e.target.value)}
               placeholder="Enter full name"
+              className="mt-1"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="age">Age</Label>
+              <Label htmlFor="age" className="text-sm font-medium">Age</Label>
               <Input
                 id="age"
                 type="number"
@@ -65,8 +67,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 max="17"
                 value={socioDemographic.age || 0}
                 onChange={(e) => handleChange('age', parseInt(e.target.value) || 0)}
+                className="mt-1"
                 onKeyDown={(e) => {
-                  // Allow continuous number entry
                   if (e.key === 'Enter') {
                     e.preventDefault();
                   }
@@ -75,9 +77,9 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             </div>
 
             <div>
-              <Label htmlFor="gender">Gender</Label>
+              <Label htmlFor="gender" className="text-sm font-medium">Gender</Label>
               <Select value={socioDemographic.gender} onValueChange={(value) => handleChange('gender', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -89,39 +91,41 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="class">Class</Label>
+              <Label htmlFor="class" className="text-sm font-medium">Class</Label>
               <Input
                 id="class"
                 value={socioDemographic.class}
                 onChange={(e) => handleChange('class', e.target.value)}
                 placeholder="e.g., 10th"
+                className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="section">Section</Label>
+              <Label htmlFor="section" className="text-sm font-medium">Section</Label>
               <Input
                 id="section"
                 value={socioDemographic.section}
                 onChange={(e) => handleChange('section', e.target.value)}
                 placeholder="e.g., A"
+                className="mt-1"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="height">Height (cm)</Label>
+              <Label htmlFor="height" className="text-sm font-medium">Height (cm)</Label>
               <Input
                 id="height"
                 type="number"
                 value={socioDemographic.height || 0}
                 onChange={(e) => handleChange('height', parseInt(e.target.value) || 0)}
                 placeholder="e.g., 150"
+                className="mt-1"
                 onKeyDown={(e) => {
-                  // Allow continuous number entry
                   if (e.key === 'Enter') {
                     e.preventDefault();
                   }
@@ -130,15 +134,15 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             </div>
 
             <div>
-              <Label htmlFor="weight">Weight (kg)</Label>
+              <Label htmlFor="weight" className="text-sm font-medium">Weight (kg)</Label>
               <Input
                 id="weight"
                 type="number"
                 value={socioDemographic.weight || 0}
                 onChange={(e) => handleChange('weight', parseInt(e.target.value) || 0)}
                 placeholder="e.g., 45"
+                className="mt-1"
                 onKeyDown={(e) => {
-                  // Allow continuous number entry
                   if (e.key === 'Enter') {
                     e.preventDefault();
                   }
@@ -148,7 +152,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           </div>
 
           {socioDemographic.height && socioDemographic.weight && (
-            <div className="p-4 bg-blue-50 rounded-lg">
+            <div className="p-3 bg-blue-50 rounded-lg">
               <p className="text-sm font-medium text-blue-900">
                 Calculated BMI: <span className="text-lg">{calculateBMI()}</span>
               </p>
@@ -156,12 +160,13 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           )}
 
           <div>
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address" className="text-sm font-medium">Address</Label>
             <Input
               id="address"
               value={socioDemographic.address}
               onChange={(e) => handleChange('address', e.target.value)}
               placeholder="Enter address"
+              className="mt-1"
             />
           </div>
 
@@ -171,155 +176,123 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               checked={socioDemographic.hostelResident}
               onCheckedChange={(checked) => handleChange('hostelResident', checked)}
             />
-            <Label htmlFor="hostelResident">Hostel Resident</Label>
+            <Label htmlFor="hostelResident" className="text-sm font-medium">Hostel Resident</Label>
           </div>
         </CardContent>
       </Card>
 
       {/* Family Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Family Information</CardTitle>
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Family Information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="px-0 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="fatherName">Father's Name</Label>
+              <Label htmlFor="fatherName" className="text-sm font-medium">Father's Name</Label>
               <Input
                 id="fatherName"
                 value={socioDemographic.fatherName}
                 onChange={(e) => handleChange('fatherName', e.target.value)}
                 placeholder="Enter father's name"
+                className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="motherName">Mother's Name</Label>
+              <Label htmlFor="motherName" className="text-sm font-medium">Mother's Name</Label>
               <Input
                 id="motherName"
                 value={socioDemographic.motherName}
                 onChange={(e) => handleChange('motherName', e.target.value)}
                 placeholder="Enter mother's name"
+                className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="fatherContact">Father's Contact</Label>
+              <Label htmlFor="fatherContact" className="text-sm font-medium">Father's Contact</Label>
               <Input
                 id="fatherContact"
                 value={socioDemographic.fatherContact}
                 onChange={(e) => handleChange('fatherContact', e.target.value)}
                 placeholder="Enter contact number"
+                className="mt-1"
               />
             </div>
 
             <div>
-              <Label htmlFor="motherContact">Mother's Contact</Label>
+              <Label htmlFor="motherContact" className="text-sm font-medium">Mother's Contact</Label>
               <Input
                 id="motherContact"
                 value={socioDemographic.motherContact}
                 onChange={(e) => handleChange('motherContact', e.target.value)}
                 placeholder="Enter contact number"
+                className="mt-1"
               />
             </div>
           </div>
 
-          {/* Updated Siblings Question */}
-          <div className="space-y-4">
-            <Label className="text-base font-medium">Do you have siblings?</Label>
+          <div className="space-y-3">
+            <Label className="text-sm font-medium">Do you have siblings?</Label>
             <RadioGroup 
               value={socioDemographic.hasSiblings} 
               onValueChange={(value) => handleChange('hasSiblings', value)}
-              className="flex space-x-6"
+              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="siblings-yes" />
-                <Label htmlFor="siblings-yes">Yes</Label>
+                <Label htmlFor="siblings-yes" className="text-sm">Yes</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="siblings-no" />
-                <Label htmlFor="siblings-no">No</Label>
+                <Label htmlFor="siblings-no" className="text-sm">No</Label>
               </div>
             </RadioGroup>
 
             {socioDemographic.hasSiblings === 'yes' && (
-              <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                 <div>
-                  <Label htmlFor="brothers">Number of Brothers</Label>
+                  <Label htmlFor="brothers" className="text-sm font-medium">Number of Brothers</Label>
                   <Input
                     id="brothers"
                     type="number"
                     min="0"
                     value={socioDemographic.brothers || 0}
                     onChange={(e) => handleChange('brothers', parseInt(e.target.value) || 0)}
-                    onKeyDown={(e) => {
-                      // Allow continuous number entry
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                      }
-                    }}
+                    className="mt-1"
                   />
                 </div>
-
                 <div>
-                  <Label htmlFor="sisters">Number of Sisters</Label>
+                  <Label htmlFor="sisters" className="text-sm font-medium">Number of Sisters</Label>
                   <Input
                     id="sisters"
                     type="number"
                     min="0"
                     value={socioDemographic.sisters || 0}
                     onChange={(e) => handleChange('sisters', parseInt(e.target.value) || 0)}
-                    onKeyDown={(e) => {
-                      // Allow continuous number entry
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                      }
-                    }}
+                    className="mt-1"
                   />
                 </div>
-
                 <div>
-                  <Label htmlFor="birthOrder">Birth Order</Label>
-                  <Select
-                    value={socioDemographic.birthOrder?.toString() || "1"}
-                    onValueChange={(value) => handleChange('birthOrder', parseInt(value))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select birth order" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[1, 2, 3, 4, 5].map((order) => (
-                        <SelectItem key={order} value={order.toString()}>
-                          {order}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
-
-            {socioDemographic.hasSiblings === 'no' && (
-              <div className="mt-4">
-                <div>
-                  <Label htmlFor="birthOrderOnly">Birth Order</Label>
+                  <Label htmlFor="birthOrder" className="text-sm font-medium">Birth Order</Label>
                   <Input
-                    id="birthOrderOnly"
+                    id="birthOrder"
                     type="number"
-                    value={1}
-                    disabled
-                    className="bg-gray-100"
+                    min="1"
+                    value={socioDemographic.birthOrder || 1}
+                    onChange={(e) => handleChange('birthOrder', parseInt(e.target.value) || 1)}
+                    className="mt-1"
                   />
-                  <p className="text-sm text-gray-600 mt-1">Only child - Birth order is 1</p>
                 </div>
               </div>
             )}
           </div>
 
           <div>
-            <Label htmlFor="familyType">Family Type</Label>
+            <Label htmlFor="familyType" className="text-sm font-medium">Family Type</Label>
             <Select value={socioDemographic.familyType} onValueChange={(value) => handleChange('familyType', value)}>
-              <SelectTrigger>
+              <SelectTrigger className="mt-1">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -332,32 +305,32 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
         </CardContent>
       </Card>
 
-      {/* Family History Questions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Family Health History</CardTitle>
-          <CardDescription>Please answer the following questions about your family health history</CardDescription>
+      {/* Family Health History */}
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Family Health History</CardTitle>
+          <CardDescription className="text-muted-foreground text-sm">Please answer the following questions about your family health history</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="px-0 space-y-6">
           {/* Q1: Does anybody in the family look fat? */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Does anybody in the family look fat?</Label>
+            <Label className="text-sm font-medium">Does anybody in the family look fat?</Label>
             <RadioGroup 
               value={socioDemographic.familyObesity} 
               onValueChange={(value) => handleChange('familyObesity', value)}
-              className="flex space-x-6"
+              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="obesity-yes" />
-                <Label htmlFor="obesity-yes">Yes</Label>
+                <Label htmlFor="obesity-yes" className="text-sm">Yes</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="obesity-no" />
-                <Label htmlFor="obesity-no">No</Label>
+                <Label htmlFor="obesity-no" className="text-sm">No</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="cannot-tell" id="obesity-cannot-tell" />
-                <Label htmlFor="obesity-cannot-tell">Cannot tell</Label>
+                <Label htmlFor="obesity-cannot-tell" className="text-sm">Cannot tell</Label>
               </div>
             </RadioGroup>
             
@@ -367,19 +340,19 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <RadioGroup 
                   value={socioDemographic.familyObesityRelation} 
                   onValueChange={(value) => handleChange('familyObesityRelation', value)}
-                  className="flex space-x-4"
+                  className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="father" id="obesity-father" />
-                    <Label htmlFor="obesity-father">Father</Label>
+                    <Label htmlFor="obesity-father" className="text-sm">Father</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="mother" id="obesity-mother" />
-                    <Label htmlFor="obesity-mother">Mother</Label>
+                    <Label htmlFor="obesity-mother" className="text-sm">Mother</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="both-parents" id="obesity-both" />
-                    <Label htmlFor="obesity-both">Both Parents</Label>
+                    <Label htmlFor="obesity-both" className="text-sm">Both Parents</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -388,23 +361,23 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
           {/* Q2: Is anyone in the family suffering from diabetes? */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Is anyone in the family suffering from diabetes?</Label>
+            <Label className="text-sm font-medium">Is anyone in the family suffering from diabetes?</Label>
             <RadioGroup 
               value={socioDemographic.familyDiabetes} 
               onValueChange={(value) => handleChange('familyDiabetes', value)}
-              className="flex space-x-6"
+              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="diabetes-yes" />
-                <Label htmlFor="diabetes-yes">Yes</Label>
+                <Label htmlFor="diabetes-yes" className="text-sm">Yes</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="diabetes-no" />
-                <Label htmlFor="diabetes-no">No</Label>
+                <Label htmlFor="diabetes-no" className="text-sm">No</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="dont-know" id="diabetes-dont-know" />
-                <Label htmlFor="diabetes-dont-know">Don't know</Label>
+                <Label htmlFor="diabetes-dont-know" className="text-sm">Don't know</Label>
               </div>
             </RadioGroup>
             
@@ -414,19 +387,19 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <RadioGroup 
                   value={socioDemographic.familyDiabetesRelation} 
                   onValueChange={(value) => handleChange('familyDiabetesRelation', value)}
-                  className="flex space-x-4"
+                  className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="father" id="diabetes-father" />
-                    <Label htmlFor="diabetes-father">Father</Label>
+                    <Label htmlFor="diabetes-father" className="text-sm">Father</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="mother" id="diabetes-mother" />
-                    <Label htmlFor="diabetes-mother">Mother</Label>
+                    <Label htmlFor="diabetes-mother" className="text-sm">Mother</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="both-parents" id="diabetes-both" />
-                    <Label htmlFor="diabetes-both">Both Parents</Label>
+                    <Label htmlFor="diabetes-both" className="text-sm">Both Parents</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -435,23 +408,23 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
           {/* Q3: Is anyone in the family suffering from Hypertension? */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Is anyone in the family suffering from Hypertension or taking medicines for High BP?</Label>
+            <Label className="text-sm font-medium">Is anyone in the family suffering from Hypertension or taking medicines for High BP?</Label>
             <RadioGroup 
               value={socioDemographic.familyHypertension} 
               onValueChange={(value) => handleChange('familyHypertension', value)}
-              className="flex space-x-6"
+              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="hypertension-yes" />
-                <Label htmlFor="hypertension-yes">Yes</Label>
+                <Label htmlFor="hypertension-yes" className="text-sm">Yes</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="hypertension-no" />
-                <Label htmlFor="hypertension-no">No</Label>
+                <Label htmlFor="hypertension-no" className="text-sm">No</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="dont-know" id="hypertension-dont-know" />
-                <Label htmlFor="hypertension-dont-know">Don't know</Label>
+                <Label htmlFor="hypertension-dont-know" className="text-sm">Don't know</Label>
               </div>
             </RadioGroup>
             
@@ -461,19 +434,19 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <RadioGroup 
                   value={socioDemographic.familyHypertensionRelation} 
                   onValueChange={(value) => handleChange('familyHypertensionRelation', value)}
-                  className="flex space-x-4"
+                  className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="father" id="hypertension-father" />
-                    <Label htmlFor="hypertension-father">Father</Label>
+                    <Label htmlFor="hypertension-father" className="text-sm">Father</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="mother" id="hypertension-mother" />
-                    <Label htmlFor="hypertension-mother">Mother</Label>
+                    <Label htmlFor="hypertension-mother" className="text-sm">Mother</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="both-parents" id="hypertension-both" />
-                    <Label htmlFor="hypertension-both">Both Parents</Label>
+                    <Label htmlFor="hypertension-both" className="text-sm">Both Parents</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -482,23 +455,23 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
           {/* Q4: Is anybody in the family suffering from thyroid dysfunction? */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Is anybody in the family suffering from thyroid dysfunction?</Label>
+            <Label className="text-sm font-medium">Is anybody in the family suffering from thyroid dysfunction?</Label>
             <RadioGroup 
               value={socioDemographic.familyThyroid} 
               onValueChange={(value) => handleChange('familyThyroid', value)}
-              className="flex space-x-6"
+              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="thyroid-yes" />
-                <Label htmlFor="thyroid-yes">Yes</Label>
+                <Label htmlFor="thyroid-yes" className="text-sm">Yes</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="thyroid-no" />
-                <Label htmlFor="thyroid-no">No</Label>
+                <Label htmlFor="thyroid-no" className="text-sm">No</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="dont-know" id="thyroid-dont-know" />
-                <Label htmlFor="thyroid-dont-know">Don't know</Label>
+                <Label htmlFor="dont-know" className="text-sm">Don't know</Label>
               </div>
             </RadioGroup>
             
@@ -508,19 +481,19 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <RadioGroup 
                   value={socioDemographic.familyThyroidRelation} 
                   onValueChange={(value) => handleChange('familyThyroidRelation', value)}
-                  className="flex space-x-4"
+                  className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="father" id="thyroid-father" />
-                    <Label htmlFor="thyroid-father">Father</Label>
+                    <Label htmlFor="thyroid-father" className="text-sm">Father</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="mother" id="thyroid-mother" />
-                    <Label htmlFor="thyroid-mother">Mother</Label>
+                    <Label htmlFor="thyroid-mother" className="text-sm">Mother</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="both-parents" id="thyroid-both" />
-                    <Label htmlFor="thyroid-both">Both Parents</Label>
+                    <Label htmlFor="thyroid-both" className="text-sm">Both Parents</Label>
                   </div>
                 </RadioGroup>
               </div>

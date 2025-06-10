@@ -41,152 +41,102 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
   ];
 
   const calculateTotalScreenTime = () => {
-    return (sedentaryBehavior.tvTime || 0) + (sedentaryBehavior.mobileTime || 0);
+    // Ensure values are numbers before summing
+    const tvTime = typeof sedentaryBehavior.tvTime === 'number' ? sedentaryBehavior.tvTime : 0;
+    const mobileTime = typeof sedentaryBehavior.mobileTime === 'number' ? sedentaryBehavior.mobileTime : 0;
+    return tvTime + mobileTime;
   };
 
   const calculateTotalSedentaryTime = () => {
-    return Object.values(sedentaryBehavior).reduce((sum, value) => sum + (value || 0), 0);
+    // Sum up all time-based sedentary behaviors, ensuring values are numbers
+    const relevantFields: (keyof SedentaryBehavior)[] = [
+      'tvTime', 'mobileTime', 'schoolReading', 'nonSchoolReading',
+      'indoorGamesTime', 'outdoorGamesTime', 'tuitionTime',
+    ];
+    return relevantFields.reduce((sum, field) => sum + (typeof sedentaryBehavior[field] === 'number' ? (sedentaryBehavior[field] as number) : 0), 0);
   };
+
+  const ActivityInputRow = ({ activityKey, label }: { activityKey: keyof SedentaryBehavior; label: string }) => (
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b last:border-b-0">
+      <Label className="text-sm font-medium mb-2 sm:mb-0 sm:w-1/2">{label}</Label>
+      <RadioGroup
+        value={sedentaryBehavior[activityKey]?.toString() || "0"}
+        onValueChange={(value) => handleChange(activityKey, parseInt(value))}
+        className="flex flex-wrap justify-start sm:justify-end gap-2 sm:gap-4 w-full sm:w-1/2"
+      >
+        {timeOptions.map((option) => (
+          <div key={option.value} className="flex items-center space-x-1">
+            <RadioGroupItem value={option.value.toString()} id={`${activityKey}-${option.value}`} />
+            <Label htmlFor={`${activityKey}-${option.value}`} className="text-xs sm:text-sm cursor-pointer">
+              {option.label.replace('Hr/day', '')}
+            </Label>
+          </div>
+        ))}
+      </RadioGroup>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
         <h3 className="text-lg font-semibold">Sedentary Behaviour Activities (Last 7 Days)</h3>
-        <p className="text-gray-600">Track your screen-based and sedentary activities</p>
+        <p className="text-muted-foreground text-sm">Track your screen-based and sedentary activities</p>
       </div>
 
       {/* Screen-Based Activities */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Screen-Based Activities (Last 7 Days)</CardTitle>
-          <CardDescription>How often do you engage in these activities?</CardDescription>
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Screen-Based Activities (Last 7 Days)</CardTitle>
+          <CardDescription className="text-muted-foreground text-sm">How often do you engage in these activities?</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Duration (Select One)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {screenTimeActivities.map((activity) => (
-                  <tr key={activity.key} className="border-b">
-                    <td className="py-4 px-4 text-sm font-medium">{activity.label}</td>
-                    <td className="py-4 px-4">
-                      <RadioGroup
-                        value={sedentaryBehavior[activity.key as keyof SedentaryBehavior]?.toString() || "0"}
-                        onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
-                        className="flex space-x-4"
-                      >
-                        {timeOptions.map((option) => (
-                          <div key={option.value} className="flex items-center space-x-2">
-                            <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
-                            <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
-                              {option.label}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <CardContent className="px-0 space-y-4">
+          {screenTimeActivities.map((activity) => (
+            <ActivityInputRow
+              key={activity.key}
+              activityKey={activity.key as keyof SedentaryBehavior}
+              label={activity.label}
+            />
+          ))}
         </CardContent>
       </Card>
 
       {/* Reading & Writing Activities */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Reading & Writing Activities</CardTitle>
-          <CardDescription>Time spent on reading and writing activities</CardDescription>
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Reading & Writing Activities</CardTitle>
+          <CardDescription className="text-muted-foreground text-sm">Time spent on reading and writing activities</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Duration (Select One)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {readingActivities.map((activity) => (
-                  <tr key={activity.key} className="border-b">
-                    <td className="py-4 px-4 text-sm font-medium">{activity.label}</td>
-                    <td className="py-4 px-4">
-                      <RadioGroup
-                        value={sedentaryBehavior[activity.key as keyof SedentaryBehavior]?.toString() || "0"}
-                        onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
-                        className="flex space-x-4"
-                      >
-                        {timeOptions.map((option) => (
-                          <div key={option.value} className="flex items-center space-x-2">
-                            <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
-                            <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
-                              {option.label}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <CardContent className="px-0 space-y-4">
+          {readingActivities.map((activity) => (
+            <ActivityInputRow
+              key={activity.key}
+              activityKey={activity.key as keyof SedentaryBehavior}
+              label={activity.label}
+            />
+          ))}
         </CardContent>
       </Card>
 
       {/* Other Sedentary Activities */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Other Sedentary Activities</CardTitle>
-          <CardDescription>Time spent on games and other activities</CardDescription>
+      <Card className="border-0 shadow-none">
+        <CardHeader className="px-0 pt-0">
+          <CardTitle className="text-lg font-semibold">Other Sedentary Activities</CardTitle>
+          <CardDescription className="text-muted-foreground text-sm">Time spent on games and other activities</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Activity Type</th>
-                  <th className="py-3 px-4 text-left text-sm font-medium text-gray-900">Time Duration (Select One)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {otherActivities.map((activity) => (
-                  <tr key={activity.key} className="border-b">
-                    <td className="py-4 px-4 text-sm font-medium">{activity.label}</td>
-                    <td className="py-4 px-4">
-                      <RadioGroup
-                        value={sedentaryBehavior[activity.key as keyof SedentaryBehavior]?.toString() || "0"}
-                        onValueChange={(value) => handleChange(activity.key as keyof SedentaryBehavior, parseInt(value))}
-                        className="flex space-x-4"
-                      >
-                        {timeOptions.map((option) => (
-                          <div key={option.value} className="flex items-center space-x-2">
-                            <RadioGroupItem value={option.value.toString()} id={`${activity.key}-${option.value}`} />
-                            <Label htmlFor={`${activity.key}-${option.value}`} className="text-sm">
-                              {option.label}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <CardContent className="px-0 space-y-4">
+          {otherActivities.map((activity) => (
+            <ActivityInputRow
+              key={activity.key}
+              activityKey={activity.key as keyof SedentaryBehavior}
+              label={activity.label}
+            />
+          ))}
         </CardContent>
       </Card>
 
       {/* Summary Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className={`${calculateTotalScreenTime() >= 6 ? 'bg-red-50 border-red-200' : 'bg-orange-50 border-orange-200'}`}>
+        <Card className={`border ${calculateTotalScreenTime() >= 6 ? 'bg-red-50 border-red-200' : 'bg-orange-50 border-orange-200'}`}>
           <CardHeader>
             <CardTitle className={`text-lg ${calculateTotalScreenTime() >= 6 ? 'text-red-900' : 'text-orange-900'}`}>
               Daily Screen Time (Computed)
@@ -196,7 +146,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Total Screen Time:</span>
-                <span className="font-bold">{timeOptions[Math.min(calculateTotalScreenTime(), 4)]?.label || '> 3 Hr/day'}</span>
+                <span className="font-bold">{timeOptions[Math.min(calculateTotalScreenTime(), timeOptions.length - 1)]?.label || '> 3 Hr/day'}</span>
               </div>
               <div className={`text-xs ${calculateTotalScreenTime() >= 6 ? 'text-red-600' : 'text-orange-600'}`}>
                 {calculateTotalScreenTime() >= 6 ? '⚠️ > 6 hrs is NOT recommended' : 'Recommended: Less than 2 hours for recreational screen time'}
@@ -213,7 +163,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>Daily Total:</span>
-                <span className="font-bold">{timeOptions[Math.min(calculateTotalSedentaryTime(), 4)]?.label || '> 3 Hr/day'}</span>
+                <span className="font-bold">{timeOptions[Math.min(calculateTotalSedentaryTime(), timeOptions.length - 1)]?.label || '> 3 Hr/day'}</span>
               </div>
               <div className="text-xs text-blue-600">
                 Aim: Break sitting time every 60 minutes

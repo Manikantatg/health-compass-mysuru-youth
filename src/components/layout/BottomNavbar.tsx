@@ -1,16 +1,31 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, BarChart, Lightbulb, User, PlusCircle } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, BarChart, Lightbulb, User, PlusCircle, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
 const BottomNavbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { userProfile, logout } = useAuth();
+  const isAdmin = userProfile?.role === 'admin';
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
 
   const navItems = [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
-    { path: '/data', icon: BarChart, label: 'Data' },
-    { path: '/insights', icon: Lightbulb, label: 'Insights' },
+    ...(isAdmin ? [
+      { path: '/data', icon: BarChart, label: 'Data' },
+      { path: '/insights', icon: Lightbulb, label: 'Insights' },
+    ] : []),
     { path: '/profile', icon: User, label: 'Profile' },
   ];
 
@@ -30,6 +45,14 @@ const BottomNavbar = () => {
             <span className="text-xs">{item.label}</span>
           </Link>
         ))}
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="flex flex-col items-center justify-center gap-1 text-sm font-medium text-muted-foreground transition-colors"
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="text-xs">Logout</span>
+        </button>
       </div>
       {/* Floating Action Button for adding new entries */}
       <div className="absolute -top-8 left-1/2 -translate-x-1/2">

@@ -206,6 +206,13 @@ const AuthForm: React.FC = () => {
               </CardContent>
             </Card>
           </motion.div>
+          <div className="flex flex-col items-center justify-center mt-6 space-y-4">
+            <p className="text-sm text-muted-foreground">Provided by</p>
+            <div className="flex flex-row items-center justify-center space-x-8">
+              <img src="https://www.jssstuniv.in/assets/img/logo/jssstulogo.png" alt="JSS Science and Technology University Logo" className="h-16 w-auto object-contain" />
+              <img src="https://jssaherstoragenew.blob.core.windows.net/jssuudstorage/sdimages/jssnewlogo.jpg" alt="JSS Academy of Higher Education & Research Logo" className="h-16 w-auto object-contain" />
+            </div>
+          </div>
         </div>
       </div>
 

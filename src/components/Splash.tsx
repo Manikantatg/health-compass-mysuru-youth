@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const Splash: React.FC = () => {
   const navigate = useNavigate();
-  const [showSplash, setShowSplash] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const hasVisited = sessionStorage.getItem('hasVisitedPediaPredict');
@@ -13,68 +14,116 @@ const Splash: React.FC = () => {
       return;
     }
 
-    setShowSplash(true); // Show splash only if not visited before
-    sessionStorage.setItem('hasVisitedPediaPredict', 'true'); // Mark as visited
+    sessionStorage.setItem('hasVisitedPediaPredict', 'true');
 
     const timer = setTimeout(() => {
       navigate('/dashboard', { replace: true });
-    }, 2000); // 2 seconds
+    }, 4000);
 
-    return () => clearTimeout(timer); // Cleanup timer
+    return () => clearTimeout(timer);
   }, [navigate]);
 
-  if (!showSplash) {
-    return null; // Don't render anything if not showing splash
-  }
+  const handleError = () => {
+    setError('Failed to load animation');
+    setIsLoading(false);
+  };
+
+  const handleLoad = () => {
+    setIsLoading(false);
+  };
+
+  const handleDoutlyClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.open('https://doutly.com', '_blank');
+  };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 flex flex-col items-center justify-center bg-[#FAFAFA] z-[9999] pointer-events-none overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-          className="w-48 h-48 mb-8" // Adjusted size for animation
-        >
-          {/* Simple health-themed SVG. Replace with a more complex one if needed. */}
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <motion.path
-              d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
-              fill="#3F51B5"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-            />
-            <motion.path
-              d="M9 12L11 14L15 10"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 1 }}
-            />
-          </svg>
-        </motion.div>
-
-        <motion.p
-          className="font-poppins text-lg text-[#3F51B5]"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 1.5 }}
-        >
-          PediaPredict AI
-        </motion.p>
-      </motion.div>
-    </AnimatePresence>
+    <div style={styles.container}>
+      {isLoading && (
+        <div style={styles.loadingContainer}>
+          <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
+        </div>
+      )}
+      
+      {error ? (
+        <div style={styles.errorContainer}>
+          <div style={styles.appName}>PediaPredict AI</div>
+        </div>
+      ) : (
+        <>
+          <div style={styles.appName}>PediaPredict AI</div>
+          <DotLottieReact
+            src="https://lottie.host/7a51a990-cd4f-4aca-9dc5-c7ff7f90dd55/SqvTgsCzdi.lottie"
+            autoplay
+            loop={false}
+            style={styles.animation}
+            onError={handleError}
+            onLoad={handleLoad}
+          />
+          <a 
+            href="https://doutly.com" 
+            onClick={handleDoutlyClick}
+            style={styles.doutlyLink}
+          >
+            Powered by Doutly
+          </a>
+        </>
+      )}
+    </div>
   );
 };
+
+const styles = {
+  container: {
+    height: '100vh',
+    width: '100vw',
+    backgroundColor: '#FAFAFA',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    zIndex: 9999,
+  },
+  loadingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: '1rem',
+  },
+  errorContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '1rem',
+  },
+  appName: {
+    fontSize: '2.5rem',
+    fontWeight: 'bold',
+    color: '#3F51B5',
+    fontFamily: 'Poppins, sans-serif',
+    marginBottom: '2rem',
+    textAlign: 'center',
+    textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  },
+  animation: {
+    width: '300px',
+    height: '300px',
+  },
+  doutlyLink: {
+    marginTop: '1rem',
+    fontSize: '14px',
+    color: '#666',
+    textDecoration: 'none',
+    fontFamily: 'Poppins, sans-serif',
+    cursor: 'pointer',
+    transition: 'color 0.2s ease',
+    '&:hover': {
+      color: '#3F51B5',
+    },
+  },
+} as const;
 
 export default Splash; 
