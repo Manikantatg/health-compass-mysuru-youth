@@ -1,7 +1,7 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { EatingHabits } from '../../../types/assessment';
 
 interface Props {
@@ -12,23 +12,34 @@ interface Props {
 const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
   const eatingHabits = data.eatingHabits as EatingHabits;
 
-  const handleChange = (field: keyof EatingHabits, value: number) => {
+  const handleChange = (field: keyof EatingHabits, value: any) => {
     updateData('eatingHabits', { [field]: value });
   };
 
-  const handleNonVegChange = (value: string) => {
-    const numValue = value === 'never' ? 0 : value === 'rarely' ? 1 : 2;
-    updateData('eatingHabits', { nonVegConsumption: numValue });
-  };
+  const scaleLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
 
-  const scaleLabels = ['Never', 'Rarely', 'Sometimes', 'Very often', 'Almost always'];
-  const scaleOptions = [
-    { value: 0, label: 'Never' },
-    { value: 1, label: 'Rarely' },
-    { value: 2, label: 'Sometimes' },
-    { value: 3, label: 'Very often' },
-    { value: 4, label: 'Almost always' }
-  ];
+  const DropdownScale = ({ field, label }: { field: keyof EatingHabits; label: string }) => (
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <Label className="text-sm font-medium text-foreground">{label}</Label>
+      </div>
+      <Select
+        value={eatingHabits[field]?.toString() || "0"}
+        onValueChange={(value) => handleChange(field, parseInt(value))}
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select frequency" />
+        </SelectTrigger>
+        <SelectContent>
+          {scaleLabels.map((label, index) => (
+            <SelectItem key={index} value={index.toString()}>
+              {label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
 
   const foodCategories = [
     {
@@ -53,26 +64,6 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
     }
   ];
 
-  const RadioScale = ({ field, label }: { field: keyof EatingHabits; label: string }) => (
-    <div className="space-y-4">
-      <Label className="text-sm font-medium text-foreground">{label}</Label>
-      <RadioGroup
-        value={eatingHabits[field]?.toString() || '0'}
-        onValueChange={(value) => handleChange(field, parseInt(value))}
-        className="flex flex-wrap gap-4"
-      >
-        {scaleOptions.map((option) => (
-          <div key={option.value} className="flex items-center space-x-2">
-            <RadioGroupItem value={option.value.toString()} id={`${field}-${option.value}`} />
-            <Label htmlFor={`${field}-${option.value}`} className="text-sm cursor-pointer">
-              {option.label}
-            </Label>
-          </div>
-        ))}
-      </RadioGroup>
-    </div>
-  );
-
   return (
     <div className="space-y-6 font-['Inter']">
       <div className="text-center mb-6">
@@ -88,7 +79,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
           </CardHeader>
           <CardContent className="space-y-6">
             {category.items.map((item) => (
-              <RadioScale
+              <DropdownScale
                 key={item.key}
                 field={item.key as keyof EatingHabits}
                 label={item.label}
@@ -98,23 +89,10 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
             {/* Add Non-Vegetarian Foods question after healthy foods */}
             {categoryIndex === 0 && (
               <div className="space-y-4 pt-4 border-t border-gray-200">
-                <div>
-                  <Label className="text-sm font-medium">Non-Vegetarian Foods?</Label>
-                </div>
-                <RadioGroup
-                  value={eatingHabits.nonVegConsumption?.toString() || '0'}
-                  onValueChange={(value) => handleChange('nonVegConsumption', parseInt(value))}
-                  className="flex flex-wrap gap-4"
-                >
-                  {scaleOptions.map((option) => (
-                    <div key={option.value} className="flex items-center space-x-2">
-                      <RadioGroupItem value={option.value.toString()} id={`nonVeg-${option.value}`} />
-                      <Label htmlFor={`nonVeg-${option.value}`} className="text-sm cursor-pointer">
-                        {option.label}
-                      </Label>
-                    </div>
-                  ))}
-                </RadioGroup>
+                <DropdownScale
+                  field="nonVegConsumption"
+                  label="Non-Vegetarian Foods"
+                />
               </div>
             )}
           </CardContent>
@@ -122,7 +100,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
       ))}
 
       {/* Summary Card */}
-      <Card className="bg-blue-50">
+      <Card>
         <CardHeader>
           <CardTitle className="text-lg text-blue-900">Nutrition Summary</CardTitle>
         </CardHeader>

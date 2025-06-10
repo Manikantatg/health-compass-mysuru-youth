@@ -40,8 +40,8 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
   const activities = [
     { key: 'yoga', label: 'Yoga' },
     { key: 'exercise', label: 'Exercise' },
-    { key: 'indoorGames', label: 'Indoor Games (e.g., Table Tennis, Badminton, Skipping Rope)' },
-    { key: 'outdoorGames', label: 'Outdoor Games (e.g., Kho-Kho, Kabaddi, Cricket, Football, Lagori, Badminton)' },
+    { key: 'indoorGames', label: 'Indoor Games (e.g., Table Tennis)' },
+    { key: 'outdoorGames', label: 'Outdoor Games (e.g., Cricket, Football)' },
     { key: 'playAfterSchool', label: 'Playing after school hours/household works' },
     { key: 'cycling', label: 'Bicycle (Self-transport)' },
     { key: 'walking', label: 'Walking' },
@@ -250,59 +250,40 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
           {activities.map((activity) => (
             <ActivityRow key={activity.key} activity={activity} />
           ))}
+        </CardContent>
+      </Card>
 
-          {/* Dance Input */}
-          <div className="grid grid-cols-3 items-center gap-4 py-3 border-b last:border-b-0">
-            <div className="text-sm font-medium col-span-1">Dance</div>
-            <div className="col-span-2">
-              <Input
-                type="number"
-                min="0"
-                max="420"
-                value={physicalActivity.dance || 0}
-                onChange={(e) => handleChange('dance', parseInt(e.target.value) || 0)}
-                className="w-full"
-                placeholder="Minutes per week"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                  }
-                }}
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={4}
-              />
+      {/* PT Participation Summary */}
+      <Card className="bg-blue-50/50 border border-blue-100">
+        <CardHeader>
+          <CardTitle className="text-lg text-blue-900">PT Participation Summary</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium text-blue-900">PT Participation Status:</span>
+              <span className="text-sm text-blue-700">{physicalActivity.participation ? 'Active' : 'Not Participating'}</span>
             </div>
-          </div>
-
-          {/* Swimming Input */}
-          <div className="grid grid-cols-3 items-center gap-4 py-3 border-b last:border-b-0">
-            <div className="text-sm font-medium col-span-1">Swimming</div>
-            <div className="col-span-2">
-              <Input
-                type="number"
-                min="0"
-                max="420"
-                value={physicalActivity.swimming || 0}
-                onChange={(e) => handleChange('swimming', parseInt(e.target.value) || 0)}
-                className="w-full"
-                placeholder="Minutes per week"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                  }
-                }}
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={4}
-              />
-            </div>
-          </div>
-
-          <div className="p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm font-medium text-blue-900">
-              Total Weekly Activity Minutes: <span className="text-lg">{calculateTotalActivityMinutes()}</span>
-            </p>
+            {physicalActivity.participation && (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-blue-900">Classes per Week:</span>
+                  <span className="text-sm text-blue-700">{physicalActivity.ptFrequency} days</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-blue-900">Duration per Class:</span>
+                  <span className="text-sm text-blue-700">{physicalActivity.ptDuration} minutes</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-blue-900">Total Weekly PT Minutes:</span>
+                  <span className="text-sm text-blue-700">{physicalActivity.ptFrequency * physicalActivity.ptDuration} minutes</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-blue-900">Total Weekly Activity Minutes:</span>
+                  <span className="text-sm text-blue-700">{calculateTotalActivityMinutes()} minutes</span>
+                </div>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>

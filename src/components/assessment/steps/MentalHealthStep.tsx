@@ -1,7 +1,7 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MentalHealth } from '../../../types/assessment';
@@ -29,23 +29,24 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
     { value: 4, label: 'Almost Always' }
   ];
 
-  const FrequencyRadio = ({ field, label }: { field: keyof MentalHealth; label: string }) => (
+  const FrequencyDropdown = ({ field, label }: { field: keyof MentalHealth; label: string }) => (
     <div className="space-y-3">
       <Label className="text-sm font-medium">{label}</Label>
-      <RadioGroup
+      <Select
         value={mentalHealth[field]?.toString() || "0"}
         onValueChange={(value) => handleChange(field, parseInt(value) as MentalHealth[keyof MentalHealth])}
-        className="flex flex-wrap gap-4"
       >
-        {frequencyOptions.map((option) => (
-          <div key={option.value} className="flex items-center space-x-2">
-            <RadioGroupItem value={option.value.toString()} id={`${field}-${option.value}`} />
-            <Label htmlFor={`${field}-${option.value}`} className="text-sm cursor-pointer">
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select frequency" />
+        </SelectTrigger>
+        <SelectContent>
+          {frequencyOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value.toString()}>
               {option.label}
-            </Label>
-          </div>
-        ))}
-      </RadioGroup>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 
@@ -63,20 +64,21 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
           <CardDescription>Please select the option that best describes how you view your current weight</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <RadioGroup
+          <Select
             value={mentalHealth.bodyPerception?.toString() || "3"}
             onValueChange={(value) => handleChange('bodyPerception', parseInt(value) as MentalHealth[keyof MentalHealth])}
-            className="space-y-2"
           >
-            {bodyPerceptionLabels.map((label, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <RadioGroupItem value={(index + 1).toString()} id={`weight-${index}`} />
-                <Label htmlFor={`weight-${index}`} className="cursor-pointer">
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select body perception" />
+            </SelectTrigger>
+            <SelectContent>
+              {bodyPerceptionLabels.map((label, index) => (
+                <SelectItem key={index} value={(index + 1).toString()}>
                   {String.fromCharCode(65 + index)}. {label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </CardContent>
       </Card>
 
@@ -87,24 +89,19 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
           <CardDescription>Select your current weight goal</CardDescription>
         </CardHeader>
         <CardContent>
-          <RadioGroup
+          <Select
             value={mentalHealth.weightGoal || "maintain"}
             onValueChange={(value) => handleChange('weightGoal', value as MentalHealth[keyof MentalHealth])}
-            className="space-y-2"
           >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="lose" id="weight-lose" />
-              <Label htmlFor="weight-lose" className="cursor-pointer">A. Lose weight</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="gain" id="weight-gain" />
-              <Label htmlFor="weight-gain" className="cursor-pointer">B. Gain weight</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="maintain" id="weight-maintain" />
-              <Label htmlFor="weight-maintain" className="cursor-pointer">C. Stay the same weight</Label>
-            </div>
-          </RadioGroup>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select weight goal" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="lose">Lose weight</SelectItem>
+              <SelectItem value="gain">Gain weight</SelectItem>
+              <SelectItem value="maintain">Stay the same weight</SelectItem>
+            </SelectContent>
+          </Select>
         </CardContent>
       </Card>
 
@@ -142,14 +139,14 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
           <CardDescription>Please rate how often you experience these situations (Last 15 Days)</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <FrequencyRadio field="difficultyWalking" label="It is hard for me to walk" />
-          <FrequencyRadio field="difficultyRunning" label="It is hard for me to run" />
-          <FrequencyRadio field="difficultySports" label="It is hard for me to do sports activity or exercise" />
-          <FrequencyRadio field="difficultyAttention" label="It is hard to pay attention at school" />
-          <FrequencyRadio field="forgetThings" label="I forget things" />
-          <FrequencyRadio field="troubleKeepingUp" label="I have trouble keeping up with my work or studies" />
-          <FrequencyRadio field="feelLonely" label="I feel lonely and not interested in my work" />
-          <FrequencyRadio field="wantEatLess" label="I feel I want to eat less to lose weight" />
+          <FrequencyDropdown field="difficultyWalking" label="It is hard for me to walk" />
+          <FrequencyDropdown field="difficultyRunning" label="It is hard for me to run" />
+          <FrequencyDropdown field="difficultySports" label="It is hard for me to do sports activity or exercise" />
+          <FrequencyDropdown field="difficultyAttention" label="It is hard to pay attention at school" />
+          <FrequencyDropdown field="forgetThings" label="I forget things" />
+          <FrequencyDropdown field="troubleKeepingUp" label="I have trouble keeping up with my work or studies" />
+          <FrequencyDropdown field="feelLonely" label="I feel lonely and not interested in my work" />
+          <FrequencyDropdown field="wantEatLess" label="I feel I want to eat less to lose weight" />
         </CardContent>
       </Card>
 

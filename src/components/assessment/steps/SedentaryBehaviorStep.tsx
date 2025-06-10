@@ -1,6 +1,6 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SedentaryBehavior } from '../../../types/assessment';
 
@@ -12,16 +12,24 @@ interface Props {
 const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
   const sedentaryBehavior = data.sedentaryBehavior as SedentaryBehavior;
 
-  const handleChange = (field: keyof SedentaryBehavior, value: number) => {
+  const handleChange = (field: keyof SedentaryBehavior, value: any) => {
     updateData('sedentaryBehavior', { [field]: value });
   };
 
   const timeOptions = [
-    { value: 0, label: 'Never' },
-    { value: 1, label: '< 1 Hr/day' },
-    { value: 2, label: '1–2 Hr/day' },
-    { value: 3, label: '2–3 Hr/day' },
-    { value: 4, label: '> 3 Hr/day' }
+    { value: 0, label: '0 Hr/day' },
+    { value: 1, label: '1 Hr/day' },
+    { value: 2, label: '2 Hr/day' },
+    { value: 3, label: '3 Hr/day' },
+    { value: 4, label: '4 Hr/day' },
+    { value: 5, label: '5 Hr/day' },
+    { value: 6, label: '6 Hr/day' },
+    { value: 7, label: '7 Hr/day' },
+    { value: 8, label: '8 Hr/day' },
+    { value: 9, label: '9 Hr/day' },
+    { value: 10, label: '10 Hr/day' },
+    { value: 11, label: '11 Hr/day' },
+    { value: 12, label: '12 Hr/day' }
   ];
 
   const screenTimeActivities = [
@@ -56,23 +64,25 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
     return relevantFields.reduce((sum, field) => sum + (typeof sedentaryBehavior[field] === 'number' ? (sedentaryBehavior[field] as number) : 0), 0);
   };
 
-  const ActivityInputRow = ({ activityKey, label }: { activityKey: keyof SedentaryBehavior; label: string }) => (
+  const ActivityDropdown = ({ activityKey, label }: { activityKey: keyof SedentaryBehavior; label: string }) => (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b last:border-b-0">
       <Label className="text-sm font-medium mb-2 sm:mb-0 sm:w-1/2">{label}</Label>
-      <RadioGroup
+      <Select
         value={sedentaryBehavior[activityKey]?.toString() || "0"}
         onValueChange={(value) => handleChange(activityKey, parseInt(value))}
-        className="flex flex-wrap justify-start sm:justify-end gap-2 sm:gap-4 w-full sm:w-1/2"
+        className="w-full sm:w-1/2"
       >
-        {timeOptions.map((option) => (
-          <div key={option.value} className="flex items-center space-x-1">
-            <RadioGroupItem value={option.value.toString()} id={`${activityKey}-${option.value}`} />
-            <Label htmlFor={`${activityKey}-${option.value}`} className="text-xs sm:text-sm cursor-pointer">
-              {option.label.replace('Hr/day', '')}
-            </Label>
-          </div>
-        ))}
-      </RadioGroup>
+        <SelectTrigger>
+          <SelectValue placeholder="Select hours" />
+        </SelectTrigger>
+        <SelectContent>
+          {timeOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value.toString()}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 
@@ -91,7 +101,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
         </CardHeader>
         <CardContent className="px-0 space-y-4">
           {screenTimeActivities.map((activity) => (
-            <ActivityInputRow
+            <ActivityDropdown
               key={activity.key}
               activityKey={activity.key as keyof SedentaryBehavior}
               label={activity.label}
@@ -108,7 +118,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
         </CardHeader>
         <CardContent className="px-0 space-y-4">
           {readingActivities.map((activity) => (
-            <ActivityInputRow
+            <ActivityDropdown
               key={activity.key}
               activityKey={activity.key as keyof SedentaryBehavior}
               label={activity.label}
@@ -125,7 +135,7 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
         </CardHeader>
         <CardContent className="px-0 space-y-4">
           {otherActivities.map((activity) => (
-            <ActivityInputRow
+            <ActivityDropdown
               key={activity.key}
               activityKey={activity.key as keyof SedentaryBehavior}
               label={activity.label}

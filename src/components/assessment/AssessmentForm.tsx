@@ -147,7 +147,7 @@ const AssessmentForm: React.FC = () => {
     { title: 'Personal Information', component: SocioDemographicStep },
     { title: 'Eating Habits', component: EatingHabitsStep },
     { title: 'Physical Activity', component: PhysicalActivityStep },
-    { title: 'Screen Time & Sedentary Behavior', component: SedentaryBehaviorStep },
+    { title: ' Sedentary Behavior', component: SedentaryBehaviorStep },
     { title: 'Mental Health & Body Image', component: MentalHealthStep },
     { title: 'Sleep Quality', component: SleepQualityStep },
   ];

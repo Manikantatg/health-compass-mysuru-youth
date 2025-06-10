@@ -61,7 +61,7 @@ const BottomNavbar = () => {
           className="h-16 w-16 rounded-full shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 ease-in-out transform hover:scale-105"
           asChild
         >
-          <Link to="/assessment/new">
+          <Link to="/assessment">
             <PlusCircle className="h-8 w-8" />
           </Link>
         </Button>

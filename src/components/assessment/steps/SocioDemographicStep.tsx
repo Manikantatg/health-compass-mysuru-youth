@@ -235,23 +235,23 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
           <div className="space-y-3">
             <Label className="text-sm font-medium">Do you have siblings?</Label>
-            <RadioGroup 
-              value={socioDemographic.hasSiblings} 
+            <Select
+              value={socioDemographic.hasSiblings || "no"}
               onValueChange={(value) => handleChange('hasSiblings', value)}
-              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="siblings-yes" />
-                <Label htmlFor="siblings-yes" className="text-sm">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="siblings-no" />
-                <Label htmlFor="siblings-no" className="text-sm">No</Label>
-              </div>
-            </RadioGroup>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select answer" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yes">Yes</SelectItem>
+                <SelectItem value="no">No</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            {socioDemographic.hasSiblings === 'yes' && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+          {socioDemographic.hasSiblings === 'yes' && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="brothers" className="text-sm font-medium">Number of Brothers</Label>
                   <Input
@@ -274,20 +274,9 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                     className="mt-1"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="birthOrder" className="text-sm font-medium">Birth Order</Label>
-                  <Input
-                    id="birthOrder"
-                    type="number"
-                    min="1"
-                    value={socioDemographic.birthOrder || 1}
-                    onChange={(e) => handleChange('birthOrder', parseInt(e.target.value) || 1)}
-                    className="mt-1"
-                  />
-                </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <div>
             <Label htmlFor="familyType" className="text-sm font-medium">Family Type</Label>
@@ -315,190 +304,150 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           {/* Q1: Does anybody in the family look fat? */}
           <div className="space-y-3">
             <Label className="text-sm font-medium">Does anybody in the family look fat?</Label>
-            <RadioGroup 
-              value={socioDemographic.familyObesity} 
+            <Select
+              value={socioDemographic.familyObesity || "no"}
               onValueChange={(value) => handleChange('familyObesity', value)}
-              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="obesity-yes" />
-                <Label htmlFor="obesity-yes" className="text-sm">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="obesity-no" />
-                <Label htmlFor="obesity-no" className="text-sm">No</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="cannot-tell" id="obesity-cannot-tell" />
-                <Label htmlFor="obesity-cannot-tell" className="text-sm">Cannot tell</Label>
-              </div>
-            </RadioGroup>
-            
-            {socioDemographic.familyObesity === 'yes' && (
-              <div className="ml-4 space-y-2">
-                <Label className="text-sm font-medium">How is he/she related to you?</Label>
-                <RadioGroup 
-                  value={socioDemographic.familyObesityRelation} 
-                  onValueChange={(value) => handleChange('familyObesityRelation', value)}
-                  className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="father" id="obesity-father" />
-                    <Label htmlFor="obesity-father" className="text-sm">Father</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="mother" id="obesity-mother" />
-                    <Label htmlFor="obesity-mother" className="text-sm">Mother</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="both-parents" id="obesity-both" />
-                    <Label htmlFor="obesity-both" className="text-sm">Both Parents</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            )}
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select answer" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yes">Yes</SelectItem>
+                <SelectItem value="no">No</SelectItem>
+                <SelectItem value="cannot-tell">Cannot tell</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          {socioDemographic.familyObesity === 'yes' && (
+            <div className="ml-4 space-y-2">
+              <Label className="text-sm font-medium">How is he/she related to you?</Label>
+              <Select
+                value={socioDemographic.familyObesityRelation || "father"}
+                onValueChange={(value) => handleChange('familyObesityRelation', value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select relation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="father">Father</SelectItem>
+                  <SelectItem value="mother">Mother</SelectItem>
+                  <SelectItem value="both-parents">Both Parents</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Q2: Is anyone in the family suffering from diabetes? */}
           <div className="space-y-3">
             <Label className="text-sm font-medium">Is anyone in the family suffering from diabetes?</Label>
-            <RadioGroup 
-              value={socioDemographic.familyDiabetes} 
+            <Select
+              value={socioDemographic.familyDiabetes || "no"}
               onValueChange={(value) => handleChange('familyDiabetes', value)}
-              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="diabetes-yes" />
-                <Label htmlFor="diabetes-yes" className="text-sm">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="diabetes-no" />
-                <Label htmlFor="diabetes-no" className="text-sm">No</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="dont-know" id="diabetes-dont-know" />
-                <Label htmlFor="diabetes-dont-know" className="text-sm">Don't know</Label>
-              </div>
-            </RadioGroup>
-            
-            {socioDemographic.familyDiabetes === 'yes' && (
-              <div className="ml-4 space-y-2">
-                <Label className="text-sm font-medium">How is he/she related to you?</Label>
-                <RadioGroup 
-                  value={socioDemographic.familyDiabetesRelation} 
-                  onValueChange={(value) => handleChange('familyDiabetesRelation', value)}
-                  className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="father" id="diabetes-father" />
-                    <Label htmlFor="diabetes-father" className="text-sm">Father</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="mother" id="diabetes-mother" />
-                    <Label htmlFor="diabetes-mother" className="text-sm">Mother</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="both-parents" id="diabetes-both" />
-                    <Label htmlFor="diabetes-both" className="text-sm">Both Parents</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            )}
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select answer" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yes">Yes</SelectItem>
+                <SelectItem value="no">No</SelectItem>
+                <SelectItem value="dont-know">Don't know</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          {socioDemographic.familyDiabetes === 'yes' && (
+            <div className="ml-4 space-y-2">
+              <Label className="text-sm font-medium">How is he/she related to you?</Label>
+              <Select
+                value={socioDemographic.familyDiabetesRelation || "father"}
+                onValueChange={(value) => handleChange('familyDiabetesRelation', value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select relation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="father">Father</SelectItem>
+                  <SelectItem value="mother">Mother</SelectItem>
+                  <SelectItem value="both-parents">Both Parents</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Q3: Is anyone in the family suffering from Hypertension? */}
           <div className="space-y-3">
             <Label className="text-sm font-medium">Is anyone in the family suffering from Hypertension or taking medicines for High BP?</Label>
-            <RadioGroup 
-              value={socioDemographic.familyHypertension} 
+            <Select
+              value={socioDemographic.familyHypertension || "no"}
               onValueChange={(value) => handleChange('familyHypertension', value)}
-              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="hypertension-yes" />
-                <Label htmlFor="hypertension-yes" className="text-sm">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="hypertension-no" />
-                <Label htmlFor="hypertension-no" className="text-sm">No</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="dont-know" id="hypertension-dont-know" />
-                <Label htmlFor="hypertension-dont-know" className="text-sm">Don't know</Label>
-              </div>
-            </RadioGroup>
-            
-            {socioDemographic.familyHypertension === 'yes' && (
-              <div className="ml-4 space-y-2">
-                <Label className="text-sm font-medium">How is he/she related to you?</Label>
-                <RadioGroup 
-                  value={socioDemographic.familyHypertensionRelation} 
-                  onValueChange={(value) => handleChange('familyHypertensionRelation', value)}
-                  className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="father" id="hypertension-father" />
-                    <Label htmlFor="hypertension-father" className="text-sm">Father</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="mother" id="hypertension-mother" />
-                    <Label htmlFor="hypertension-mother" className="text-sm">Mother</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="both-parents" id="hypertension-both" />
-                    <Label htmlFor="hypertension-both" className="text-sm">Both Parents</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            )}
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select answer" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yes">Yes</SelectItem>
+                <SelectItem value="no">No</SelectItem>
+                <SelectItem value="dont-know">Don't know</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          {socioDemographic.familyHypertension === 'yes' && (
+            <div className="ml-4 space-y-2">
+              <Label className="text-sm font-medium">How is he/she related to you?</Label>
+              <Select
+                value={socioDemographic.familyHypertensionRelation || "father"}
+                onValueChange={(value) => handleChange('familyHypertensionRelation', value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select relation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="father">Father</SelectItem>
+                  <SelectItem value="mother">Mother</SelectItem>
+                  <SelectItem value="both-parents">Both Parents</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Q4: Is anybody in the family suffering from thyroid dysfunction? */}
           <div className="space-y-3">
             <Label className="text-sm font-medium">Is anybody in the family suffering from thyroid dysfunction?</Label>
-            <RadioGroup 
-              value={socioDemographic.familyThyroid} 
+            <Select
+              value={socioDemographic.familyThyroid || "no"}
               onValueChange={(value) => handleChange('familyThyroid', value)}
-              className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="yes" id="thyroid-yes" />
-                <Label htmlFor="thyroid-yes" className="text-sm">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="no" id="thyroid-no" />
-                <Label htmlFor="thyroid-no" className="text-sm">No</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="dont-know" id="thyroid-dont-know" />
-                <Label htmlFor="dont-know" className="text-sm">Don't know</Label>
-              </div>
-            </RadioGroup>
-            
-            {socioDemographic.familyThyroid === 'yes' && (
-              <div className="ml-4 space-y-2">
-                <Label className="text-sm font-medium">How is he/she related to you?</Label>
-                <RadioGroup 
-                  value={socioDemographic.familyThyroidRelation} 
-                  onValueChange={(value) => handleChange('familyThyroidRelation', value)}
-                  className="flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="father" id="thyroid-father" />
-                    <Label htmlFor="thyroid-father" className="text-sm">Father</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="mother" id="thyroid-mother" />
-                    <Label htmlFor="thyroid-mother" className="text-sm">Mother</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="both-parents" id="thyroid-both" />
-                    <Label htmlFor="thyroid-both" className="text-sm">Both Parents</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            )}
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select answer" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yes">Yes</SelectItem>
+                <SelectItem value="no">No</SelectItem>
+                <SelectItem value="dont-know">Don't know</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          {socioDemographic.familyThyroid === 'yes' && (
+            <div className="ml-4 space-y-2">
+              <Label className="text-sm font-medium">How is he/she related to you?</Label>
+              <Select
+                value={socioDemographic.familyThyroidRelation || "father"}
+                onValueChange={(value) => handleChange('familyThyroidRelation', value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select relation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="father">Father</SelectItem>
+                  <SelectItem value="mother">Mother</SelectItem>
+                  <SelectItem value="both-parents">Both Parents</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

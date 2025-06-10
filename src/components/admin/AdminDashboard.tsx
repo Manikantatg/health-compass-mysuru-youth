@@ -208,7 +208,7 @@ const AdminDashboard: React.FC = () => {
             </Button>
             
             <Button
-              onClick={() => navigate('/admin')}
+              onClick={() => navigate('/data')}
               variant="outline"
               className="btn-secondary flex items-center space-x-2"
             >
