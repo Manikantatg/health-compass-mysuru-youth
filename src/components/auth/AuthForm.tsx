@@ -80,7 +80,7 @@ const AuthForm: React.FC = () => {
             <Card className="border-0 shadow-xl rounded-3xl bg-card">
               <CardHeader className="space-y-2 text-center pb-8">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Heart className="h-8 w-8 text-primary" />
+                  <img src="https://cdn.vectorstock.com/i/1000v/38/32/obese-man-clip-art-worried-expression-vector-48613832.jpg" alt="Obese man icon" className="h-10 w-10 text-primary" />
                 </div>
                 <CardTitle className="text-3xl font-bold text-foreground tracking-tight">
                   {isLogin ? 'Welcome Back' : 'Join PediaPredict'}
