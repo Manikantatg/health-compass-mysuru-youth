@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, BarChart, Lightbulb, User, PlusCircle, LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '../ui/button';
+import { cn } from '../../lib/utils';
+import { useAuth } from '../../contexts/AuthContext';
 
 const BottomNavbar = () => {
   const location = useLocation();
@@ -56,15 +56,14 @@ const BottomNavbar = () => {
       </div>
       {/* Floating Action Button for adding new entries */}
       <div className="absolute -top-8 left-1/2 -translate-x-1/2">
-        <Button 
-          size="icon" 
-          className="h-16 w-16 rounded-full shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 ease-in-out transform hover:scale-105"
-          asChild
-        >
-          <Link to="/assessment">
+        <Link to="/assessment">
+          <Button 
+            size="icon" 
+            className="h-16 w-16 rounded-full shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 ease-in-out transform hover:scale-105"
+          >
             <PlusCircle className="h-8 w-8" />
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
     </nav>
   );

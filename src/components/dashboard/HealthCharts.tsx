@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,12 +13,17 @@ const HealthCharts: React.FC<HealthChartsProps> = ({ assessmentData }) => {
   const { socioDemographic, eatingHabits, physicalActivity, sedentaryBehavior, sleepQuality } = assessmentData;
 
   // Helper function to safely get numeric value from activity data
-  const getActivityMinutes = (value: any): number => {
-    if (typeof value === 'number') return value;
-    if (typeof value === 'object' && value !== null && 'days' in value && 'minutes' in value) {
-      return (Number(value.days) || 0) * (Number(value.minutes) || 0);
+  const getActivityMinutes = (activity: any): number => {
+    if (typeof activity === 'object' && activity?.days && activity?.minutes) {
+      const minutesMap: { [key: string]: number } = {
+        'less-than-1': 30,  // 30 minutes
+        '1-2': 90,         // 1.5 hours
+        '2-3': 150,        // 2.5 hours
+        'more-than-3': 240  // 4 hours
+      };
+      return activity.days * (minutesMap[activity.minutes] || 0);
     }
-    return 0;
+    return Number(activity) || 0;
   };
 
   // Family Health History Data

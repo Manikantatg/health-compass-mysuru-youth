@@ -15,19 +15,44 @@ import Data from "./pages/Data";
 import Insights from "./pages/Insights";
 import Layout from "./components/Layout";
 import Splash from "./components/Splash";
+import AssessmentResult from './pages/AssessmentResult';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, loading, error } = useAuth();
   
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
-          <p className="text-sm text-muted-foreground">Loading PediaPredict...</p>
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold text-destructive">Authentication Error</h1>
+          <p className="text-muted-foreground">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -42,14 +67,31 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Admin Route Component
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { currentUser, userProfile, loading } = useAuth();
+  const { currentUser, userProfile, loading, error } = useAuth();
   
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
-          <p className="text-sm text-muted-foreground">Loading PediaPredict...</p>
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold text-destructive">Authentication Error</h1>
+          <p className="text-muted-foreground">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -64,14 +106,31 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Public Route Component (redirects to dashboard if logged in)
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, loading, error } = useAuth();
   
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
-          <p className="text-sm text-muted-foreground">Loading PediaPredict...</p>
+          <p className="text-sm text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold text-destructive">Authentication Error</h1>
+          <p className="text-muted-foreground">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -108,6 +167,13 @@ const AppRoutes = () => {
       <Route path="/assessment" element={
         <ProtectedRoute>
           <Assessment />
+        </ProtectedRoute>
+      } />
+      
+      {/* Assessment Result - Available to all authenticated users */}
+      <Route path="/assessment/result" element={
+        <ProtectedRoute>
+          <AssessmentResult />
         </ProtectedRoute>
       } />
       

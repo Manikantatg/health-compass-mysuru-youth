@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { Button } from '../ui/button';
+import { Progress } from '../ui/progress';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import SocioDemographicStep from './steps/SocioDemographicStep';
 import EatingHabitsStep from './steps/EatingHabitsStep';
@@ -11,17 +11,22 @@ import MentalHealthStep from './steps/MentalHealthStep';
 import SleepQualityStep from './steps/SleepQualityStep';
 import { AssessmentData } from '../../types/assessment';
 import { useAuth } from '../../contexts/AuthContext';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../config/firebase';
 import { generateObesityPrediction } from '../../config/gemini';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '../ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 
 const AssessmentForm: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingResult, setIsGeneratingResult] = useState(false);
+  const [loadingStep, setLoadingStep] = useState<string>('');
   
   const initialData: Partial<AssessmentData> = {
     socioDemographic: {
@@ -85,13 +90,13 @@ const AssessmentForm: React.FC = () => {
       ncc: false,
       otherActivities: false,
       noActivities: false,
-      yoga: { days: 0, minutes: 0 },
-      exercise: { days: 0, minutes: 0 },
-      indoorGames: { days: 2, minutes: 60 },
-      outdoorGames: { days: 3, minutes: 120 },
-      playAfterSchool: { days: 5, minutes: 60 },
-      cycling: { days: 0, minutes: 0 },
-      walking: { days: 3, minutes: 60 },
+      yoga: { days: 0, minutes: 'less-than-1' },
+      exercise: { days: 0, minutes: 'less-than-1' },
+      indoorGames: { days: 2, minutes: '1-2' },
+      outdoorGames: { days: 3, minutes: '2-3' },
+      playAfterSchool: { days: 5, minutes: '1-2' },
+      cycling: { days: 0, minutes: 'less-than-1' },
+      walking: { days: 3, minutes: '1-2' },
       dance: 0,
       swimming: 0,
     },
@@ -284,43 +289,20 @@ const AssessmentForm: React.FC = () => {
     }
   };
 
-  const submitAssessment = async () => {
-    setLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
     try {
-      // Validate required fields
-      const requiredFields = {
-        'Personal Information': {
-          name: assessmentData.socioDemographic?.name,
-          age: assessmentData.socioDemographic?.age,
-          gender: assessmentData.socioDemographic?.gender,
-          height: assessmentData.socioDemographic?.height,
-          weight: assessmentData.socioDemographic?.weight
-        }
-      };
-
-      const missingFields = Object.entries(requiredFields).reduce((acc, [step, fields]) => {
-        const missing = Object.entries(fields)
-          .filter(([_, value]) => !value)
-          .map(([field]) => field);
-        if (missing.length > 0) {
-          acc[step] = missing;
-        }
-        return acc;
-      }, {} as Record<string, string[]>);
-
-      if (Object.keys(missingFields).length > 0) {
-        const errorMessage = Object.entries(missingFields)
-          .map(([step, fields]) => `${step}: ${fields.join(', ')}`)
-          .join('\n');
-        
-        toast({
-          title: "Missing Required Fields",
-          description: `Please fill in the following required fields:\n${errorMessage}`,
-          variant: "destructive",
-          duration: 5000
-        });
-        return;
-      }
+      // Show generating result state
+      setIsGeneratingResult(true);
+      setLoadingStep('preparing');
+      toast({
+        title: "Preparing Assessment",
+        description: "Loading student data and preparing health records...",
+        duration: 5000
+      });
 
       // Calculate BMI
       const bmi = calculateBMI(
@@ -336,8 +318,17 @@ const AssessmentForm: React.FC = () => {
           variant: "destructive",
           duration: 5000
         });
+        setIsSubmitting(false);
+        setIsGeneratingResult(false);
         return;
       }
+
+      setLoadingStep('analyzing');
+      toast({
+        title: "Analyzing Data",
+        description: "Processing your health information...",
+        duration: 5000
+      });
 
       // Calculate enhanced scores
       const scores = calculateScores(assessmentData);
@@ -362,11 +353,17 @@ const AssessmentForm: React.FC = () => {
         }
       };
 
+      console.log('Generating AI prediction with data:', aiPredictionData);
       const aiPrediction = await generateObesityPrediction(aiPredictionData);
+      console.log('AI prediction received:', aiPrediction);
+
+      if (!aiPrediction || !aiPrediction.riskLevel) {
+        throw new Error('Failed to generate AI prediction');
+      }
 
       // Save comprehensive assessment to Firestore
       const finalAssessment = {
-        userId: currentUser?.uid || '',
+        userId: user?.uid || '',
         ...assessmentData,
         bmi,
         aiPrediction,
@@ -376,91 +373,153 @@ const AssessmentForm: React.FC = () => {
           version: '2.0',
           formStructure: 'enhanced',
           scoringAlgorithm: 'weighted'
+        },
+        timestamp: serverTimestamp()
+      };
+
+      console.log('Saving assessment to Firestore:', finalAssessment);
+      const assessmentRef = await addDoc(collection(db, 'assessments'), finalAssessment);
+      console.log('Assessment saved with ID:', assessmentRef.id);
+
+      setLoadingStep('complete');
+      toast({
+        title: "Assessment Complete",
+        description: "Your health assessment has been successfully generated.",
+        variant: "success",
+        duration: 5000
+      });
+
+      // Prepare data for result page
+      const resultData = {
+        assessmentData: {
+          ...finalAssessment,
+          id: assessmentRef.id,
+          timestamp: new Date().toISOString()
+        },
+        aiPrediction: {
+          riskLevel: aiPrediction.riskLevel,
+          riskPercentage: aiPrediction.riskPercentage,
+          recommendations: aiPrediction.recommendations || [],
+          keyRiskFactors: aiPrediction.keyRiskFactors || [],
+          explanation: aiPrediction.explanation || ''
         }
       };
 
-      await addDoc(collection(db, 'assessments'), finalAssessment);
-
-      toast({
-        title: "Assessment Completed!",
-        description: "Your comprehensive health assessment has been successfully submitted.",
-        duration: 5000
-      });
-
-      navigate('/dashboard');
+      console.log('Navigating to result page with data:', resultData);
+      navigate('/assessment/result', { state: resultData });
     } catch (error) {
-      console.error('Error submitting assessment:', error);
+      console.error('Error in form submission:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred during submission');
       toast({
-        title: "Submission Error",
-        description: error instanceof Error ? error.message : "Failed to submit assessment. Please check your connection and try again.",
+        title: "Submission Failed",
+        description: error instanceof Error ? error.message : 'An error occurred during submission',
         variant: "destructive",
         duration: 5000
       });
-    } finally {
-      setLoading(false);
+      setIsSubmitting(false);
+      setIsGeneratingResult(false);
     }
   };
 
   const CurrentStepComponent = steps[currentStep].component;
   const progress = ((currentStep + 1) / steps.length) * 100;
 
+  if (isGeneratingResult) {
+    return (
+      <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div className="text-center space-y-6 p-6 max-w-sm mx-auto">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto" />
+          <div className="space-y-2">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">Processing Your Assessment</h2>
+            <p className="text-sm sm:text-base text-gray-600">
+              {loadingStep === 'preparing' && "Loading student data and preparing health records..."}
+              {loadingStep === 'analyzing' && "Analyzing your health information and generating insights..."}
+              {loadingStep === 'saving' && "Saving your assessment results..."}
+              {loadingStep === 'complete' && "Assessment complete! Redirecting to results..."}
+            </p>
+          </div>
+          <div className="w-48 sm:w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-blue-600 transition-all duration-500"
+              style={{
+                width: loadingStep === 'preparing' ? '25%' :
+                       loadingStep === 'analyzing' ? '50%' :
+                       loadingStep === 'saving' ? '75%' :
+                       loadingStep === 'complete' ? '100%' : '0%'
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <div className="max-w-4xl mx-auto p-2 sm:p-4 md:p-6">
       <Card className="w-full">
-        <CardHeader className="space-y-4">
-          <CardTitle className="text-2xl md:text-3xl font-bold text-center">
+        <CardHeader className="space-y-3 p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold text-center">
             Health Assessment Form
           </CardTitle>
-          <CardDescription className="text-center text-base md:text-lg">
+          <CardDescription className="text-sm sm:text-base md:text-lg text-center">
             Please fill out all required fields to complete your assessment
           </CardDescription>
           <Progress value={(currentStep / steps.length) * 100} className="h-2" />
-          <div className="text-sm text-muted-foreground text-center">
+          <div className="text-xs sm:text-sm text-muted-foreground text-center">
             Step {currentStep + 1} of {steps.length}
-      </div>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-6 p-4 md:p-6">
-          <CurrentStepComponent
-            data={assessmentData}
-            updateData={updateAssessmentData}
-          />
+        <CardContent className="space-y-4 p-4 sm:p-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <CurrentStepComponent
+              data={assessmentData}
+              updateData={updateAssessmentData}
+            />
 
-      <div className="flex justify-between items-center pt-4">
-        <Button
-          variant="outline"
-          onClick={prevStep}
-          disabled={currentStep === 0}
-          className="flex items-center gap-2"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Previous</span>
-        </Button>
+            <div className="flex justify-between items-center pt-4 gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 0}
+                className="flex items-center gap-2 h-9 sm:h-10"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Previous</span>
+              </Button>
 
-        {currentStep === steps.length - 1 ? (
-          <Button
-                type="submit" 
-                className="w-full"
-            disabled={loading}
-          >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  'Submit Assessment'
-                )}
-          </Button>
-        ) : (
-          <Button
-            onClick={nextStep}
-            className="flex items-center gap-2 bg-[#3F51B5] hover:bg-[#303F9F] text-white"
-          >
-            <span className="hidden sm:inline">Next</span>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
+              {currentStep === steps.length - 1 ? (
+                <Button
+                  type="submit"
+                  className="flex-1 h-9 sm:h-10"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <span className="hidden sm:inline">Submitting...</span>
+                      <span className="sm:hidden">Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="hidden sm:inline">Submit Assessment</span>
+                      <span className="sm:hidden">Submit</span>
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={nextStep}
+                  className="flex items-center gap-2 h-9 sm:h-10"
+                >
+                  <span className="hidden sm:inline">Next</span>
+                  <span className="sm:hidden">Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>

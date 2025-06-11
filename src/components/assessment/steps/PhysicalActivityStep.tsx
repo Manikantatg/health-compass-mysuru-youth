@@ -19,21 +19,13 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('physicalActivity', { [field]: value });
   };
 
-  const handleActivityChange = (activity: string, field: 'days' | 'minutes', value: number) => {
-    const currentActivity = physicalActivity[activity as keyof PhysicalActivity];
-    let activityData: { days: number; minutes: number };
-    
-    if (typeof currentActivity === 'object' && currentActivity !== null && 'days' in currentActivity && 'minutes' in currentActivity) {
-      activityData = { ...currentActivity };
-    } else {
-      activityData = { days: 0, minutes: 0 };
-    }
-    
-    updateData('physicalActivity', { 
-      [activity]: { 
-        ...activityData, 
-        [field]: value 
-      } 
+  const handleActivityChange = (activity: string, field: 'days' | 'minutes', value: any) => {
+    updateData('physicalActivity', {
+      ...physicalActivity,
+      [activity]: {
+        ...physicalActivity[activity as keyof PhysicalActivity],
+        [field]: value
+      }
     });
   };
 
@@ -48,21 +40,21 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
   ];
 
   const ActivityRow = ({ activity }: { activity: { key: string; label: string } }) => {
-    const currentActivity = physicalActivity[activity.key as keyof PhysicalActivity];
-    let activityData: { days: number; minutes: number };
+    const currentActivity = physicalActivity[activity.key as keyof PhysicalActivity] || { days: 0, minutes: '' };
     
-    if (typeof currentActivity === 'object' && currentActivity !== null && 'days' in currentActivity && 'minutes' in currentActivity) {
-      activityData = currentActivity as { days: number; minutes: number };
-    } else {
-      activityData = { days: 0, minutes: 0 };
-    }
+    const timeRanges = [
+      { value: 'less-than-1', label: '< 1 hr/day' },
+      { value: '1-2', label: '1-2 hr/day' },
+      { value: '2-3', label: '2-3 hr/day' },
+      { value: 'more-than-3', label: '> 3 hr/day' }
+    ];
     
     return (
       <div className="grid grid-cols-3 items-center gap-4 py-3 border-b last:border-b-0">
         <div className="text-sm font-medium col-span-1">{activity.label}</div>
         <div className="col-span-1">
           <Select
-            value={activityData.days?.toString() || "0"}
+            value={currentActivity.days?.toString() || "0"}
             onValueChange={(value) => handleActivityChange(activity.key, 'days', parseInt(value))}
           >
             <SelectTrigger className="w-full">
@@ -76,23 +68,21 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
           </Select>
         </div>
         <div className="col-span-1">
-          <Input
-            type="number"
-            min="0"
-            max="420"
-            value={activityData.minutes || 0}
-            onChange={(e) => handleActivityChange(activity.key, 'minutes', parseInt(e.target.value) || 0)}
-            className="w-full"
-            placeholder="0"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-              }
-            }}
-            inputMode="numeric"
-            pattern="[0-9]*"
-            maxLength={4}
-          />
+          <Select
+            value={currentActivity.minutes || 'less-than-1'}
+            onValueChange={(value) => handleActivityChange(activity.key, 'minutes', value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select time range" />
+            </SelectTrigger>
+            <SelectContent>
+              {timeRanges.map((range) => (
+                <SelectItem key={range.value} value={range.value}>
+                  {range.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     );
@@ -273,15 +263,15 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-blue-900">Duration per Class:</span>
                   <span className="text-sm text-blue-700">{physicalActivity.ptDuration} minutes</span>
-          </div>
+                </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-blue-900">Total Weekly PT Minutes:</span>
                   <span className="text-sm text-blue-700">{physicalActivity.ptFrequency * physicalActivity.ptDuration} minutes</span>
-            </div>
+                </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-blue-900">Total Weekly Activity Minutes:</span>
                   <span className="text-sm text-blue-700">{calculateTotalActivityMinutes()} minutes</span>
-          </div>
+                </div>
               </>
             )}
           </div>

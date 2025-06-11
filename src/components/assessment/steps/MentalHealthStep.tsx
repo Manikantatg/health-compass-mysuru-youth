@@ -164,50 +164,42 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               <div className="space-y-4">
                 <Label className="text-base font-medium">1. How do you currently perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
-                <div className="flex items-center space-x-2">
-                  <Label htmlFor="currentBodyImage" className="text-sm">Enter the number:</Label>
-                  <Input
-                    id="currentBodyImage"
-                    type="number"
-                    min="1"
-                    max="9"
-                    value={mentalHealth.currentBodyImageSatisfaction || 1}
-                    onChange={(e) => handleChange('currentBodyImageSatisfaction', parseInt(e.target.value) || 1 as MentalHealth[keyof MentalHealth])}
-                    className="w-20"
-                    placeholder="1-9"
-                    onKeyDown={(e) => {
-                      // Allow continuous number entry
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </div>
+                <Select
+                  value={mentalHealth.currentBodyImageSatisfaction?.toString() || "1"}
+                  onValueChange={(value) => handleChange('currentBodyImageSatisfaction', parseInt(value) as MentalHealth[keyof MentalHealth])}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a number (1-9)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 9 }, (_, i) => i + 1).map((num) => (
+                      <SelectItem key={num} value={num.toString()}>
+                        {num}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Desired Body Image Perception */}
               <div className="space-y-4">
                 <Label className="text-base font-medium">2. How do you desire to perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How would you ideally like to see your body?)</p>
-                <div className="flex items-center space-x-2">
-                  <Label htmlFor="desiredBodyImage" className="text-sm">Enter the number:</Label>
-                  <Input
-                    id="desiredBodyImage"
-                    type="number"
-                    min="1"
-                    max="9"
-                    value={mentalHealth.desiredBodyImageSatisfaction || 1}
-                    onChange={(e) => handleChange('desiredBodyImageSatisfaction', parseInt(e.target.value) || 1 as MentalHealth[keyof MentalHealth])}
-                    className="w-20"
-                    placeholder="1-9"
-                    onKeyDown={(e) => {
-                      // Allow continuous number entry
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </div>
+                <Select
+                  value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "1"}
+                  onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', parseInt(value) as MentalHealth[keyof MentalHealth])}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a number (1-9)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 9 }, (_, i) => i + 1).map((num) => (
+                      <SelectItem key={num} value={num.toString()}>
+                        {num}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

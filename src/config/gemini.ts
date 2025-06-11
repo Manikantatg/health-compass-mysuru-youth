@@ -1,9 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export const API_KEY = "AIzaSyDmKGy_4wQmV6h5dFlcDAhcCq6YdnzsSTs";
+// Initialize the Gemini API
+const genAI = new GoogleGenerativeAI(process.env.REACT_APP_GEMINI_API_KEY || '');
 
-const genAI = new GoogleGenerativeAI(API_KEY);
-
+// Get the generative model
 export const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 export const generateObesityPrediction = async (assessmentData: any) => {
@@ -33,157 +33,64 @@ export const generateObesityPrediction = async (assessmentData: any) => {
       riskPercentage = Math.round(75 + totalScore * 5); // 75-95%
     }
 
-    // Simplified and more focused prompt
-    const prompt = `
-You are a pediatric health specialist. Analyze this child's health assessment and provide a detailed report in ENGLISH language only.
+    // Generate key risk factors based on scores
+    const keyRiskFactors = [];
+    if (bmiScore < 1) keyRiskFactors.push('BMI indicates potential weight concerns');
+    if (dietScore < 1) keyRiskFactors.push('Current eating habits may need improvement');
+    if (activityScore < 1) keyRiskFactors.push('Physical activity levels are below recommended');
+    if (screenScore < 1) keyRiskFactors.push('High screen time may impact health');
+    if (sleepScore < 1) keyRiskFactors.push('Sleep patterns may need attention');
+    if (mentalScore < 1) keyRiskFactors.push('Mental health aspects need support');
 
-STUDENT INFO:
-Name: ${assessmentData.name || 'Student'}
-Age: ${assessmentData.age || 'N/A'} years
-Gender: ${assessmentData.gender || 'N/A'}
-BMI: ${assessmentData.bmi || 0} kg/m²
+    // Generate recommendations based on risk factors
+    const recommendations = [];
+    if (bmiScore < 1) recommendations.push('Work with healthcare provider to establish healthy weight goals');
+    if (dietScore < 1) recommendations.push('Increase consumption of fruits, vegetables, and whole grains');
+    if (activityScore < 1) recommendations.push('Aim for 60 minutes of physical activity daily');
+    if (screenScore < 1) recommendations.push('Limit screen time to 2 hours per day');
+    if (sleepScore < 1) recommendations.push('Maintain consistent sleep schedule of 8-10 hours');
+    if (mentalScore < 1) recommendations.push('Practice stress management techniques');
 
-Obesity ScoreS:
-- BMI Health: ${bmiScore}/2
-- Nutrition: ${dietScore}/2
-- Physical Activity: ${activityScore}/2
-- Screen Time: ${screenScore}/2
-- Sleep Quality: ${sleepScore}/2
-- Mental Health: ${mentalScore}/2
-TOTAL: ${totalScore}/12
+    // Generate explanation
+    const explanation = `Based on the assessment, you have a ${riskLevel.toLowerCase()} risk level (${riskPercentage}%). 
+    This is determined by analyzing your BMI, eating habits, physical activity, screen time, sleep patterns, and mental health. 
+    ${keyRiskFactors.length > 0 ? 'Key areas of concern include: ' + keyRiskFactors.join(', ') : 'Your overall health indicators are positive.'}`;
 
-RISK ASSESSMENT: ${riskLevel} Risk (${riskPercentage}%)
-
-Please provide your analysis in this EXACT format:
-
-## 🔎 Obesity Risk: ${riskLevel.toUpperCase()}
-
-### 📋 Summary:
-[2-3 sentences about Obesity Risk Level status and main concerns]
-
-### 🩺 Medical Analysis:
-- **BMI**: [Brief BMI analysis]
-- **Diet**: [Nutrition assessment]
-- **Physical Activity**: [Activity level review]
-- **Screen Time**: [Sedentary behavior impact]
-- **Sleep Quality**: [Sleep pattern analysis]
-- **Mental Health**: [Emotional wellness review]
-
-### 💡 Recommendations:
-- **Diet**: [Specific nutrition advice]
-- **Activity**: [Physical activity suggestions]
-- **Sleep**: [Sleep improvement tips]
-- **Mental Health**: [Emotional support suggestions]
-
-### 🧾 Score Breakdown:
-BMI: ${bmiScore}/2 | Diet: ${dietScore}/2 | Activity: ${activityScore}/2 | Sleep: ${sleepScore}/2 | Screen: ${screenScore}/2 | Mental: ${mentalScore}/2
-**Total: ${totalScore}/12**
-
-### 🧠 Motivational Message:
-[Encouraging message for the child focusing on positive aspects and motivation]
-
-IMPORTANT: Respond ONLY in English language. Keep each section concise and child-friendly.
-    `;
-
-    console.log("Sending prompt to Gemini API...");
-    
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    
-    console.log("Gemini API response received:", text ? "Success" : "Empty response");
-
-    if (!text || text.trim().length === 0) {
-      throw new Error("Empty response from AI");
-    }
-    
     return {
       riskLevel,
       riskPercentage,
-      recommendations: [
-        "Maintain regular physical activity for at least 60 minutes daily",
-        "Include more fruits and vegetables in daily meals",
-        "Limit recreational screen time to less than 2 hours per day",
-        "Ensure 8-9 hours of quality sleep each night",
-        "Practice positive body image and stress management"
-      ],
-      explanation: text,
-      strengths: getStrengths(assessmentData, { bmiScore, dietScore, activityScore, screenScore, sleepScore, mentalScore }),
-      topRecommendations: getTopRecommendations(riskLevel, { bmiScore, dietScore, activityScore, screenScore, sleepScore, mentalScore })
+      explanation,
+      recommendations,
+      keyRiskFactors,
+      preventiveMeasures: recommendations
     };
   } catch (error) {
-    console.error("Error generating AI prediction:", error);
-    
-    // Calculate fallback values
-    const bmiScore = getBMIScore(assessmentData.bmi || 0);
-    const dietScore = getDietScore(assessmentData.eatingHabits || {});
-    const activityScore = getActivityScore(assessmentData.physicalActivity || {});
-    const screenScore = getScreenScore(assessmentData.sedentaryBehavior || {});
-    const sleepScore = getSleepScore(assessmentData.sleepQuality || {});
-    const mentalScore = getMentalHealthScore(assessmentData.mentalHealth || {});
-    const totalScore = bmiScore + dietScore + activityScore + screenScore + sleepScore + mentalScore;
-    
-    let riskLevel: 'Low' | 'Medium' | 'High';
-    let riskPercentage: number;
-    
-    if (totalScore >= 9) {
-      riskLevel = 'Low';
-      riskPercentage = Math.round(15 + (totalScore - 9) * 5);
-    } else if (totalScore >= 5) {
-      riskLevel = 'Medium';
-      riskPercentage = Math.round(35 + (totalScore - 5) * 10);
-    } else {
-      riskLevel = 'High';
-      riskPercentage = Math.round(75 + totalScore * 5);
-    }
-
-    // Fallback detailed analysis
-    const fallbackAnalysis = `
-## 🔎 Obesity Risk: ${riskLevel.toUpperCase()}
-
-### 📋 Summary:
-Based on comprehensive health assessment, ${assessmentData.name || 'the student'} shows ${riskLevel.toLowerCase()} risk for obesity-related health concerns. The assessment considers BMI of ${assessmentData.bmi || 0} kg/m² along with lifestyle factors including physical activity, nutrition habits, sleep patterns, and mental wellness.
-
-### 🩺 Medical Analysis:
-- **BMI**: ${getBMIAnalysis(assessmentData.bmi || 0)}
-- **Diet**: ${getDietAnalysis(dietScore)}
-- **Physical Activity**: ${getActivityAnalysis(activityScore)}
-- **Screen Time**: ${getScreenAnalysis(screenScore)}
-- **Sleep Quality**: ${getSleepAnalysis(sleepScore)}
-- **Mental Health**: ${getMentalAnalysis(mentalScore)}
-
-### 💡 Recommendations:
-- **Diet**: Include more fruits, vegetables, and whole grains while reducing processed snacks and sugary drinks
-- **Activity**: Aim for at least 60 minutes of physical activity daily through sports, games, or active play
-- **Sleep**: Maintain consistent bedtime routine and aim for 8-9 hours of quality sleep each night
-- **Mental Health**: Practice positive self-image and seek support when feeling stressed or overwhelmed
-
-### 🧾 Score Breakdown:
-BMI: ${bmiScore}/2 | Diet: ${dietScore}/2 | Activity: ${activityScore}/2 | Sleep: ${sleepScore}/2 | Screen: ${screenScore}/2 | Mental: ${mentalScore}/2
-**Total: ${totalScore}/12**
-
-### 🧠 Motivational Message:
-Great job on completing your health assessment! Every step towards better health counts. Remember that small changes can make a big difference. Keep up the excellent work and continue focusing on healthy habits that make you feel strong and happy!
-    `;
-
+    console.error('Error generating prediction:', error);
+    // Return a fallback response
     return {
-      riskLevel,
-      riskPercentage,
+      riskLevel: 'Medium',
+      riskPercentage: 50,
+      explanation: 'Unable to generate detailed analysis. Please consult with a healthcare provider.',
       recommendations: [
-        "Maintain regular physical activity for at least 60 minutes daily",
-        "Include more fruits and vegetables in daily meals",
-        "Limit recreational screen time to less than 2 hours per day",
-        "Ensure 8-9 hours of quality sleep each night",
-        "Practice positive body image and stress management"
+        'Maintain regular physical activity',
+        'Follow a balanced diet',
+        'Get adequate sleep',
+        'Limit screen time',
+        'Practice stress management'
       ],
-      explanation: fallbackAnalysis,
-      strengths: getStrengths(assessmentData, { bmiScore, dietScore, activityScore, screenScore, sleepScore, mentalScore }),
-      topRecommendations: getTopRecommendations(riskLevel, { bmiScore, dietScore, activityScore, screenScore, sleepScore, mentalScore })
+      keyRiskFactors: [
+        'Unable to determine specific risk factors',
+        'Please consult with a healthcare provider for detailed assessment'
+      ],
+      preventiveMeasures: [
+        'Regular health check-ups',
+        'Balanced lifestyle',
+        'Healthy eating habits'
+      ]
     };
   }
 };
 
-// Helper functions for scoring with proper null checks
 function getBMIScore(bmi: number): number {
   if (bmi >= 18.5 && bmi < 25) return 2;
   if (bmi >= 17 && bmi < 30) return 1;
@@ -200,7 +107,13 @@ function getDietScore(eatingHabits: any): number {
 function getActivityScore(physicalActivity: any): number {
   const getActivityMinutes = (activity: any): number => {
     if (typeof activity === 'object' && activity?.days && activity?.minutes) {
-      return activity.days * activity.minutes;
+      const minutesMap: { [key: string]: number } = {
+        'less-than-1': 30,  // 30 minutes
+        '1-2': 90,         // 1.5 hours
+        '2-3': 150,        // 2.5 hours
+        'more-than-3': 240  // 4 hours
+      };
+      return activity.days * (minutesMap[activity.minutes] || 0);
     }
     return Number(activity) || 0;
   };
@@ -222,79 +135,110 @@ function getScreenScore(sedentaryBehavior: any): number {
 }
 
 function getSleepScore(sleepQuality: any): number {
-  const sleepIssues = ((sleepQuality.difficultyFallingAsleep || 0) + (sleepQuality.wakeUpDuringSleep || 0)) / 2;
-  return Math.max(0, 2 - sleepIssues);
+  const sleepDuration = sleepQuality.sleepDuration || 0;
+  const sleepIssues = [
+    sleepQuality.difficultyFallingAsleep,
+    sleepQuality.wakeUpDuringSleep,
+    sleepQuality.wakeUpFromNoise,
+    sleepQuality.difficultyGettingBackToSleep,
+    sleepQuality.sleepinessInClasses
+  ].filter(Boolean).length;
+
+  if (sleepDuration >= 480 && sleepIssues <= 1) return 2; // 8+ hours, minimal issues
+  if (sleepDuration >= 360 && sleepIssues <= 2) return 1; // 6+ hours, some issues
+  return 0;
 }
 
 function getMentalHealthScore(mentalHealth: any): number {
-  const bodyImageScore = Math.max(0, 2 - Math.abs((mentalHealth.bodyPerception || 3) - 3));
-  const bullyingPenalty = mentalHealth.bullyingExperience ? 0.5 : 0;
-  return Math.max(0, bodyImageScore - bullyingPenalty);
+  const issues = [
+    mentalHealth.difficultyWalking,
+    mentalHealth.difficultyRunning,
+    mentalHealth.difficultySports,
+    mentalHealth.difficultyAttention,
+    mentalHealth.forgetThings,
+    mentalHealth.troubleKeepingUp,
+    mentalHealth.feelLonely,
+    mentalHealth.wantEatLess
+  ].filter(score => score >= 2).length;
+
+  if (issues <= 1) return 2;
+  if (issues <= 3) return 1;
+  return 0;
 }
 
-function getStrengths(assessmentData: any, scores: any): string[] {
-  const strengths = [];
-  
-  if (scores.bmiScore >= 1.5) strengths.push("Healthy BMI range");
-  if (scores.dietScore >= 1.5) strengths.push("Good nutritional habits");
-  if (scores.activityScore >= 1.5) strengths.push("Active lifestyle");
-  if (scores.screenScore >= 1.5) strengths.push("Good screen time management");
-  if (scores.sleepScore >= 1.5) strengths.push("Quality sleep patterns");
-  if (scores.mentalScore >= 1.5) strengths.push("Positive mental health");
-  
-  return strengths.length > 0 ? strengths.slice(0, 3) : ["Completed health assessment", "Health-conscious behavior"];
+const generatePrompt = (assessment: HealthAssessment): string => {
+  return `
+You are a pediatric health expert AI analyzing a student's health assessment to predict their risk of developing obesity and related health issues. 
+Analyze the following data and provide a detailed assessment:
+
+Student Information:
+- Age: ${assessment.socioDemographic.age} years
+- Gender: ${assessment.socioDemographic.gender}
+- School: ${assessment.socioDemographic.schoolName}
+- Class: ${assessment.socioDemographic.class}
+
+Current Health Metrics:
+1. BMI: ${assessment.bmi} kg/m²
+2. Physical Activity:
+   - PT Sessions: ${assessment.physicalActivity.ptFrequency} times/week
+   - Sports Participation: ${assessment.physicalActivity.sportsParticipation ? 'Yes' : 'No'}
+   - Regular Exercise: ${assessment.physicalActivity.regularExercise ? 'Yes' : 'No'}
+
+3. Eating Habits (times per week):
+   - Fruits: ${assessment.eatingHabits.fruits}
+   - Vegetables: ${assessment.eatingHabits.vegetables}
+   - Snacks: ${assessment.eatingHabits.snacks}
+   - Sweets: ${assessment.eatingHabits.sweets}
+   - Beverages: ${assessment.eatingHabits.beverages}
+
+4. Sleep Quality (scale 1-5):
+   - Difficulty Falling Asleep: ${assessment.sleepQuality.difficultyFallingAsleep}
+   - Wake Up During Sleep: ${assessment.sleepQuality.wakeUpDuringSleep}
+   - Sleep Duration: ${assessment.sleepQuality.sleepDuration} hours
+
+5. Mental Health:
+   - Body Perception: ${assessment.mentalHealth.bodyPerception}
+   - Stress Level: ${assessment.mentalHealth.stressLevel}
+   - Anxiety Level: ${assessment.mentalHealth.anxietyLevel}
+
+6. Sedentary Behavior (hours per day):
+   - TV Time: ${assessment.sedentaryBehavior.tvTime}
+   - Mobile Time: ${assessment.sedentaryBehavior.mobileTime}
+   - Computer Time: ${assessment.sedentaryBehavior.computerTime}
+
+Based on this data, provide a comprehensive analysis in the following format:
+
+{
+  "riskLevel": "Low/Medium/High",
+  "riskPercentage": number between 0-100,
+  "explanation": "Detailed explanation of the risk factors and their impact",
+  "recommendations": [
+    "Specific actionable recommendation 1",
+    "Specific actionable recommendation 2",
+    "Specific actionable recommendation 3",
+    "Specific actionable recommendation 4",
+    "Specific actionable recommendation 5"
+  ],
+  "keyRiskFactors": [
+    "Primary risk factor 1 with explanation",
+    "Primary risk factor 2 with explanation",
+    "Primary risk factor 3 with explanation"
+  ],
+  "preventiveMeasures": [
+    "Specific preventive measure 1",
+    "Specific preventive measure 2",
+    "Specific preventive measure 3"
+  ]
 }
 
-function getTopRecommendations(riskLevel: string, scores: any): string[] {
-  const recommendations = [];
-  
-  if (scores.activityScore < 1) recommendations.push("Increase daily physical activity to 60 minutes");
-  if (scores.dietScore < 1) recommendations.push("Improve nutrition with more fruits and vegetables");
-  if (scores.screenScore < 1) recommendations.push("Reduce screen time to less than 2 hours daily");
-  if (scores.sleepScore < 1) recommendations.push("Establish better sleep routine and hygiene");
-  
-  // Add general recommendations based on risk level
-  if (riskLevel === 'High') {
-    recommendations.unshift("Consult healthcare provider for comprehensive evaluation");
-  }
-  
-  return recommendations.slice(0, 3);
-}
+Focus on:
+1. Current BMI and its implications
+2. Physical activity patterns and their impact
+3. Dietary habits and their contribution to obesity risk
+4. Sleep patterns and their effect on metabolism
+5. Sedentary behavior and its consequences
+6. Mental health factors that might influence eating habits
 
-// Helper functions for fallback analysis
-function getBMIAnalysis(bmi: number): string {
-  if (bmi < 18.5) return "Below normal weight range - consider nutritional consultation";
-  if (bmi < 25) return "Within healthy weight range for age - excellent!";
-  if (bmi < 30) return "Above normal weight range - focus on healthy lifestyle changes";
-  return "Significantly above normal range - medical consultation recommended";
-}
-
-function getDietAnalysis(score: number): string {
-  if (score >= 1.5) return "Excellent nutritional habits with good balance of healthy foods";
-  if (score >= 1) return "Good nutrition with some room for improvement in food choices";
-  return "Significant improvement needed in dietary habits and food choices";
-}
-
-function getActivityAnalysis(score: number): string {
-  if (score >= 1.5) return "Excellent activity level meeting recommended guidelines";
-  if (score >= 1) return "Moderate activity level - consider increasing frequency";
-  return "Below recommended activity levels - increase physical activity significantly";
-}
-
-function getScreenAnalysis(score: number): string {
-  if (score >= 1.5) return "Excellent screen time management within healthy limits";
-  if (score >= 1) return "Moderate screen time - monitor and consider reducing";
-  return "Excessive screen time - significant reduction needed for better health";
-}
-
-function getSleepAnalysis(score: number): string {
-  if (score >= 1.5) return "Good sleep quality and patterns supporting healthy development";
-  if (score >= 1) return "Fair sleep quality with some issues that could be improved";
-  return "Poor sleep quality requiring attention and improvement strategies";
-}
-
-function getMentalAnalysis(score: number): string {
-  if (score >= 1.5) return "Positive mental health and body image supporting overall wellness";
-  if (score >= 1) return "Generally good mental health with some areas for support";
-  return "Mental health concerns that may benefit from counseling or support";
-}
+Provide specific, actionable recommendations that can help prevent obesity and improve overall health.
+`;
+};

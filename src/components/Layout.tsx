@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Button } from '@/components/ui/button';
+import { Button } from './ui/button';
 import { LogOut, User, Activity, Menu, X, FileText, BarChart3, Plus, Moon, Sun, Database, Lightbulb, ChevronLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -42,34 +42,32 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] font-['Inter']">
-      {/* Top Header - Visible on all screens, simplified for mobile */}
+      {/* Top Header - Improved mobile layout */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 md:h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {showBackButton && (
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => navigate(-1)}
-                className="rounded-full"
+                className="rounded-full h-8 w-8 md:h-10 md:w-10"
               >
-                <ChevronLeft className="h-5 w-5 text-gray-600" />
+                <ChevronLeft className="h-4 w-4 md:h-5 md:w-5 text-gray-600" />
               </Button>
             )}
-            <h1 className="text-xl font-semibold text-[#3F51B5] tracking-tight">
+            <h1 className="text-lg md:text-xl font-semibold text-[#3F51B5] tracking-tight">
               {getHeaderTitle(location.pathname)}
             </h1>
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            {/* Desktop Navigation (Moved from original Navbar) */}
+            {/* Desktop Navigation */}
             <Button
               onClick={() => navigate('/dashboard')}
               className={`relative flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                 location.pathname === '/dashboard' ? 'bg-[#3F51B5] text-white shadow-sm' : 'text-gray-600 hover:text-[#3F51B5] hover:bg-[#D0EBE4]/30'
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
             >
               <Activity className="h-4 w-4 mr-2" />
               Dashboard
@@ -81,8 +79,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   className={`relative flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     location.pathname === '/data' ? 'bg-[#3F51B5] text-white shadow-sm' : 'text-gray-600 hover:text-[#3F51B5] hover:bg-[#D0EBE4]/30'
                   }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   <Database className="h-4 w-4 mr-2" />
                   Data
@@ -92,8 +88,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   className={`relative flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     location.pathname === '/insights' ? 'bg-[#3F51B5] text-white shadow-sm' : 'text-gray-600 hover:text-[#3F51B5] hover:bg-[#D0EBE4]/30'
                   }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   <Lightbulb className="h-4 w-4 mr-2" />
                   Insights
@@ -103,8 +97,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   className={`relative flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     location.pathname === '/profile' ? 'bg-[#3F51B5] text-white shadow-sm' : 'text-gray-600 hover:text-[#3F51B5] hover:bg-[#D0EBE4]/30'
                   }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                 >
                   <User className="h-4 w-4 mr-2" />
                   Profile
@@ -138,12 +130,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="pb-16">
+      {/* Main Content - Improved padding for mobile */}
+      <main className="pb-20 md:pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
+          className="px-4 sm:px-6 lg:px-8 py-4 md:py-6"
         >
           {children}
         </motion.div>

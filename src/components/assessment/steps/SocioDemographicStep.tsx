@@ -30,33 +30,11 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
       }
     }
 
-    // Validate height
-    if (field === 'height') {
-      const height = parseInt(value);
-      if (height < 100 || height > 200) {
-        toast({
-          title: "Invalid Height",
-          description: "Height must be between 100 and 200 cm",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
-    // Validate weight
-    if (field === 'weight') {
-      const weight = parseInt(value);
-      if (weight < 20 || weight > 100) {
-        toast({
-          title: "Invalid Weight",
-          description: "Weight must be between 20 and 100 kg",
-          variant: "destructive"
-        });
-        return;
-      }
-    }
-
-    updateData('socioDemographic', { [field]: value });
+    // Update the data without any predefined constraints
+    updateData('socioDemographic', {
+      ...socioDemographic,
+      [field]: value
+    });
   };
 
   const calculateBMI = () => {
@@ -100,20 +78,21 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="age" className="text-sm font-medium">Age</Label>
-              <Input
-                id="age"
-                type="number"
-                min="6"
-                max="17"
-                value={socioDemographic.age || 0}
-                onChange={(e) => handleChange('age', parseInt(e.target.value) || 0)}
-                className="mt-1"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                  }
-                }}
-              />
+              <Select
+                value={socioDemographic.age?.toString() || "6"}
+                onValueChange={(value) => handleChange('age', parseInt(value))}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select age" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => i + 6).map((age) => (
+                    <SelectItem key={age} value={age.toString()}>
+                      {age} years
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
@@ -161,9 +140,12 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Input
                 id="height"
                 type="number"
-                value={socioDemographic.height || 0}
-                onChange={(e) => handleChange('height', parseInt(e.target.value) || 0)}
-                placeholder="e.g., 150"
+                value={socioDemographic.height || ''}
+                onChange={(e) => {
+                  const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                  handleChange('height', value);
+                }}
+                placeholder="Enter height in cm"
                 className="mt-1"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -178,9 +160,12 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Input
                 id="weight"
                 type="number"
-                value={socioDemographic.weight || 0}
-                onChange={(e) => handleChange('weight', parseInt(e.target.value) || 0)}
-                placeholder="e.g., 45"
+                value={socioDemographic.weight || ''}
+                onChange={(e) => {
+                  const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                  handleChange('weight', value);
+                }}
+                placeholder="Enter weight in kg"
                 className="mt-1"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -195,6 +180,15 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <div className="p-3 bg-blue-50 rounded-lg">
               <p className="text-sm font-medium text-blue-900">
                 Calculated BMI: <span className="text-lg">{calculateBMI()}</span>
+              </p>
+              <p className="text-xs text-blue-700 mt-1">
+                {(() => {
+                  const bmi = calculateBMI();
+                  if (bmi < 18.5) return 'Underweight';
+                  if (bmi < 25) return 'Normal weight';
+                  if (bmi < 30) return 'Overweight';
+                  return 'Obese';
+                })()}
               </p>
             </div>
           )}

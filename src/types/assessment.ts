@@ -70,13 +70,13 @@ export interface PhysicalActivity {
   otherActivitiesDetail?: string;
   noActivities?: boolean; // New "None" option
   // Updated activities with days and minutes structure
-  yoga: { days: number; minutes: number } | number;
-  exercise: { days: number; minutes: number } | number;
-  indoorGames: { days: number; minutes: number } | number;
-  outdoorGames: { days: number; minutes: number } | number;
-  playAfterSchool: { days: number; minutes: number } | number;
-  cycling: { days: number; minutes: number } | number;
-  walking: { days: number; minutes: number } | number;
+  yoga: { days: number; minutes: string } | number;
+  exercise: { days: number; minutes: string } | number;
+  indoorGames: { days: number; minutes: string } | number;
+  outdoorGames: { days: number; minutes: string } | number;
+  playAfterSchool: { days: number; minutes: string } | number;
+  cycling: { days: number; minutes: string } | number;
+  walking: { days: number; minutes: string } | number;
   // Legacy fields for backward compatibility
   dance: number;
   swimming: number;
@@ -148,6 +148,15 @@ export interface HealthScores {
   aiScore?: number;
 }
 
+export interface AIPrediction {
+  riskLevel: 'Low' | 'Medium' | 'High';
+  riskPercentage: number;
+  explanation: string;
+  recommendations: string[];
+  keyRiskFactors: string[];
+  preventiveMeasures: string[];
+}
+
 export interface AssessmentData {
   id?: string;
   userId: string;
@@ -160,13 +169,5 @@ export interface AssessmentData {
   bmi: number;
   completedAt: Date;
   scores?: HealthScores;
-  aiPrediction: {
-    riskLevel: 'Low' | 'Medium' | 'High';
-    riskPercentage: number;
-    recommendations: string[];
-    explanation: string;
-    // AI analysis fields
-    strengths?: string[];
-    topRecommendations?: string[];
-  };
+  aiPrediction: AIPrediction;
 }
