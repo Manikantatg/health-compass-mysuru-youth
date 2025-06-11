@@ -330,7 +330,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <SelectContent>
                 <SelectItem value="1">1st Child</SelectItem>
                 <SelectItem value="2">2nd Child</SelectItem>
-                <SelectItem value="3">>2 Children</SelectItem>
+                <SelectItem value="3">More than 2 Children</SelectItem>
               </SelectContent>
             </Select>
           </div>
