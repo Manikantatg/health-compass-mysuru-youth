@@ -287,9 +287,9 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <SelectItem value="no">No</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+              </div>
 
-          {socioDemographic.hasSiblings === 'yes' && (
+            {socioDemographic.hasSiblings === 'yes' && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -314,9 +314,9 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                     className="mt-1"
                   />
                 </div>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           <div>
             <Label htmlFor="birthOrder" className="text-sm font-medium">Birth Order</Label>
@@ -374,14 +374,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <SelectItem value="cannot-tell">Cannot tell</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          {socioDemographic.familyObesity === 'yes' && (
-            <div className="ml-4 space-y-2">
-              <Label className="text-sm font-medium">How is he/she related to you?</Label>
+              </div>
+            
+            {socioDemographic.familyObesity === 'yes' && (
+              <div className="ml-4 space-y-2">
+                <Label className="text-sm font-medium">How is he/she related to you?</Label>
               <Select
                 value={socioDemographic.familyObesityRelation || "father"}
-                onValueChange={(value) => handleChange('familyObesityRelation', value)}
+                  onValueChange={(value) => handleChange('familyObesityRelation', value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select relation" />
@@ -392,8 +392,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                   <SelectItem value="both-parents">Both Parents</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          )}
+              </div>
+            )}
 
           {/* Q2: Is anyone in the family suffering from diabetes? */}
           <div className="space-y-3">
@@ -411,14 +411,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <SelectItem value="dont-know">Don't know</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          {socioDemographic.familyDiabetes === 'yes' && (
-            <div className="ml-4 space-y-2">
-              <Label className="text-sm font-medium">How is he/she related to you?</Label>
+              </div>
+            
+            {socioDemographic.familyDiabetes === 'yes' && (
+              <div className="ml-4 space-y-2">
+                <Label className="text-sm font-medium">How is he/she related to you?</Label>
               <Select
                 value={socioDemographic.familyDiabetesRelation || "father"}
-                onValueChange={(value) => handleChange('familyDiabetesRelation', value)}
+                  onValueChange={(value) => handleChange('familyDiabetesRelation', value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select relation" />
@@ -429,8 +429,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                   <SelectItem value="both-parents">Both Parents</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          )}
+              </div>
+            )}
 
           {/* Q3: Is anyone in the family suffering from Hypertension? */}
           <div className="space-y-3">
@@ -448,14 +448,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <SelectItem value="dont-know">Don't know</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          {socioDemographic.familyHypertension === 'yes' && (
-            <div className="ml-4 space-y-2">
-              <Label className="text-sm font-medium">How is he/she related to you?</Label>
+              </div>
+            
+            {socioDemographic.familyHypertension === 'yes' && (
+              <div className="ml-4 space-y-2">
+                <Label className="text-sm font-medium">How is he/she related to you?</Label>
               <Select
                 value={socioDemographic.familyHypertensionRelation || "father"}
-                onValueChange={(value) => handleChange('familyHypertensionRelation', value)}
+                  onValueChange={(value) => handleChange('familyHypertensionRelation', value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select relation" />
@@ -466,8 +466,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                   <SelectItem value="both-parents">Both Parents</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          )}
+              </div>
+            )}
 
           {/* Q4: Is anybody in the family suffering from thyroid dysfunction? */}
           <div className="space-y-3">
@@ -485,14 +485,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                 <SelectItem value="dont-know">Don't know</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          {socioDemographic.familyThyroid === 'yes' && (
-            <div className="ml-4 space-y-2">
-              <Label className="text-sm font-medium">How is he/she related to you?</Label>
+              </div>
+            
+            {socioDemographic.familyThyroid === 'yes' && (
+              <div className="ml-4 space-y-2">
+                <Label className="text-sm font-medium">How is he/she related to you?</Label>
               <Select
                 value={socioDemographic.familyThyroidRelation || "father"}
-                onValueChange={(value) => handleChange('familyThyroidRelation', value)}
+                  onValueChange={(value) => handleChange('familyThyroidRelation', value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select relation" />
@@ -503,8 +503,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                   <SelectItem value="both-parents">Both Parents</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          )}
+              </div>
+            )}
         </CardContent>
       </Card>
     </div>

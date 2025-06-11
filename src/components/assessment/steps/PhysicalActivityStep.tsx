@@ -273,15 +273,15 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-blue-900">Duration per Class:</span>
                   <span className="text-sm text-blue-700">{physicalActivity.ptDuration} minutes</span>
-                </div>
+          </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-blue-900">Total Weekly PT Minutes:</span>
                   <span className="text-sm text-blue-700">{physicalActivity.ptFrequency * physicalActivity.ptDuration} minutes</span>
-                </div>
+            </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-medium text-blue-900">Total Weekly Activity Minutes:</span>
                   <span className="text-sm text-blue-700">{calculateTotalActivityMinutes()} minutes</span>
-                </div>
+          </div>
               </>
             )}
           </div>

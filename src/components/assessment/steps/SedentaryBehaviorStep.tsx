@@ -68,11 +68,11 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
           <SelectValue placeholder="Select hours" />
         </SelectTrigger>
         <SelectContent>
-          {timeOptions.map((option) => (
+        {timeOptions.map((option) => (
             <SelectItem key={option.value} value={option.value.toString()}>
               {option.label}
             </SelectItem>
-          ))}
+        ))}
         </SelectContent>
       </Select>
     </div>

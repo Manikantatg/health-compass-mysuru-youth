@@ -53,11 +53,11 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
           <SelectValue placeholder="Select frequency" />
         </SelectTrigger>
         <SelectContent>
-          {frequencyOptions.map((option) => (
+        {frequencyOptions.map((option) => (
             <SelectItem key={option.value} value={option.value.toString()}>
               {option.label}
             </SelectItem>
-          ))}
+        ))}
         </SelectContent>
       </Select>
     </div>
@@ -126,59 +126,113 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Q3: Sleep Environment</CardTitle>
-          <CardDescription>Tell us about your sleep environment</CardDescription>
+          <CardTitle className="text-lg">Sleep Quality Summary</CardTitle>
+          <CardDescription>Your sleep quality assessment results</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Do you sleep in a quiet environment?</Label>
-            <Select
-              value={sleepQuality.quietEnvironment || "yes"}
-              onValueChange={(value) => handleChange('quietEnvironment', value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select answer" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="sometimes">Sometimes</SelectItem>
-              </SelectContent>
-            </Select>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <h4 className="font-medium text-blue-900 text-sm">Sleep Duration</h4>
+              <p className="text-xl font-bold text-blue-700 mt-1">{calculateSleepDuration()} hours</p>
+              <p className="text-xs text-blue-600 mt-1">
+                {calculateSleepDuration() >= 8 && calculateSleepDuration() <= 10 
+                  ? "✅ Optimal" 
+                  : calculateSleepDuration() >= 7 && calculateSleepDuration() <= 11 
+                  ? "⚠️ Adequate" 
+                  : "❌ Insufficient"}
+              </p>
+            </div>
+            <div className="p-3 bg-indigo-50 rounded-lg">
+              <h4 className="font-medium text-indigo-900 text-sm">Sleep Schedule</h4>
+              <div className="text-xs text-indigo-700 mt-1">
+                <div className="flex justify-between">
+                  <span>Bedtime:</span>
+                  <span className="font-medium">{sleepQuality.bedtime || 'Not set'}</span>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span>Wake-up:</span>
+                  <span className="font-medium">{sleepQuality.wakeupTime || 'Not set'}</span>
+                </div>
+              </div>
+            </div>
+            <div className="p-3 bg-green-50 rounded-lg">
+              <h4 className="font-medium text-green-900 text-sm">Sleep Issues</h4>
+              <div className="text-xs text-green-700 mt-1">
+                <div className="flex justify-between">
+                  <span>Difficulty Falling Asleep:</span>
+                  <span className="font-medium">
+                    {sleepQuality.difficultyFallingAsleep > 2 ? '⚠️ High' : '✅ Low'}
+                  </span>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span>Night Awakenings:</span>
+                  <span className="font-medium">
+                    {sleepQuality.wakeUpDuringSleep > 2 ? '⚠️ High' : '✅ Low'}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Do you sleep in a dark environment?</Label>
-            <Select
-              value={sleepQuality.darkEnvironment || "yes"}
-              onValueChange={(value) => handleChange('darkEnvironment', value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select answer" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="sometimes">Sometimes</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Do you use electronic devices before bed?</Label>
-            <Select
-              value={sleepQuality.useElectronics || "yes"}
-              onValueChange={(value) => handleChange('useElectronics', value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select answer" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="sometimes">Sometimes</SelectItem>
-              </SelectContent>
-            </Select>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-3 bg-purple-50 rounded-lg">
+              <h4 className="font-medium text-purple-900 text-sm">Quick Tips</h4>
+              <ul className="mt-2 space-y-1">
+                {calculateSleepDuration() < 8 && (
+                  <li className="text-xs text-purple-700 flex items-start">
+                    <span className="mr-1">•</span>
+                    Aim for 8-10 hours of sleep
+                  </li>
+                )}
+                {sleepQuality.difficultyFallingAsleep > 2 && (
+                  <li className="text-xs text-purple-700 flex items-start">
+                    <span className="mr-1">•</span>
+                    Avoid screens 1 hour before bed
+                  </li>
+                )}
+                {sleepQuality.wakeUpDuringSleep > 2 && (
+                  <li className="text-xs text-purple-700 flex items-start">
+                    <span className="mr-1">•</span>
+                    Keep bedroom cool and dark
+                  </li>
+                )}
+                {sleepQuality.sleepinessInClasses > 2 && (
+                  <li className="text-xs text-purple-700 flex items-start">
+                    <span className="mr-1">•</span>
+                    Maintain consistent sleep schedule
+                  </li>
+                )}
+              </ul>
+            </div>
+            <div className="p-3 bg-amber-50 rounded-lg">
+              <h4 className="font-medium text-amber-900 text-sm">Sleep Impact</h4>
+              <ul className="mt-2 space-y-1">
+                {sleepQuality.sleepHeadache > 2 && (
+                  <li className="text-xs text-amber-700 flex items-start">
+                    <span className="mr-1">•</span>
+                    Headaches may indicate poor sleep
+                  </li>
+                )}
+                {sleepQuality.sleepIrritation > 2 && (
+                  <li className="text-xs text-amber-700 flex items-start">
+                    <span className="mr-1">•</span>
+                    Poor sleep affects mood
+                  </li>
+                )}
+                {sleepQuality.sleepLossOfInterest > 2 && (
+                  <li className="text-xs text-amber-700 flex items-start">
+                    <span className="mr-1">•</span>
+                    Sleep affects focus and interest
+                  </li>
+                )}
+                {sleepQuality.sleepForgetfulness > 2 && (
+                  <li className="text-xs text-amber-700 flex items-start">
+                    <span className="mr-1">•</span>
+                    Memory affected by sleep quality
+                  </li>
+                )}
+              </ul>
+            </div>
           </div>
         </CardContent>
       </Card>

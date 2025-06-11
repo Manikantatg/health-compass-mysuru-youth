@@ -417,7 +417,7 @@ const AssessmentForm: React.FC = () => {
           <Progress value={(currentStep / steps.length) * 100} className="h-2" />
           <div className="text-sm text-muted-foreground text-center">
             Step {currentStep + 1} of {steps.length}
-          </div>
+      </div>
         </CardHeader>
         <CardContent className="space-y-6 p-4 md:p-6">
           <CurrentStepComponent
@@ -425,23 +425,23 @@ const AssessmentForm: React.FC = () => {
             updateData={updateAssessmentData}
           />
 
-          <div className="flex justify-between items-center pt-4">
-            <Button
-              variant="outline"
-              onClick={prevStep}
-              disabled={currentStep === 0}
-              className="flex items-center gap-2"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Previous</span>
-            </Button>
+      <div className="flex justify-between items-center pt-4">
+        <Button
+          variant="outline"
+          onClick={prevStep}
+          disabled={currentStep === 0}
+          className="flex items-center gap-2"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          <span className="hidden sm:inline">Previous</span>
+        </Button>
 
-            {currentStep === steps.length - 1 ? (
-              <Button 
+        {currentStep === steps.length - 1 ? (
+          <Button
                 type="submit" 
                 className="w-full"
-                disabled={loading}
-              >
+            disabled={loading}
+          >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -450,17 +450,17 @@ const AssessmentForm: React.FC = () => {
                 ) : (
                   'Submit Assessment'
                 )}
-              </Button>
-            ) : (
-              <Button
-                onClick={nextStep}
-                className="flex items-center gap-2 bg-[#3F51B5] hover:bg-[#303F9F] text-white"
-              >
-                <span className="hidden sm:inline">Next</span>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
+          </Button>
+        ) : (
+          <Button
+            onClick={nextStep}
+            className="flex items-center gap-2 bg-[#3F51B5] hover:bg-[#303F9F] text-white"
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
         </CardContent>
       </Card>
     </div>
