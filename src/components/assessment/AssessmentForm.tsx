@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import SocioDemographicStep from './steps/SocioDemographicStep';
 import EatingHabitsStep from './steps/EatingHabitsStep';
 import PhysicalActivityStep from './steps/PhysicalActivityStep';
@@ -405,65 +405,64 @@ const AssessmentForm: React.FC = () => {
   const progress = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <div className="space-y-6">
-      {/* Progress Bar */}
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <span className="text-sm font-medium text-gray-700">
-            Step {currentStep + 1} of {steps.length}
-          </span>
-          <span className="text-sm font-medium text-gray-700">
-            {Math.round(progress)}%
-          </span>
-        </div>
-        <Progress value={progress} className="h-2" />
-      </div>
-
-      {/* Current Step */}
-      <Card className="border-0 shadow-none md:shadow-sm">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xl md:text-2xl font-semibold text-gray-900">
-            {steps[currentStep].title}
+    <div className="max-w-4xl mx-auto p-4 md:p-6">
+      <Card className="w-full">
+        <CardHeader className="space-y-4">
+          <CardTitle className="text-2xl md:text-3xl font-bold text-center">
+            Health Assessment Form
           </CardTitle>
+          <CardDescription className="text-center text-base md:text-lg">
+            Please fill out all required fields to complete your assessment
+          </CardDescription>
+          <Progress value={(currentStep / steps.length) * 100} className="h-2" />
+          <div className="text-sm text-muted-foreground text-center">
+            Step {currentStep + 1} of {steps.length}
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6 p-4 md:p-6">
           <CurrentStepComponent
             data={assessmentData}
             updateData={updateAssessmentData}
           />
+
+          <div className="flex justify-between items-center pt-4">
+            <Button
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentStep === 0}
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Previous</span>
+            </Button>
+
+            {currentStep === steps.length - 1 ? (
+              <Button 
+                type="submit" 
+                className="w-full"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Submitting...
+                  </>
+                ) : (
+                  'Submit Assessment'
+                )}
+              </Button>
+            ) : (
+              <Button
+                onClick={nextStep}
+                className="flex items-center gap-2 bg-[#3F51B5] hover:bg-[#303F9F] text-white"
+              >
+                <span className="hidden sm:inline">Next</span>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-between items-center pt-4">
-        <Button
-          variant="outline"
-          onClick={prevStep}
-          disabled={currentStep === 0}
-          className="flex items-center gap-2"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Previous</span>
-        </Button>
-
-        {currentStep === steps.length - 1 ? (
-          <Button
-            onClick={submitAssessment}
-            disabled={loading}
-            className="flex items-center gap-2 bg-[#3F51B5] hover:bg-[#303F9F] text-white"
-          >
-            {loading ? 'Submitting...' : 'Submit Assessment'}
-          </Button>
-        ) : (
-          <Button
-            onClick={nextStep}
-            className="flex items-center gap-2 bg-[#3F51B5] hover:bg-[#303F9F] text-white"
-          >
-            <span className="hidden sm:inline">Next</span>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
     </div>
   );
 };

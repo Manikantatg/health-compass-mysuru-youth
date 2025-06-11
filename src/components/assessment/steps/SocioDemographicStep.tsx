@@ -6,6 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { SocioDemographic } from '../../../types/assessment';
+import { toast } from '@/components/ui/use-toast';
 
 interface Props {
   data: any;
@@ -16,6 +17,45 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
   const socioDemographic = data.socioDemographic as SocioDemographic;
 
   const handleChange = (field: keyof SocioDemographic, value: any) => {
+    // Validate age
+    if (field === 'age') {
+      const age = parseInt(value);
+      if (age < 6 || age > 17) {
+        toast({
+          title: "Invalid Age",
+          description: "Age must be between 6 and 17 years",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
+    // Validate height
+    if (field === 'height') {
+      const height = parseInt(value);
+      if (height < 100 || height > 200) {
+        toast({
+          title: "Invalid Height",
+          description: "Height must be between 100 and 200 cm",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
+    // Validate weight
+    if (field === 'weight') {
+      const weight = parseInt(value);
+      if (weight < 20 || weight > 100) {
+        toast({
+          title: "Invalid Weight",
+          description: "Weight must be between 20 and 100 kg",
+          variant: "destructive"
+        });
+        return;
+      }
+    }
+
     updateData('socioDemographic', { [field]: value });
   };
 

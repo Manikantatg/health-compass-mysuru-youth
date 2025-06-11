@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,8 +19,16 @@ const PhoneVerification: React.FC<PhoneVerificationProps> = ({ onVerified }) => 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate phone number
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      setError('Please enter a valid 10-digit Indian phone number starting with 6-9');
+      return;
+    }
+
     setLoading(true);
-    setError('');
+    setError(null);
 
     try {
       // Format phone number (remove spaces, dashes, etc.)
