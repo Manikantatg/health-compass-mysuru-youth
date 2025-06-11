@@ -1,216 +1,172 @@
-# Health Compass Mysuru Youth - College Project Report
+# PediaPredict - AI-Powered Health Assessment System
 
-## Project Overview
-Health Compass Mysuru Youth is a comprehensive health assessment and management platform designed to help students and administrators track, analyze, and improve youth health metrics in Mysuru. The platform leverages modern web technologies and artificial intelligence to provide personalized health insights and recommendations.
+PediaPredict is an advanced health assessment and monitoring system designed for educational institutions. It leverages artificial intelligence to provide comprehensive health insights and recommendations for students.
 
-## Tech Stack
+## 🌟 Key Features
 
-### Frontend
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: 
-  - Tailwind CSS
-  - Shadcn UI Components
-  - Radix UI Primitives
-- **State Management**: 
-  - React Query for server state
-  - React Context for global state
-- **Routing**: React Router v6
-- **Form Handling**: React Hook Form with Zod validation
-- **Charts & Visualization**: Recharts
+### 1. AI-Powered Health Assessment
+- Comprehensive health evaluation using advanced AI algorithms
+- Real-time risk assessment and scoring
+- Personalized health recommendations
+- Detailed health reports with actionable insights
+
+### 2. Student Health Monitoring
+- BMI tracking and analysis
+- Physical activity assessment
+- Diet quality evaluation
+- Sleep pattern analysis
+- Risk level categorization (High/Medium/Low)
+
+### 3. Professional Reporting
+- Detailed PDF health reports
+- Color-coded risk indicators
+- Comprehensive health metrics
+- AI-generated recommendations
+- Professional medical-style formatting
+
+### 4. Security Features
+- Disabled right-click functionality
+- Protected against common inspection methods
+- Secure data handling
+- Professional authentication system
+
+### 5. User Interface
+- Modern, responsive design
+- Mobile-friendly interface
+- Intuitive navigation
+- Real-time updates
+- Interactive health metrics
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn
+- Git
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/pedia-predict.git
+cd pedia-predict
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
+Edit `.env.local` with your configuration.
+
+4. Run the development server:
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🛠️ Technology Stack
+
+- **Frontend**: Next.js 14, React, TypeScript
+- **Styling**: Tailwind CSS, Shadcn UI
 - **PDF Generation**: jsPDF
-
-### Backend & Services
-- **Authentication**: Firebase Authentication
-- **Database**: Firebase Firestore
-- **AI Integration**: Google Generative AI (Gemini)
+- **AI Integration**: Custom AI models
+- **Authentication**: NextAuth.js
+- **Database**: MongoDB
 - **Deployment**: Vercel
 
-## Features
+## 📊 Health Assessment Features
 
-### Student Features
-1. **User Authentication**
-   - Secure login/signup
-   - Profile management
-   - Password reset functionality
+### BMI Analysis
+- Real-time BMI calculation
+- Weight category classification
+- Trend tracking
+- Health risk assessment
 
-2. **Health Assessment**
-   - Comprehensive health questionnaire
-   - Real-time assessment feedback
-   - Historical assessment tracking
-   - Personalized health recommendations
+### Physical Activity Tracking
+- PT session monitoring
+- Activity level assessment
+- Sports participation tracking
+- Exercise frequency analysis
 
-3. **Dashboard**
-   - Health metrics visualization
-   - Progress tracking
-   - Recent activity feed
-   - Quick access to assessments
+### Diet Assessment
+- Fruit and vegetable intake tracking
+- Diet quality evaluation
+- Nutritional recommendations
+- Eating habit analysis
 
-4. **Data Visualization**
-   - Interactive health charts
-   - Trend analysis
-   - Comparative statistics
-   - Export functionality
+### Sleep Quality
+- Sleep pattern monitoring
+- Quality assessment
+- Issue identification
+- Improvement recommendations
 
-### Admin Features
-1. **User Management**
-   - Student profile management
-   - Role assignment
-   - Access control
+## 🔒 Security Measures
 
-2. **Analytics Dashboard**
-   - Obesity Risk Level metrics
-   - Student performance tracking
-   - Statistical analysis
-   - Data export capabilities
+- Disabled right-click functionality
+- Protected against DevTools inspection
+- Secure API endpoints
+- Data encryption
+- Regular security updates
 
-3. **Assessment Management**
-   - Create/edit assessments
-   - View assessment results
-   - Generate reports
-   - Track completion rates
+## 📱 Mobile Responsiveness
 
-4. **Insights Generation**
-   - AI-powered health insights
-   - Trend analysis
-   - Predictive analytics
-   - Custom report generation
+- Optimized for all screen sizes
+- Touch-friendly interface
+- Responsive design patterns
+- Mobile-first approach
 
-## AI Integration
+## 🎨 UI/UX Features
 
-### Google Generative AI (Gemini) Implementation
-The platform uses Google's Generative AI to provide intelligent health insights and recommendations. The AI integration is implemented through the following components:
+- Clean, modern interface
+- Intuitive navigation
+- Color-coded risk indicators
+- Interactive elements
+- Smooth animations
+- Professional typography
 
-1. **Health Assessment Analysis**
-   ```typescript
-   // AI prompt for health assessment analysis
-   const assessmentPrompt = `
-   Analyze the following health assessment data and provide:
-   1. Obesity Risk Level status
-   2. Key areas of concern
-   3. Personalized recommendations
-   4. Preventive measures
-   `;
-   ```
+## 📄 PDF Report Features
 
-2. **Insight Generation**
-   ```typescript
-   // AI prompt for generating health insights
-   const insightPrompt = `
-   Based on the user's health data and history:
-   1. Identify patterns and trends
-   2. Suggest lifestyle improvements
-   3. Provide evidence-based recommendations
-   4. Highlight potential health risks
-   `;
-   ```
+- Professional medical report format
+- Comprehensive health metrics
+- Color-coded risk indicators
+- AI-generated recommendations
+- Student information section
+- Assessment details
+- Medical-style formatting
 
-## API Integration
+## 🤝 Contributing
 
-### Firebase APIs
-1. **Authentication API**
-   - User registration
-   - Login/logout
-   - Password reset
-   - Session management
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-2. **Firestore API**
-   - User data storage
-   - Assessment results
-   - Health metrics
-   - Analytics data
+## 📝 License
 
-### Google Generative AI API
-- Health assessment analysis
-- Personalized recommendations
-- Trend analysis
-- Insight generation
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Workflow
+## 🙏 Acknowledgments
 
-### Student Workflow
-1. **Registration & Login**
-   - Create account
-   - Complete profile
-   - Set health preferences
+- Developed by Doutly.com
+- Powered by advanced AI technology
+- Built with modern web technologies
+- Designed for educational institutions
 
-2. **Health Assessment**
-   - Complete initial assessment
-   - Receive AI-generated feedback
-   - View personalized recommendations
+## 📞 Support
 
-3. **Regular Usage**
-   - Track health metrics
-   - Update assessments
-   - View progress
-   - Export reports
+For support, email support@pediapredict.com or join our Slack channel.
 
-### Admin Workflow
-1. **User Management**
-   - Monitor student registrations
-   - Manage user roles
-   - Handle support requests
+---
 
-2. **Assessment Management**
-   - Review assessment results
-   - Generate reports
-   - Track completion rates
-
-3. **Analytics & Insights**
-   - View overall metrics
-   - Analyze trends
-   - Generate insights
-   - Export data
-
-## Security Features
-1. **Authentication**
-   - Secure login system
-   - Role-based access control
-   - Session management
-
-2. **Data Protection**
-   - Encrypted data storage
-   - Secure API communication
-   - Privacy compliance
-
-3. **Access Control**
-   - Admin-only routes
-   - Protected API endpoints
-   - User permission management
-
-## Future Enhancements
-1. **Mobile Application**
-   - Native mobile app development
-   - Offline functionality
-   - Push notifications
-
-2. **Advanced AI Features**
-   - Predictive health analytics
-   - Personalized health plans
-   - Real-time health monitoring
-
-3. **Integration Capabilities**
-   - Health device integration
-   - Third-party health apps
-   - Medical record systems
-
-## Installation & Setup
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Set up environment variables
-4. Start development server:
-   ```bash
-   npm run dev
-   ```
-
-## Contributing
-Please read our contributing guidelines before submitting pull requests.
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-For any queries or support, please contact the development team.
+Built with ❤️ by Doutly.com
