@@ -112,15 +112,15 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
           <CardDescription>How often do you experience these sleep-related issues?</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <FrequencyDropdown field="difficultyFallingAsleep" label="Have difficulty falling asleep" />
-          <FrequencyDropdown field="difficultyStayingAsleep" label="Have difficulty staying asleep" />
-          <FrequencyDropdown field="wakeUpEarly" label="Wake up too early and cannot fall back asleep" />
-          <FrequencyDropdown field="feelTired" label="Feel tired or sleepy during the day" />
-          <FrequencyDropdown field="snore" label="Snore loudly" />
-          <FrequencyDropdown field="stopBreathing" label="Stop breathing or gasp for air during sleep" />
-          <FrequencyDropdown field="legsCramp" label="Have legs that cramp or jerk during sleep" />
-          <FrequencyDropdown field="feelDisoriented" label="Feel disoriented or confused when waking up" />
-          <FrequencyDropdown field="useSleepingPills" label="Take sleeping pills or other medication to help sleep" />
+          <FrequencyDropdown field="difficultyFallingAsleep" label="I have difficulty falling asleep (I cannot get sleep within 30 minutes)" />
+          <FrequencyDropdown field="wakeUpDuringSleep" label="I wake up while sleeping (bad dreams etc.,)" />
+          <FrequencyDropdown field="wakeUpFromNoise" label="I wake up easily from the noise" />
+          <FrequencyDropdown field="difficultyGettingBackToSleep" label="I have difficulty getting back to sleep once I wake up in the middle of the night" />
+          <FrequencyDropdown field="sleepinessInClasses" label="Sleepiness interferes with my classes" />
+          <FrequencyDropdown field="sleepHeadache" label="Poor sleep gives me a headache" />
+          <FrequencyDropdown field="sleepIrritation" label="Poor sleep makes me irritated" />
+          <FrequencyDropdown field="sleepLossOfInterest" label="Poor sleep makes me lose interest in work/studies" />
+          <FrequencyDropdown field="sleepForgetfulness" label="Poor sleep makes me forget things more easily" />
         </CardContent>
       </Card>
 

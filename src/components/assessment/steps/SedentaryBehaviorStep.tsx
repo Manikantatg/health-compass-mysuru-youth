@@ -17,19 +17,11 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
   };
 
   const timeOptions = [
-    { value: 0, label: '0 Hr/day' },
-    { value: 1, label: '1 Hr/day' },
-    { value: 2, label: '2 Hr/day' },
-    { value: 3, label: '3 Hr/day' },
-    { value: 4, label: '4 Hr/day' },
-    { value: 5, label: '5 Hr/day' },
-    { value: 6, label: '6 Hr/day' },
-    { value: 7, label: '7 Hr/day' },
-    { value: 8, label: '8 Hr/day' },
-    { value: 9, label: '9 Hr/day' },
-    { value: 10, label: '10 Hr/day' },
-    { value: 11, label: '11 Hr/day' },
-    { value: 12, label: '12 Hr/day' }
+    { value: 0, label: 'Never' },
+    { value: 1, label: '< 1 hr/day' },
+    { value: 2, label: '1-2 hr/day' },
+    { value: 3, label: '2-3 hr/day' },
+    { value: 4, label: '> 3 hr/day' }
   ];
 
   const screenTimeActivities = [

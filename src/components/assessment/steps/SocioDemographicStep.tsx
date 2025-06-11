@@ -279,6 +279,23 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           )}
 
           <div>
+            <Label htmlFor="birthOrder" className="text-sm font-medium">Birth Order</Label>
+            <Select
+              value={socioDemographic.birthOrder?.toString() || "1"}
+              onValueChange={(value) => handleChange('birthOrder', parseInt(value))}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select birth order" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">1st Child</SelectItem>
+                <SelectItem value="2">2nd Child</SelectItem>
+                <SelectItem value="3">>2 Children</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
             <Label htmlFor="familyType" className="text-sm font-medium">Family Type</Label>
             <Select value={socioDemographic.familyType} onValueChange={(value) => handleChange('familyType', value)}>
               <SelectTrigger className="mt-1">
