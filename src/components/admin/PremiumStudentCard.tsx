@@ -16,9 +16,21 @@ interface PremiumStudentCardProps {
 
 const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, onDelete }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   const handleDownloadPDF = async () => {
+    if (isGeneratingPDF) return; // Prevent multiple clicks
+
+    setIsGeneratingPDF(true);
     try {
+      if (!assessment) {
+        throw new Error('No assessment data available');
+      }
+
+      if (!assessment.aiPrediction) {
+        throw new Error('AI prediction data is missing');
+      }
+
       await generatePDF(assessment, assessment.aiPrediction);
       toast({
         title: "Success",
@@ -28,9 +40,11 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, onD
       console.error('Error generating PDF:', error);
       toast({
         title: "Error",
-        description: "Failed to generate PDF report. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to generate PDF report. Please try again.",
         variant: "destructive"
       });
+    } finally {
+      setIsGeneratingPDF(false);
     }
   };
 
@@ -109,26 +123,14 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, onD
             </div>
             <div className="space-y-2">
               <div className="flex items-center text-sm text-gray-600">
-                <Brain className="h-4 w-4 mr-2 text-blue-600" />
-                <span>Mental Health: {assessment.mentalHealth?.overallScore || 'N/A'}</span>
+                <School className="h-4 w-4 mr-2 text-blue-600" />
+                <span>School: {assessment.socioDemographic?.schoolName || 'N/A'}</span>
               </div>
               <div className="flex items-center text-sm text-gray-600">
-                <Heart className="h-4 w-4 mr-2 text-blue-600" />
-                <span>Physical Health: {assessment.physicalHealth?.overallScore || 'N/A'}</span>
+                <User className="h-4 w-4 mr-2 text-blue-600" />
+                <span>Class: {assessment.socioDemographic?.class || 'N/A'}</span>
               </div>
             </div>
-          </div>
-
-          {/* Obesity Risk Score Section */}
-          <div className="pt-2 border-t border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center text-sm text-gray-600">
-                <Scale className="h-4 w-4 mr-2 text-blue-600" />
-                <span>Obesity Risk Score</span>
-              </div>
-              <span className="text-sm font-medium">{obesityRiskScore}%</span>
-            </div>
-            <Progress value={obesityRiskScore} className={`h-2 ${getProgressColor(obesityRiskScore)}`} />
           </div>
 
           <AnimatePresence>
@@ -170,9 +172,19 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, onD
                   size="sm"
                   className="flex items-center gap-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                   onClick={handleDownloadPDF}
+                  disabled={isGeneratingPDF}
                 >
-                  <Download className="h-4 w-4" />
-                  <span>Download Report</span>
+                  {isGeneratingPDF ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4" />
+                      <span>Download Report</span>
+                    </>
+                  )}
                 </Button>
                 <Button
                   variant="ghost"

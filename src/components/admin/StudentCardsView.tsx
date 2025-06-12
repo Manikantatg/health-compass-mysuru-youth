@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,8 @@ const StudentCardsView: React.FC<StudentCardsViewProps> = ({ assessments }) => {
   const [filterClass, setFilterClass] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
+  console.log("StudentCardsView - Initial Assessments:", assessments);
+
   const getFilteredAssessments = () => {
     return assessments.filter(assessment => {
       const matchesSearch = searchTerm === '' || 
@@ -40,6 +41,7 @@ const StudentCardsView: React.FC<StudentCardsViewProps> = ({ assessments }) => {
   };
 
   const filteredAssessments = getFilteredAssessments();
+  console.log("StudentCardsView - Filtered Assessments:", filteredAssessments);
   const uniqueClasses = [...new Set(assessments.map(a => a.socioDemographic.class))].filter(Boolean);
 
   return (

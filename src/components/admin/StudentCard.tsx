@@ -1,13 +1,13 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AssessmentData } from '../../types/assessment';
-import { ChevronDown, ChevronUp, Download, User, School, Calendar } from 'lucide-react';
+import { ChevronDown, ChevronUp, Download, User, School, Calendar, AlertTriangle, Activity, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateHealthReportPDF } from '../../utils/pdfExport';
 import { toast } from '@/hooks/use-toast';
+import { Progress } from '@/components/ui/progress';
 
 interface StudentCardProps {
   assessment: AssessmentData;
@@ -16,12 +16,36 @@ interface StudentCardProps {
 const StudentCard: React.FC<StudentCardProps> = ({ assessment }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
+  console.log("StudentCard assessment data:", assessment);
+  console.log("AI Prediction:", assessment.aiPrediction);
+  console.log("Risk Percentage:", assessment.aiPrediction?.riskPercentage);
+  
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel?.toLowerCase()) {
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'low': return {
+        bg: 'bg-green-50',
+        text: 'text-green-800',
+        border: 'border-green-200',
+        progress: 'bg-green-500'
+      };
+      case 'medium': return {
+        bg: 'bg-yellow-50',
+        text: 'text-yellow-800',
+        border: 'border-yellow-200',
+        progress: 'bg-yellow-500'
+      };
+      case 'high': return {
+        bg: 'bg-red-50',
+        text: 'text-red-800',
+        border: 'border-red-200',
+        progress: 'bg-red-500'
+      };
+      default: return {
+        bg: 'bg-gray-50',
+        text: 'text-gray-800',
+        border: 'border-gray-200',
+        progress: 'bg-gray-500'
+      };
     }
   };
 
@@ -94,7 +118,10 @@ const StudentCard: React.FC<StudentCardProps> = ({ assessment }) => {
     }
   };
 
-  const riskLevel = assessment.aiPrediction?.riskLevel || 'Medium';
+  const riskLevel = assessment.aiPrediction?.riskLevel || 'Unknown';
+  const riskPercentage = assessment.aiPrediction?.riskPercentage || 0;
+  const student = assessment.socioDemographic || {};
+  const riskColors = getRiskColor(riskLevel);
 
   return (
     <motion.div
@@ -104,63 +131,108 @@ const StudentCard: React.FC<StudentCardProps> = ({ assessment }) => {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className={`border-2 hover:shadow-lg transition-all duration-300 ${getRiskColor(riskLevel)}`}>
+      <Card className={`border-2 hover:shadow-lg transition-all duration-300 ${riskColors.bg} ${riskColors.border}`}>
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
-              <CardTitle className="text-lg font-bold">{assessment.socioDemographic.name}</CardTitle>
+              <CardTitle className="text-xl font-bold text-gray-900">{student.name || 'Unknown Student'}</CardTitle>
               <div className="text-sm text-gray-600 space-y-1">
                 <div className="flex items-center space-x-1">
                   <User className="h-3 w-3" />
-                  <span>{assessment.socioDemographic.age}y, {assessment.socioDemographic.gender}</span>
+                  <span>{student.age ? `${student.age}y` : 'N/A'}, {student.gender || 'N/A'}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <School className="h-3 w-3" />
-                  <span>Class {assessment.socioDemographic.class}</span>
+                  <span>{student.schoolName || 'Unknown School'}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Calendar className="h-3 w-3" />
+                  <span>Class {student.class || 'N/A'} {student.section || ''}</span>
                 </div>
               </div>
             </div>
-            <Badge className={`${getRiskColor(riskLevel)} font-semibold`}>
-              {riskLevel} Risk
-            </Badge>
           </div>
         </CardHeader>
         
         <CardContent className="space-y-4">
+          {/* Risk Level Display */}
+          <div className={`p-4 rounded-lg ${riskColors.bg} border ${riskColors.border}`}>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className={`h-5 w-5 ${riskColors.text}`} />
+                <span className={`font-bold text-lg ${riskColors.text}`}>
+                  {riskLevel} Risk Level ({riskPercentage}%)
+                </span>
+              </div>
+              <span className={`font-bold text-lg ${riskColors.text}`}>
+                {riskPercentage}%
+              </span>
+            </div>
+            <Progress 
+              value={riskPercentage} 
+              className="h-2"
+              indicatorClassName={riskColors.progress}
+            />
+          </div>
+
+          {/* Health Metrics */}
+          <div className="grid grid-cols-2 gap-4 p-4 bg-white rounded-lg border border-gray-200">
+            <div className="flex items-center space-x-2">
+              <Activity className="h-4 w-4 text-blue-600" />
+              <div>
+                <p className="text-sm font-medium text-gray-600">BMI</p>
+                <p className="text-lg font-bold text-gray-900">{assessment.bmi?.toFixed(1) || 'N/A'}</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Heart className="h-4 w-4 text-red-600" />
+              <div>
+                <p className="text-sm font-medium text-gray-600">Assessment Date</p>
+                <p className="text-lg font-bold text-gray-900">
+                  {new Date(assessment.completedAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* AI Summary */}
-          <div className="p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm font-medium text-blue-800 mb-1">AI Analysis:</p>
-            <p className="text-xs text-blue-700">
+          <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <p className="text-sm font-medium text-blue-800 mb-2">AI Analysis</p>
+            <p className="text-sm text-blue-700">
               {assessment.aiPrediction?.explanation || 'Assessment completed successfully.'}
             </p>
           </div>
 
-          {/* Mini Indicators */}
-          <div className="grid grid-cols-5 gap-2">
-            {['activity', 'diet', 'screen', 'sleep', 'mental'].map((category) => {
-              const score = getIndicatorScore(category);
-              return (
-                <div key={category} className="text-center">
-                  {getIndicatorIcon(category, score)}
-                  <div className="text-xs mt-1 font-medium capitalize">{category}</div>
-                  <div className={`text-xs ${score >= 1.5 ? 'text-green-600' : score >= 1 ? 'text-yellow-600' : 'text-red-600'}`}>
-                    {score.toFixed(1)}/2
-                  </div>
-                </div>
-              );
-            })}
+          {/* Action Buttons */}
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadPDF}
+              className="flex-1 bg-white hover:bg-gray-50"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download Report
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex-1 bg-white hover:bg-gray-50"
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="h-4 w-4 mr-2" />
+                  Read Less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4 mr-2" />
+                  Read More
+                </>
+              )}
+            </Button>
           </div>
-
-          {/* Toggle Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full flex items-center justify-center space-x-2"
-          >
-            <span>{isExpanded ? 'See Less' : 'See More'}</span>
-            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
 
           {/* Expanded Content */}
           <AnimatePresence>
@@ -173,40 +245,35 @@ const StudentCard: React.FC<StudentCardProps> = ({ assessment }) => {
                 className="overflow-hidden"
               >
                 <div className="space-y-4 pt-4 border-t">
-                  {/* Detailed Scores */}
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <span className="font-medium">BMI:</span> {assessment.bmi.toFixed(1)}
-                    </div>
-                    <div>
-                      <span className="font-medium">Risk %:</span> {assessment.aiPrediction?.riskPercentage || 50}%
-                    </div>
-                    <div className="col-span-2">
-                      <span className="font-medium">Assessment Date:</span> {new Date(assessment.completedAt).toLocaleDateString()}
-                    </div>
-                  </div>
-
                   {/* Recommendations */}
                   {assessment.aiPrediction?.recommendations && (
-                    <div className="bg-purple-50 p-3 rounded-lg">
-                      <p className="font-medium text-purple-800 mb-2">Top Recommendations:</p>
-                      <ul className="text-xs text-purple-700 space-y-1">
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                      <p className="font-medium text-purple-800 mb-2">Top Recommendations</p>
+                      <ul className="text-sm text-purple-700 space-y-2">
                         {assessment.aiPrediction.recommendations.slice(0, 3).map((rec, index) => (
-                          <li key={index}>• {rec}</li>
+                          <li key={index} className="flex items-start">
+                            <span className="mr-2">•</span>
+                            <span>{rec}</span>
+                          </li>
                         ))}
                       </ul>
                     </div>
                   )}
 
-                  {/* Download PDF Button */}
-                  <Button
-                    onClick={handleDownloadPDF}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                    size="sm"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download PDF Report
-                  </Button>
+                  {/* Risk Factors */}
+                  {assessment.aiPrediction?.keyRiskFactors && (
+                    <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                      <p className="font-medium text-orange-800 mb-2">Key Risk Factors</p>
+                      <ul className="text-sm text-orange-700 space-y-2">
+                        {assessment.aiPrediction.keyRiskFactors.slice(0, 3).map((factor, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="mr-2">•</span>
+                            <span>{factor}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}

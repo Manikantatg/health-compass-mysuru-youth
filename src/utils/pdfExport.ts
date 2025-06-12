@@ -1,7 +1,23 @@
+// Helper function for BMI categorization
+function getBMICategory(bmi: number): string {
+  if (bmi < 18.5) return 'Underweight';
+  if (bmi < 25) return 'Normal Weight';
+  if (bmi < 30) return 'Overweight';
+  return 'Obese';
+}
+
 import { jsPDF } from 'jspdf';
-import { AssessmentData, HealthScores } from '../types/assessment';
+import { AssessmentData } from '../types/assessment';
 
 export const generateHealthReportPDF = async (assessmentData: AssessmentData) => {
+  if (!assessmentData) {
+    throw new Error('No assessment data provided');
+  }
+
+  if (!assessmentData.aiPrediction) {
+    throw new Error('No AI prediction data available');
+  }
+
   try {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -13,15 +29,20 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
       return y;
     };
 
-    // Add logo
-    doc.addImage(
-      'https://img.freepik.com/premium-vector/worried-man-with-obesity-clip-art-vector-illustration_136875-5657.jpg',
-      'JPEG',
-      20,
-      20,
-      30,
-      30
-    );
+    // Add logo (with error handling)
+    try {
+      doc.addImage(
+        'https://img.freepik.com/premium-vector/worried-man-with-obesity-clip-art-vector-illustration_136875-5657.jpg',
+        'JPEG',
+        20,
+        20,
+        30,
+        30
+      );
+    } catch (imageError) {
+      console.warn('Failed to load logo image:', imageError);
+      // Continue without the logo
+    }
 
     // Header with PediaPredict branding
     doc.setFont('helvetica', 'bold');
@@ -64,13 +85,13 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     doc.setFont('helvetica', 'normal');
     
     // Safe data extraction with proper null checks
-    const socioDemo = assessmentData.socioDemographic;
+    const socioDemo = assessmentData.socioDemographic || {};
     const studentInfo = [
-      `Name: ${socioDemo?.name || 'Not Provided'}`,
-      `Age: ${socioDemo?.age || 'Not Provided'} years`,
-      `Gender: ${socioDemo?.gender ? socioDemo.gender.charAt(0).toUpperCase() + socioDemo.gender.slice(1) : 'Not Provided'}`,
-      `Class: ${socioDemo?.class || 'Not Provided'}-${socioDemo?.section || 'Not Provided'}`,
-      `School: ${socioDemo?.schoolName || 'Not Provided'}`,
+      `Name: ${socioDemo.name || 'Not Provided'}`,
+      `Age: ${socioDemo.age || 'Not Provided'} years`,
+      `Gender: ${socioDemo.gender ? socioDemo.gender.charAt(0).toUpperCase() + socioDemo.gender.slice(1) : 'Not Provided'}`,
+      `Class: ${socioDemo.class || 'Not Provided'}-${socioDemo.section || 'Not Provided'}`,
+      `School: ${socioDemo.schoolName || 'Not Provided'}`,
       `Assessment Date: ${assessmentData.completedAt ? new Date(assessmentData.completedAt).toLocaleDateString('en-GB') : 'Not Available'}`,
       `BMI: ${assessmentData.bmi ? assessmentData.bmi.toFixed(1) : 'Not Calculated'} (${getBMICategory(assessmentData.bmi || 0)})`
     ];
@@ -82,7 +103,7 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     currentY += 10;
 
     // Risk Level with color coding
-    const riskLevel = assessmentData.aiPrediction?.riskLevel || 'Medium';
+    const riskLevel = assessmentData.aiPrediction.riskLevel || 'Medium';
     const riskColor: [number, number, number] = riskLevel === 'High' ? [220, 53, 69] : 
                      riskLevel === 'Medium' ? [255, 193, 7] : [40, 167, 69];
     doc.setTextColor(riskColor[0], riskColor[1], riskColor[2]);
@@ -128,7 +149,7 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     currentY = addText('Recommendations', 20, currentY);
     currentY += 8;
 
-    const recommendations = assessmentData.aiPrediction?.recommendations || [
+    const recommendations = assessmentData.aiPrediction.recommendations || [
       'Maintain regular physical activity for at least 60 minutes daily',
       'Include more fruits and vegetables in daily meals',
       'Limit recreational screen time to less than 2 hours per day',
@@ -158,25 +179,16 @@ export const generateHealthReportPDF = async (assessmentData: AssessmentData) =>
     doc.text('Powered by Doutly  | www.pediapredict.com', pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
 
     // Generate safe filename
-    const cleanName = (socioDemo?.name || 'student').replace(/[^a-zA-Z0-9]/g, '_');
+    const cleanName = (socioDemo.name || 'student').replace(/[^a-zA-Z0-9]/g, '_');
     const dateStr2 = now.toISOString().split('T')[0];
     const timeStamp = now.toTimeString().split(' ')[0].replace(/:/g, '-');
     const filename = `pediapredict_health_${cleanName}_${dateStr2}_${timeStamp}.pdf`;
     
     // Save the PDF
     doc.save(filename);
-
     return true;
   } catch (error) {
     console.error('PDF generation error:', error);
     throw new Error('Failed to generate PDF report. Please check your data and try again.');
   }
 };
-
-// Helper function for BMI categorization
-function getBMICategory(bmi: number): string {
-  if (bmi < 18.5) return 'Underweight';
-  if (bmi < 25) return 'Normal Weight';
-  if (bmi < 30) return 'Overweight';
-  return 'Obese';
-}

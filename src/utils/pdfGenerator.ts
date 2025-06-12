@@ -1,163 +1,215 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 import { AssessmentData, AIPrediction } from '@/types/assessment';
 
-export const generatePDF = async (assessmentData: AssessmentData, aiPrediction: AIPrediction) => {
+// Helper function to validate assessment data
+const validateAssessmentData = (data: AssessmentData) => {
+  if (!data) return false;
+  if (!data.socioDemographic) return false;
+  if (!data.aiPrediction) return false;
+  return true;
+};
+
+// Helper function to add grid lines
+const addGridLines = (doc: jsPDF, startY: number, endY: number, margin: number, pageWidth: number) => {
+  const gridSpacing = 10;
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.1);
+
+  // Vertical lines
+  for (let x = margin; x <= pageWidth - margin; x += gridSpacing) {
+    doc.line(x, startY, x, endY);
+  }
+
+  // Horizontal lines
+  for (let y = startY; y <= endY; y += gridSpacing) {
+    doc.line(margin, y, pageWidth - margin, y);
+  }
+};
+
+// Helper function to add section header
+const addSectionHeader = (doc: jsPDF, title: string, y: number, margin: number, pageWidth: number) => {
+  doc.setFontSize(14);
+  doc.setTextColor(60, 60, 60);
+  doc.text(title, margin, y);
+  doc.setDrawColor(200, 200, 200);
+  doc.line(margin, y + 2, pageWidth - margin, y + 2);
+  return y + 10;
+};
+
+// Helper function to add key-value pair
+const addKeyValue = (doc: jsPDF, key: string, value: string, y: number, margin: number) => {
+  doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`${key}:`, margin, y);
+  doc.setTextColor(60, 60, 60);
+  doc.text(value, margin + 40, y);
+  return y + 7;
+};
+
+// Helper function to add bullet point
+const addBulletPoint = (doc: jsPDF, text: string, y: number, margin: number) => {
+  const bulletPoint = '•';
+  const textWidth = doc.getTextWidth(text);
+  const maxWidth = doc.internal.pageSize.getWidth() - (margin * 2) - 10;
+  
+  // Split text into multiple lines if needed
+  const lines = doc.splitTextToSize(text, maxWidth);
+  
+  // Add bullet point to first line
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  doc.text(bulletPoint, margin, y);
+  doc.text(lines[0], margin + 5, y);
+  
+  // Add remaining lines indented
+  let currentY = y;
+  for (let i = 1; i < lines.length; i++) {
+    currentY += 7;
+    doc.text(lines[i], margin + 5, currentY);
+  }
+  
+  return currentY + 7;
+};
+
+// Helper function to add list items
+const addListItems = (doc: jsPDF, items: string[], y: number, margin: number) => {
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0);
+  items.forEach((item, index) => {
+    doc.text(`• ${item}`, margin, y + (index * 7));
+  });
+  return y + (items.length * 7) + 10;
+};
+
+// Helper function to add page number
+const addPageNumber = (doc: jsPDF, pageNumber: number, totalPages: number, margin: number, pageWidth: number) => {
+  doc.setFontSize(8);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Page ${pageNumber} of ${totalPages}`, pageWidth - margin - 30, doc.internal.pageSize.getHeight() - 10);
+};
+
+export const generatePDF = async (assessmentData: AssessmentData, aiPrediction?: AIPrediction) => {
+  if (!validateAssessmentData(assessmentData)) {
+    throw new Error('Invalid or incomplete assessment data');
+  }
+
+  const prediction = aiPrediction || assessmentData.aiPrediction;
+  if (!prediction) {
+    throw new Error('No AI prediction data available');
+  }
+
+  let doc: jsPDF;
   try {
-    const doc = new jsPDF();
+    doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+      putOnlyUsedFonts: true,
+      compress: true
+    });
+
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 15;
     const contentWidth = pageWidth - (margin * 2);
 
-    // Add header with gradient background
-    doc.setFillColor(240, 248, 255); // Light blue background
+    // Add header with soft gradient background
+    doc.setFillColor(245, 247, 250); // Soft blue-gray
     doc.rect(0, 0, pageWidth, 30, 'F');
     
-    // Add title and logo
+    // Add title
     doc.setFontSize(20);
-    doc.setTextColor(41, 128, 185); // Blue color
+    doc.setTextColor(70, 130, 180); // Steel blue
     doc.text('PediaPredict Health Report', margin, 20);
 
     // Add date
     doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
+    doc.setTextColor(120, 120, 120); // Soft gray
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, pageWidth - margin - 60, 20);
 
-    // Add student information section with grid
-    doc.setFillColor(245, 247, 250); // Light gray background
-    doc.rect(margin, 40, contentWidth, 30, 'F');
+    let currentY = 40;
+
+    // Student Information Section
+    currentY = addSectionHeader(doc, 'Student Information', currentY, margin, pageWidth);
+    const socioDemo = assessmentData.socioDemographic || {};
+    currentY = addKeyValue(doc, 'Name', socioDemo.name || 'N/A', currentY, margin);
+    currentY = addKeyValue(doc, 'Age', socioDemo.age?.toString() || 'N/A', currentY, margin);
+    currentY = addKeyValue(doc, 'Gender', socioDemo.gender || 'N/A', currentY, margin);
+    currentY = addKeyValue(doc, 'School', socioDemo.schoolName || 'N/A', currentY, margin);
+    currentY = addKeyValue(doc, 'Class', socioDemo.class || 'N/A', currentY, margin);
+    currentY += 10;
+
+    // Risk Assessment Section with Visual Indicator
+    currentY = addSectionHeader(doc, 'Risk Assessment', currentY, margin, pageWidth);
     
-    doc.setFontSize(12);
-    doc.setTextColor(41, 128, 185);
-    doc.text('Student Information', margin + 5, 50);
-
-    const studentInfo = [
-      ['Name', assessmentData.socioDemographic?.name || 'N/A'],
-      ['Age', assessmentData.socioDemographic?.age?.toString() || 'N/A'],
-      ['Gender', assessmentData.socioDemographic?.gender || 'N/A'],
-      ['School', assessmentData.socioDemographic?.schoolName || 'N/A'],
-      ['Class', assessmentData.socioDemographic?.class || 'N/A']
-    ];
-
-    (doc as any).autoTable({
-      startY: 55,
-      head: [['Field', 'Value']],
-      body: studentInfo,
-      theme: 'grid',
-      headStyles: { fillColor: [41, 128, 185], textColor: 255 },
-      styles: { fontSize: 10, cellPadding: 3 },
-      margin: { left: margin, right: margin },
-      tableWidth: contentWidth
-    });
-
-    // Add risk assessment section with highlighted risk level
-    const riskY = (doc as any).lastAutoTable.finalY + 10;
-    doc.setFillColor(245, 247, 250);
-    doc.rect(margin, riskY - 5, contentWidth, 25, 'F');
+    // Add risk percentage with visual indicator
+    const riskPercentage = prediction.riskPercentage;
+    const riskColor = prediction.riskLevel === 'High' ? [220, 53, 69] : 
+                     prediction.riskLevel === 'Medium' ? [255, 193, 7] : 
+                     [40, 167, 69];
     
-    doc.setFontSize(12);
-    doc.setTextColor(41, 128, 185);
-    doc.text('Risk Assessment', margin + 5, riskY + 5);
-
-    const riskLevel = aiPrediction?.riskLevel || 'Unknown';
-    const riskColor = riskLevel.toLowerCase() === 'high' ? [231, 76, 60] : 
-                     riskLevel.toLowerCase() === 'medium' ? [241, 196, 15] : 
-                     [46, 204, 113];
-
-    (doc as any).autoTable({
-      startY: riskY + 10,
-      head: [['Risk Level', 'Confidence Score']],
-      body: [[riskLevel, `${(aiPrediction?.confidenceScore || 0).toFixed(2)}%`]],
-      theme: 'grid',
-      headStyles: { fillColor: riskColor, textColor: 255 },
-      styles: { fontSize: 10, cellPadding: 3 },
-      margin: { left: margin, right: margin },
-      tableWidth: contentWidth
-    });
-
-    // Add health metrics section
-    const metricsY = (doc as any).lastAutoTable.finalY + 10;
-    doc.setFillColor(245, 247, 250);
-    doc.rect(margin, metricsY - 5, contentWidth, 25, 'F');
+    // Draw risk percentage circle
+    const circleX = margin + 20;
+    const circleY = currentY + 15;
+    const circleRadius = 20;
     
-    doc.setFontSize(12);
-    doc.setTextColor(41, 128, 185);
-    doc.text('Health Metrics', margin + 5, metricsY + 5);
-
-    const metricsData = [
-      ['BMI', assessmentData.bmi?.toString() || 'N/A'],
-      ['Physical Activity', assessmentData.physicalHealth?.physicalActivity?.toString() || 'N/A'],
-      ['Sleep Quality', assessmentData.physicalHealth?.sleepQuality?.toString() || 'N/A'],
-      ['Stress Level', assessmentData.mentalHealth?.stressLevel?.toString() || 'N/A'],
-      ['Academic Performance', assessmentData.mentalHealth?.academicPerformance?.toString() || 'N/A'],
-      ['Obesity Risk Score', `${assessmentData.physicalHealth?.obesityRisk || 0}%`]
-    ];
-
-    (doc as any).autoTable({
-      startY: metricsY + 10,
-      head: [['Metric', 'Score']],
-      body: metricsData,
-      theme: 'grid',
-      headStyles: { fillColor: [41, 128, 185], textColor: 255 },
-      styles: { fontSize: 10, cellPadding: 3 },
-      margin: { left: margin, right: margin },
-      tableWidth: contentWidth
-    });
-
-    // Add key findings section
-    const findingsY = (doc as any).lastAutoTable.finalY + 10;
-    doc.setFillColor(245, 247, 250);
-    doc.rect(margin, findingsY - 5, contentWidth, 25, 'F');
+    // Draw circle background
+    doc.setFillColor(245, 247, 250); // Soft blue-gray
+    doc.circle(circleX, circleY, circleRadius, 'F');
     
-    doc.setFontSize(12);
-    doc.setTextColor(41, 128, 185);
-    doc.text('Key Findings', margin + 5, findingsY + 5);
-
-    const keyFindings = aiPrediction?.keyRiskFactors?.slice(0, 3) || [];
-    const findingsData = keyFindings.map(finding => [finding]);
-
-    (doc as any).autoTable({
-      startY: findingsY + 10,
-      body: findingsData,
-      theme: 'grid',
-      styles: { fontSize: 10, cellPadding: 3 },
-      margin: { left: margin, right: margin },
-      tableWidth: contentWidth
-    });
-
-    // Add recommendations section
-    const recommendationsY = (doc as any).lastAutoTable.finalY + 10;
-    doc.setFillColor(245, 247, 250);
-    doc.rect(margin, recommendationsY - 5, contentWidth, 25, 'F');
+    // Draw percentage text
+    doc.setFontSize(16);
+    doc.setTextColor(...riskColor);
+    doc.text(`${riskPercentage}%`, circleX, circleY + 5, { align: 'center' });
     
+    // Draw risk level text
+    doc.setFontSize(10);
+    doc.text(prediction.riskLevel, circleX, circleY + 15, { align: 'center' });
+    
+    // Add risk level description
     doc.setFontSize(12);
-    doc.setTextColor(41, 128, 185);
-    doc.text('Recommendations', margin + 5, recommendationsY + 5);
+    doc.setTextColor(70, 130, 180); // Steel blue
+    doc.text('Risk Level:', margin + 50, currentY + 10);
+    doc.setFontSize(11);
+    doc.setTextColor(60, 60, 60); // Dark gray
+    doc.text(prediction.riskLevel, margin + 50, currentY + 20);
+    
+    currentY += 60;
 
-    const recommendations = aiPrediction?.recommendations?.slice(0, 3) || [];
-    const recommendationData = recommendations.map(rec => [rec]);
-
-    (doc as any).autoTable({
-      startY: recommendationsY + 10,
-      body: recommendationData,
-      theme: 'grid',
-      styles: { fontSize: 10, cellPadding: 3 },
-      margin: { left: margin, right: margin },
-      tableWidth: contentWidth
+    // Key Findings Section
+    currentY = addSectionHeader(doc, 'Key Findings', currentY, margin, pageWidth);
+    prediction.keyRiskFactors.forEach((factor: string) => {
+      currentY = addBulletPoint(doc, factor, currentY, margin);
     });
+    currentY += 10;
 
-    // Add footer with AI attribution
-    const footerY = doc.internal.pageSize.getHeight() - 15;
+    // Recommendations Section
+    currentY = addSectionHeader(doc, 'Recommendations', currentY, margin, pageWidth);
+    prediction.recommendations.forEach((recommendation: string) => {
+      currentY = addBulletPoint(doc, recommendation, currentY, margin);
+    });
+    currentY += 10;
+
+    // Add grid lines with softer color
+    doc.setDrawColor(200, 200, 200); // Light gray
+    addGridLines(doc, 40, pageHeight - 20, margin, pageWidth);
+
+    // Add footer with softer colors
     doc.setFontSize(8);
-    doc.setTextColor(100, 100, 100);
-    doc.text('Generated by PediaPredict AI', margin, footerY);
-    doc.text('Provided by Dr. Doutly', pageWidth - margin - 60, footerY);
+    doc.setTextColor(120, 120, 120); // Soft gray
+    doc.text('Generated by PediaPredict AI', margin, pageHeight - 10);
+    doc.text('Please consult with healthcare professionals for detailed analysis.', pageWidth - margin - 100, pageHeight - 10);
 
+    // Generate safe filename with timestamp
+    const timestamp = new Date().getTime();
+    const cleanName = (socioDemo.name || 'report').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const filename = `health-report-${cleanName}-${timestamp}.pdf`;
+    
     // Save the PDF
-    const filename = `health-report-${assessmentData.socioDemographic?.name?.toLowerCase().replace(/\s+/g, '-') || 'report'}.pdf`;
     doc.save(filename);
+    return true;
   } catch (error) {
     console.error('Error generating PDF:', error);
-    throw new Error('Failed to generate PDF report');
+    throw new Error(error instanceof Error ? error.message : 'Failed to generate PDF report. Please check your data and try again.');
   }
 }; 
