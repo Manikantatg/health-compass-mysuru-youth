@@ -13,6 +13,7 @@
       <p className="text-xl text-muted-foreground max-w-2xl">
         Empowering youth health through early obesity risk assessment and personalized recommendations
       </p>
+      <p className="text-sm font-medium text-[#7C3AED]">Provided by Doutly</p>
       <div className="flex gap-4">
         <Link to="/register">
           <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">

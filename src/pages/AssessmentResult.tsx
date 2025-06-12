@@ -8,7 +8,7 @@ import { AssessmentData, AIPrediction } from '../types/assessment';
 import { generatePDF } from '../utils/pdfGenerator';
 import { motion } from 'framer-motion';
 import { useToast } from '../components/ui/use-toast';
-import { Loader2, CheckCircle, AlertCircle, Download } from 'lucide-react';
+import { Loader2, CheckCircle, AlertCircle, Download, User, School, Calendar } from 'lucide-react';
 
 const AssessmentResult: React.FC = () => {
   const location = useLocation();
@@ -139,76 +139,110 @@ const AssessmentResult: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="space-y-6"
+          className="space-y-4 sm:space-y-6"
         >
-          {/* Header */}
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-gray-900">Assessment Results</h1>
-            <p className="text-gray-600">Your personalized health assessment report</p>
+          {/* Header Section */}
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Assessment Results</h1>
+            <p className="text-sm sm:text-base text-gray-600">
+              Your personalized health assessment report is ready.
+            </p>
           </div>
 
-          {/* Risk Level Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Risk Assessment</span>
-                <Badge variant={
-                  aiPrediction.riskLevel === 'High' ? 'destructive' :
-                  aiPrediction.riskLevel === 'Medium' ? 'warning' :
-                  'success'
-                }>
-                  {aiPrediction.riskLevel} Risk
-                </Badge>
-              </CardTitle>
+          {/* Student Info Card */}
+          <Card className="bg-white">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg sm:text-xl">Student Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>Risk Level</span>
-                    <span>{aiPrediction.riskPercentage}%</span>
-                  </div>
-                  <Progress value={aiPrediction.riskPercentage} className="h-2" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="flex items-center space-x-2">
+                  <User className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm sm:text-base">{assessmentData.socioDemographic.name}</span>
                 </div>
-                <p className="text-gray-600">{aiPrediction.explanation}</p>
+                <div className="flex items-center space-x-2">
+                  <School className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm sm:text-base">{assessmentData.socioDemographic.schoolName}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm sm:text-base">Class {assessmentData.socioDemographic.class}</span>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Key Risk Factors */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Key Risk Factors</CardTitle>
+          {/* Risk Assessment Card */}
+          <Card className="bg-white">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg sm:text-xl">Risk Assessment</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <Progress 
+                      value={aiPrediction.riskPercentage} 
+                      className="h-24 w-24 sm:h-32 sm:w-32"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-lg sm:text-2xl font-bold">
+                        {aiPrediction.riskPercentage}%
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <Badge 
+                      variant={aiPrediction.riskLevel === 'High' ? 'destructive' : 
+                              aiPrediction.riskLevel === 'Medium' ? 'warning' : 
+                              'success'}
+                      className="text-sm sm:text-base mb-2"
+                    >
+                      {aiPrediction.riskLevel} Risk
+                    </Badge>
+                    <p className="text-sm text-gray-600">
+                      Based on comprehensive health assessment
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Key Risk Factors Card */}
+          <Card className="bg-white">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg sm:text-xl">Key Risk Factors</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
                 {aiPrediction.keyRiskFactors.map((factor, index) => (
                   <li key={index} className="flex items-start">
-                    <AlertCircle className="h-5 w-5 text-red-500 mr-2 mt-0.5" />
-                    <span>{factor}</span>
+                    <AlertCircle className="h-5 w-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm sm:text-base">{factor}</span>
                   </li>
                 ))}
               </ul>
             </CardContent>
           </Card>
 
-          {/* Recommendations */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recommendations</CardTitle>
+          {/* Recommendations Card */}
+          <Card className="bg-white">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg sm:text-xl">Recommendations</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
                 {aiPrediction.recommendations.map((recommendation, index) => (
                   <li key={index} className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
-                    <span>{recommendation}</span>
+                    <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm sm:text-base">{recommendation}</span>
                   </li>
                 ))}
               </ul>
@@ -216,12 +250,19 @@ const AssessmentResult: React.FC = () => {
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex justify-center space-x-4">
-            <Button onClick={handleDownloadPDF} className="flex items-center">
+          <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 pt-4">
+            <Button 
+              onClick={handleDownloadPDF} 
+              className="w-full sm:w-auto flex items-center justify-center"
+            >
               <Download className="mr-2 h-4 w-4" />
               Download Report
             </Button>
-            <Button variant="outline" onClick={() => navigate('/dashboard')}>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/dashboard')}
+              className="w-full sm:w-auto"
+            >
               Return to Dashboard
             </Button>
           </div>

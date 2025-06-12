@@ -214,12 +214,12 @@ const StudentCard: React.FC<StudentCardProps> = ({ assessment }) => {
               <Download className="h-4 w-4 mr-2" />
               Download Report
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsExpanded(!isExpanded)}
               className="flex-1 bg-white hover:bg-gray-50"
-            >
+          >
               {isExpanded ? (
                 <>
                   <ChevronUp className="h-4 w-4 mr-2" />
@@ -231,7 +231,7 @@ const StudentCard: React.FC<StudentCardProps> = ({ assessment }) => {
                   Read More
                 </>
               )}
-            </Button>
+          </Button>
           </div>
 
           {/* Expanded Content */}

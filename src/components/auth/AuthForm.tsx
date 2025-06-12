@@ -80,7 +80,7 @@ const AuthForm: React.FC = () => {
             <Card className="border-0 shadow-xl rounded-3xl bg-card">
               <CardHeader className="space-y-2 text-center pb-8">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <img src="https://cdn.vectorstock.com/i/1000v/38/32/obese-man-clip-art-worried-expression-vector-48613832.jpg" alt="Obese man icon" className="h-10 w-10 text-primary" />
+                  <img src="/lovable-uploads/logo.jpg" alt="PediaPredict Logo" className="h-10 w-10 text-primary" />
                 </div>
                 <CardTitle className="text-3xl font-bold text-foreground tracking-tight">
                   {isLogin ? 'Welcome Back' : 'Join PediaPredict'}
@@ -91,6 +91,7 @@ const AuthForm: React.FC = () => {
                     : 'Create your account to start your health journey'
                   }
                 </CardDescription>
+                <p className="text-sm font-medium text-[#7C3AED] mt-2">Provided by Doutly</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -207,7 +208,6 @@ const AuthForm: React.FC = () => {
             </Card>
           </motion.div>
           <div className="flex flex-col items-center justify-center mt-6 space-y-4">
-            <p className="text-sm text-muted-foreground">Provided by</p>
             <div className="flex flex-row items-center justify-center space-x-8">
               <img src="https://www.jssstuniv.in/assets/img/logo/jssstulogo.png" alt="JSS Science and Technology University Logo" className="h-16 w-auto object-contain" />
               <img src="https://jssaherstoragenew.blob.core.windows.net/jssuudstorage/sdimages/jssnewlogo.jpg" alt="JSS Academy of Higher Education & Research Logo" className="h-16 w-auto object-contain" />

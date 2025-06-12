@@ -181,8 +181,8 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, onD
                     </>
                   ) : (
                     <>
-                      <Download className="h-4 w-4" />
-                      <span>Download Report</span>
+                  <Download className="h-4 w-4" />
+                  <span>Download Report</span>
                     </>
                   )}
                 </Button>
