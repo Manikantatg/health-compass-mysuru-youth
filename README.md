@@ -163,10 +163,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built with modern web technologies
 - Designed for educational institutions
 
+## 👥 Project Team
+
+### Project Coordinators
+- Dr Rakshitha J, PhD Scholar, Department of Community Medicine, JSS Medical College, JSSAHER, Mysuru
+- Dr Sunil Kumar D, Professor and Head, Department of Community Medicine, JSS Medical College, Mysuru
+- Dr Vanishri Arun, Associate Professor, Department of IS &E, JSS STU, Mysuru
+- Dr Santhosh Kumar M, Associate Professor, Department of Pediatrics, JSS Medical College, JSSAHER, Mysuru
+
 ## 📞 Support
 
 For support, email tgmanikanta74@gmail.com 
 
 ---
 
-Built with ❤️ by Doutly.com
+Built with ❤️ Support by Doutly

@@ -25,11 +25,11 @@ const Splash: React.FC = () => {
       {isLoading ? (
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent"></div>
-          <p className="text-sm text-muted-foreground">Loading Health Compass...</p>
+          <p className="text-sm text-muted-foreground">Loading PediaPredict ...</p>
         </div>
       ) : (
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-primary">Health Compass</h1>
+          <h1 className="text-4xl font-bold text-primary">PediaPredict </h1>
           <p className="text-muted-foreground">Your Health Assessment Guide</p>
         </div>
       )}
