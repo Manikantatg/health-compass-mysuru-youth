@@ -114,11 +114,12 @@ const EditAssessmentDrawer: React.FC<EditAssessmentDrawerProps> = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="gender">Gender</Label>
-              <Select value={formData.gender || 'male'} onValueChange={(value) => handleChange('gender', value)}>
+              <Select value={formData.gender || "none"} onValueChange={(value) => handleChange('gender', value === "none" ? undefined : value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Gender" />
+                  <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select gender</SelectItem>
                   <SelectItem value="male">Male</SelectItem>
                   <SelectItem value="female">Female</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
@@ -245,11 +246,12 @@ const EditAssessmentDrawer: React.FC<EditAssessmentDrawerProps> = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="birthOrder">Birth Order</Label>
-              <Select value={formData.birthOrder?.toString() || '1'} onValueChange={(value) => handleChange('birthOrder', parseInt(value))}>
+              <Select value={formData.birthOrder?.toString() || "none"} onValueChange={(value) => handleChange('birthOrder', value === "none" ? undefined : parseInt(value))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select birth order" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select birth order</SelectItem>
                   {[1, 2, 3, 4, 5].map((order) => (
                     <SelectItem key={order} value={order.toString()}>{order}</SelectItem>
                   ))}
@@ -258,11 +260,12 @@ const EditAssessmentDrawer: React.FC<EditAssessmentDrawerProps> = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="familyType">Family Type</Label>
-              <Select value={formData.familyType || 'nuclear'} onValueChange={(value) => handleChange('familyType', value)}>
+              <Select value={formData.familyType || "none"} onValueChange={(value) => handleChange('familyType', value === "none" ? undefined : value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Family Type" />
+                  <SelectValue placeholder="Select family type" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select family type</SelectItem>
                   <SelectItem value="nuclear">Nuclear</SelectItem>
                   <SelectItem value="joint">Joint</SelectItem>
                 </SelectContent>
@@ -270,11 +273,12 @@ const EditAssessmentDrawer: React.FC<EditAssessmentDrawerProps> = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="familyObesity">Family History of Obesity</Label>
-              <Select value={formData.familyObesity || 'no'} onValueChange={(value) => handleChange('familyObesity', value)}>
+              <Select value={formData.familyObesity || "none"} onValueChange={(value) => handleChange('familyObesity', value === "none" ? undefined : value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="Select answer" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select answer</SelectItem>
                   <SelectItem value="yes">Yes</SelectItem>
                   <SelectItem value="no">No</SelectItem>
                   <SelectItem value="unknown">Unknown</SelectItem>
@@ -283,11 +287,12 @@ const EditAssessmentDrawer: React.FC<EditAssessmentDrawerProps> = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="familyDiabetes">Family History of Diabetes</Label>
-              <Select value={formData.familyDiabetes || 'no'} onValueChange={(value) => handleChange('familyDiabetes', value)}>
+              <Select value={formData.familyDiabetes || ''} onValueChange={(value) => handleChange('familyDiabetes', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="">Select answer</SelectItem>
                   <SelectItem value="yes">Yes</SelectItem>
                   <SelectItem value="no">No</SelectItem>
                   <SelectItem value="unknown">Unknown</SelectItem>
@@ -296,11 +301,12 @@ const EditAssessmentDrawer: React.FC<EditAssessmentDrawerProps> = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="familyHypertension">Family History of Hypertension</Label>
-              <Select value={formData.familyHypertension || 'no'} onValueChange={(value) => handleChange('familyHypertension', value)}>
+              <Select value={formData.familyHypertension || ''} onValueChange={(value) => handleChange('familyHypertension', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="">Select answer</SelectItem>
                   <SelectItem value="yes">Yes</SelectItem>
                   <SelectItem value="no">No</SelectItem>
                   <SelectItem value="unknown">Unknown</SelectItem>
@@ -309,11 +315,12 @@ const EditAssessmentDrawer: React.FC<EditAssessmentDrawerProps> = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="familyThyroid">Family History of Thyroid</Label>
-              <Select value={formData.familyThyroid || 'no'} onValueChange={(value) => handleChange('familyThyroid', value)}>
+              <Select value={formData.familyThyroid || ''} onValueChange={(value) => handleChange('familyThyroid', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="">Select answer</SelectItem>
                   <SelectItem value="yes">Yes</SelectItem>
                   <SelectItem value="no">No</SelectItem>
                   <SelectItem value="unknown">Unknown</SelectItem>

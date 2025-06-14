@@ -79,13 +79,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <Label htmlFor="age" className="text-sm font-medium">Age</Label>
               <Select
-                value={socioDemographic.age?.toString() || "6"}
-                onValueChange={(value) => handleChange('age', parseInt(value))}
+                value={socioDemographic.age?.toString() || "none"}
+                onValueChange={(value) => handleChange('age', value === "none" ? undefined : parseInt(value))}
               >
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select age" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select age</SelectItem>
                   {Array.from({ length: 12 }, (_, i) => i + 6).map((age) => (
                     <SelectItem key={age} value={age.toString()}>
                       {age} years
@@ -97,11 +98,15 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
             <div>
               <Label htmlFor="gender" className="text-sm font-medium">Gender</Label>
-              <Select value={socioDemographic.gender} onValueChange={(value) => handleChange('gender', value)}>
+              <Select 
+                value={socioDemographic.gender || "none"} 
+                onValueChange={(value) => handleChange('gender', value === "none" ? undefined : value)}
+              >
                 <SelectTrigger className="mt-1">
-                  <SelectValue />
+                  <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select gender</SelectItem>
                   <SelectItem value="male">Male</SelectItem>
                   <SelectItem value="female">Female</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
@@ -270,13 +275,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="space-y-3">
             <Label className="text-sm font-medium">Do you have siblings?</Label>
             <Select
-              value={socioDemographic.hasSiblings || "no"}
-              onValueChange={(value) => handleChange('hasSiblings', value)}
+              value={socioDemographic.hasSiblings || "none"}
+              onValueChange={(value) => handleChange('hasSiblings', value === "none" ? undefined : value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select answer" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select answer</SelectItem>
                 <SelectItem value="yes">Yes</SelectItem>
                 <SelectItem value="no">No</SelectItem>
               </SelectContent>
@@ -315,13 +321,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div>
             <Label htmlFor="birthOrder" className="text-sm font-medium">Birth Order</Label>
             <Select
-              value={socioDemographic.birthOrder?.toString() || "1"}
-              onValueChange={(value) => handleChange('birthOrder', parseInt(value))}
+              value={socioDemographic.birthOrder?.toString() || "none"}
+              onValueChange={(value) => handleChange('birthOrder', value === "none" ? undefined : parseInt(value))}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select birth order" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select birth order</SelectItem>
                 <SelectItem value="1">1st Child</SelectItem>
                 <SelectItem value="2">2nd Child</SelectItem>
                 <SelectItem value="3">More than 2 Children</SelectItem>
@@ -331,11 +338,12 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
 
           <div>
             <Label htmlFor="familyType" className="text-sm font-medium">Family Type</Label>
-            <Select value={socioDemographic.familyType} onValueChange={(value) => handleChange('familyType', value)}>
+            <Select value={socioDemographic.familyType || "none"} onValueChange={(value) => handleChange('familyType', value === "none" ? undefined : value)}>
               <SelectTrigger className="mt-1">
-                <SelectValue />
+                <SelectValue placeholder="Select family type" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select family type</SelectItem>
                 <SelectItem value="nuclear">Nuclear Family</SelectItem>
                 <SelectItem value="joint">Joint Family</SelectItem>
                 <SelectItem value="three-generation">Three Generation Family</SelectItem>
@@ -356,13 +364,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="space-y-3">
             <Label className="text-sm font-medium">Does anybody in the family look fat?</Label>
             <Select
-              value={socioDemographic.familyObesity || "no"}
-              onValueChange={(value) => handleChange('familyObesity', value)}
+              value={socioDemographic.familyObesity || "none"}
+              onValueChange={(value) => handleChange('familyObesity', value === "none" ? undefined : value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select answer" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select answer</SelectItem>
                 <SelectItem value="yes">Yes</SelectItem>
                 <SelectItem value="no">No</SelectItem>
                 <SelectItem value="cannot-tell">Cannot tell</SelectItem>
@@ -374,13 +383,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <div className="ml-4 space-y-2">
                 <Label className="text-sm font-medium">How is he/she related to you?</Label>
               <Select
-                value={socioDemographic.familyObesityRelation || "father"}
-                  onValueChange={(value) => handleChange('familyObesityRelation', value)}
+                value={socioDemographic.familyObesityRelation || "none"}
+                onValueChange={(value) => handleChange('familyObesityRelation', value === "none" ? undefined : value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select relation" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select relation</SelectItem>
                   <SelectItem value="father">Father</SelectItem>
                   <SelectItem value="mother">Mother</SelectItem>
                   <SelectItem value="both-parents">Both Parents</SelectItem>
@@ -393,13 +403,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="space-y-3">
             <Label className="text-sm font-medium">Is anyone in the family suffering from diabetes?</Label>
             <Select
-              value={socioDemographic.familyDiabetes || "no"}
-              onValueChange={(value) => handleChange('familyDiabetes', value)}
+              value={socioDemographic.familyDiabetes || "none"}
+              onValueChange={(value) => handleChange('familyDiabetes', value === "none" ? undefined : value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select answer" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select answer</SelectItem>
                 <SelectItem value="yes">Yes</SelectItem>
                 <SelectItem value="no">No</SelectItem>
                 <SelectItem value="dont-know">Don't know</SelectItem>
@@ -411,13 +422,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <div className="ml-4 space-y-2">
                 <Label className="text-sm font-medium">How is he/she related to you?</Label>
               <Select
-                value={socioDemographic.familyDiabetesRelation || "father"}
-                  onValueChange={(value) => handleChange('familyDiabetesRelation', value)}
+                value={socioDemographic.familyDiabetesRelation || "none"}
+                onValueChange={(value) => handleChange('familyDiabetesRelation', value === "none" ? undefined : value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select relation" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select relation</SelectItem>
                   <SelectItem value="father">Father</SelectItem>
                   <SelectItem value="mother">Mother</SelectItem>
                   <SelectItem value="both-parents">Both Parents</SelectItem>
@@ -430,13 +442,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="space-y-3">
             <Label className="text-sm font-medium">Is anyone in the family suffering from Hypertension or taking medicines for High BP?</Label>
             <Select
-              value={socioDemographic.familyHypertension || "no"}
-              onValueChange={(value) => handleChange('familyHypertension', value)}
+              value={socioDemographic.familyHypertension || "none"}
+              onValueChange={(value) => handleChange('familyHypertension', value === "none" ? undefined : value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select answer" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select answer</SelectItem>
                 <SelectItem value="yes">Yes</SelectItem>
                 <SelectItem value="no">No</SelectItem>
                 <SelectItem value="dont-know">Don't know</SelectItem>
@@ -448,13 +461,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <div className="ml-4 space-y-2">
                 <Label className="text-sm font-medium">How is he/she related to you?</Label>
               <Select
-                value={socioDemographic.familyHypertensionRelation || "father"}
-                  onValueChange={(value) => handleChange('familyHypertensionRelation', value)}
+                value={socioDemographic.familyHypertensionRelation || "none"}
+                onValueChange={(value) => handleChange('familyHypertensionRelation', value === "none" ? undefined : value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select relation" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select relation</SelectItem>
                   <SelectItem value="father">Father</SelectItem>
                   <SelectItem value="mother">Mother</SelectItem>
                   <SelectItem value="both-parents">Both Parents</SelectItem>
@@ -467,13 +481,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="space-y-3">
             <Label className="text-sm font-medium">Is anybody in the family suffering from thyroid dysfunction?</Label>
             <Select
-              value={socioDemographic.familyThyroid || "no"}
-              onValueChange={(value) => handleChange('familyThyroid', value)}
+              value={socioDemographic.familyThyroid || "none"}
+              onValueChange={(value) => handleChange('familyThyroid', value === "none" ? undefined : value)}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select answer" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select answer</SelectItem>
                 <SelectItem value="yes">Yes</SelectItem>
                 <SelectItem value="no">No</SelectItem>
                 <SelectItem value="dont-know">Don't know</SelectItem>
@@ -485,13 +500,14 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <div className="ml-4 space-y-2">
                 <Label className="text-sm font-medium">How is he/she related to you?</Label>
               <Select
-                value={socioDemographic.familyThyroidRelation || "father"}
-                  onValueChange={(value) => handleChange('familyThyroidRelation', value)}
+                value={socioDemographic.familyThyroidRelation || "none"}
+                  onValueChange={(value) => handleChange('familyThyroidRelation', value === "none" ? undefined : value)}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select relation" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Select relation</SelectItem>
                   <SelectItem value="father">Father</SelectItem>
                   <SelectItem value="mother">Mother</SelectItem>
                   <SelectItem value="both-parents">Both Parents</SelectItem>

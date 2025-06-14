@@ -17,11 +17,16 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
   };
 
   const timeOptions = [
-    { value: 0, label: 'Never' },
-    { value: 1, label: '< 1 hr/day' },
-    { value: 2, label: '1-2 hr/day' },
-    { value: 3, label: '2-3 hr/day' },
-    { value: 4, label: '> 3 hr/day' }
+    { value: "none", label: "Select hours" },
+    { value: 0, label: '0 hours' },
+    { value: 1, label: '1 hour' },
+    { value: 2, label: '2 hours' },
+    { value: 3, label: '3 hours' },
+    { value: 4, label: '4 hours' },
+    { value: 5, label: '5 hours' },
+    { value: 6, label: '6 hours' },
+    { value: 7, label: '7 hours' },
+    { value: 8, label: '8 hours' }
   ];
 
   const screenTimeActivities = [
@@ -60,8 +65,8 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
     <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b last:border-b-0">
       <Label className="text-sm font-medium mb-2 sm:mb-0 sm:w-1/2">{label}</Label>
       <Select
-        value={sedentaryBehavior[activityKey]?.toString() || "0"}
-        onValueChange={(value) => handleChange(activityKey, parseInt(value))}
+        value={sedentaryBehavior[activityKey]?.toString() || "none"}
+        onValueChange={(value) => handleChange(activityKey, value === "none" ? undefined : parseInt(value))}
         className="w-full sm:w-1/2"
       >
         <SelectTrigger>

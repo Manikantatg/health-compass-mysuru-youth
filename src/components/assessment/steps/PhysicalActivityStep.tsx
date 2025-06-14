@@ -40,9 +40,10 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
   ];
 
   const ActivityRow = ({ activity }: { activity: { key: string; label: string } }) => {
-    const currentActivity = physicalActivity[activity.key as keyof PhysicalActivity] || { days: 0, minutes: '' };
+    const currentActivity = physicalActivity[activity.key as keyof PhysicalActivity] || { days: undefined, minutes: 'none' };
     
     const timeRanges = [
+      { value: 'none', label: 'Select time range' },
       { value: 'less-than-1', label: '< 1 hr/day' },
       { value: '1-2', label: '1-2 hr/day' },
       { value: '2-3', label: '2-3 hr/day' },
@@ -54,13 +55,14 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         <div className="text-sm font-medium col-span-1">{activity.label}</div>
         <div className="col-span-1">
           <Select
-            value={currentActivity.days?.toString() || "0"}
-            onValueChange={(value) => handleActivityChange(activity.key, 'days', parseInt(value))}
+            value={currentActivity.days?.toString() || "none"}
+            onValueChange={(value) => handleActivityChange(activity.key, 'days', value === "none" ? undefined : parseInt(value))}
           >
             <SelectTrigger className="w-full">
-              <SelectValue />
+              <SelectValue placeholder="Select days" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="none">Select days</SelectItem>
               {[0, 1, 2, 3, 4, 5, 6, 7].map(day => (
                 <SelectItem key={day} value={day.toString()}>{day}</SelectItem>
               ))}
@@ -69,7 +71,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         </div>
         <div className="col-span-1">
           <Select
-            value={currentActivity.minutes || 'less-than-1'}
+            value={currentActivity.minutes || 'none'}
             onValueChange={(value) => handleActivityChange(activity.key, 'minutes', value)}
           >
             <SelectTrigger className="w-full">

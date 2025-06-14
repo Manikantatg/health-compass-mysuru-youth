@@ -35,6 +35,7 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
   };
 
   const frequencyOptions = [
+    { value: "none", label: "Select frequency" },
     { value: 0, label: 'Never' },
     { value: 1, label: 'Rarely' },
     { value: 2, label: 'Sometimes' },
@@ -46,18 +47,18 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
     <div className="space-y-3">
       <Label className="text-sm font-medium">{label}</Label>
       <Select
-        value={sleepQuality[field]?.toString() || "0"}
-        onValueChange={(value) => handleChange(field, parseInt(value))}
+        value={sleepQuality[field]?.toString() || "none"}
+        onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value))}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select frequency" />
         </SelectTrigger>
         <SelectContent>
-        {frequencyOptions.map((option) => (
+          {frequencyOptions.map((option) => (
             <SelectItem key={option.value} value={option.value.toString()}>
               {option.label}
             </SelectItem>
-        ))}
+          ))}
         </SelectContent>
       </Select>
     </div>

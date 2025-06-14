@@ -275,7 +275,7 @@ const DataDashboard: React.FC = () => {
             handleFilter({ gender: value });
           }}>
             <SelectTrigger>
-              <SelectValue placeholder="Filter by gender" />
+              <SelectValue placeholder="" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Genders</SelectItem>
@@ -288,7 +288,7 @@ const DataDashboard: React.FC = () => {
             handleFilter({ school: value });
           }}>
             <SelectTrigger>
-              <SelectValue placeholder="Filter by school" />
+              <SelectValue placeholder="" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Schools</SelectItem>

@@ -22,6 +22,7 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
 
   const bodyPerceptionLabels = ['Very underweight', 'Slightly underweight', 'About the right weight', 'Slightly overweight', 'Very overweight'];
   const frequencyOptions = [
+    { value: "none", label: "Select frequency" },
     { value: 0, label: 'Never' },
     { value: 1, label: 'Rarely' },
     { value: 2, label: 'Sometimes' },
@@ -33,8 +34,8 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
     <div className="space-y-3">
       <Label className="text-sm font-medium">{label}</Label>
       <Select
-        value={mentalHealth[field]?.toString() || "0"}
-        onValueChange={(value) => handleChange(field, parseInt(value) as MentalHealth[keyof MentalHealth])}
+        value={mentalHealth[field]?.toString() || "none"}
+        onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select frequency" />
@@ -65,13 +66,14 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <Select
-            value={mentalHealth.bodyPerception?.toString() || "3"}
-            onValueChange={(value) => handleChange('bodyPerception', parseInt(value) as MentalHealth[keyof MentalHealth])}
+            value={mentalHealth.bodyPerception?.toString() || "none"}
+            onValueChange={(value) => handleChange('bodyPerception', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select body perception" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="none">Select body perception</SelectItem>
               {bodyPerceptionLabels.map((label, index) => (
                 <SelectItem key={index} value={(index + 1).toString()}>
                   {String.fromCharCode(65 + index)}. {label}
@@ -90,13 +92,14 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         </CardHeader>
         <CardContent>
           <Select
-            value={mentalHealth.weightGoal || "maintain"}
-            onValueChange={(value) => handleChange('weightGoal', value as MentalHealth[keyof MentalHealth])}
+            value={mentalHealth.weightGoal || "none"}
+            onValueChange={(value) => handleChange('weightGoal', value === "none" ? undefined : value as MentalHealth[keyof MentalHealth])}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select weight goal" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="none">Select weight goal</SelectItem>
               <SelectItem value="lose">Lose weight</SelectItem>
               <SelectItem value="gain">Gain weight</SelectItem>
               <SelectItem value="maintain">Stay the same weight</SelectItem>
@@ -165,13 +168,14 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
                 <Label className="text-base font-medium">1. How do you currently perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
                 <Select
-                  value={mentalHealth.currentBodyImageSatisfaction?.toString() || "1"}
-                  onValueChange={(value) => handleChange('currentBodyImageSatisfaction', parseInt(value) as MentalHealth[keyof MentalHealth])}
+                  value={mentalHealth.currentBodyImageSatisfaction?.toString() || "none"}
+                  onValueChange={(value) => handleChange('currentBodyImageSatisfaction', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a number (1-9)" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="none">Select a number (1-9)</SelectItem>
                     {Array.from({ length: 9 }, (_, i) => i + 1).map((num) => (
                       <SelectItem key={num} value={num.toString()}>
                         {num}
@@ -186,13 +190,14 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
                 <Label className="text-base font-medium">2. How do you desire to perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How would you ideally like to see your body?)</p>
                 <Select
-                  value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "1"}
-                  onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', parseInt(value) as MentalHealth[keyof MentalHealth])}
+                  value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "none"}
+                  onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a number (1-9)" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="none">Select a number (1-9)</SelectItem>
                     {Array.from({ length: 9 }, (_, i) => i + 1).map((num) => (
                       <SelectItem key={num} value={num.toString()}>
                         {num}
@@ -240,17 +245,62 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <h4 className="font-medium mb-2">Body Image & Weight</h4>
               <div className="space-y-1 text-sm">
-                <p><strong>Current Weight Perception:</strong> {bodyPerceptionLabels[mentalHealth.bodyPerception - 1]}</p>
-                <p><strong>Weight Goal:</strong> {mentalHealth.weightGoal === 'lose' ? 'Lose weight' : mentalHealth.weightGoal === 'gain' ? 'Gain weight' : 'Maintain weight'}</p>
-                <p><strong>Bullying Experience:</strong> {mentalHealth.bullyingExperience ? 'Yes' : 'No'}</p>
+                <p>
+                  <strong>Current Weight Perception:</strong>{' '}
+                  {mentalHealth.bodyPerception ? bodyPerceptionLabels[mentalHealth.bodyPerception - 1] : 'Not selected'}
+                </p>
+                <p>
+                  <strong>Weight Goal:</strong>{' '}
+                  {mentalHealth.weightGoal === 'lose' 
+                    ? 'Lose weight' 
+                    : mentalHealth.weightGoal === 'gain' 
+                      ? 'Gain weight' 
+                      : mentalHealth.weightGoal === 'maintain'
+                        ? 'Maintain weight'
+                        : 'Not selected'}
+                </p>
+                <p>
+                  <strong>Bullying Experience:</strong>{' '}
+                  {mentalHealth.bullyingExperience === undefined 
+                    ? 'Not selected' 
+                    : mentalHealth.bullyingExperience 
+                      ? 'Yes' 
+                      : 'No'}
+                </p>
+                <p>
+                  <strong>Current Body Image:</strong>{' '}
+                  {mentalHealth.currentBodyImageSatisfaction 
+                    ? `Rating: ${mentalHealth.currentBodyImageSatisfaction}` 
+                    : 'Not selected'}
+                </p>
+                <p>
+                  <strong>Desired Body Image:</strong>{' '}
+                  {mentalHealth.desiredBodyImageSatisfaction 
+                    ? `Rating: ${mentalHealth.desiredBodyImageSatisfaction}` 
+                    : 'Not selected'}
+                </p>
               </div>
             </div>
             <div>
               <h4 className="font-medium mb-2">Mental Health Indicators</h4>
               <div className="space-y-1 text-sm">
-                <p><strong>Physical Activity Difficulty:</strong> {frequencyOptions[mentalHealth.difficultySports]?.label}</p>
-                <p><strong>Attention Issues:</strong> {frequencyOptions[mentalHealth.difficultyAttention]?.label}</p>
-                <p><strong>Academic Performance:</strong> {frequencyOptions[mentalHealth.troubleKeepingUp]?.label}</p>
+                {[
+                  { field: 'difficultyWalking', label: 'Difficulty Walking' },
+                  { field: 'difficultyRunning', label: 'Difficulty Running' },
+                  { field: 'difficultySports', label: 'Difficulty with Sports' },
+                  { field: 'difficultyAttention', label: 'Difficulty Paying Attention' },
+                  { field: 'forgetThings', label: 'Forgetfulness' },
+                  { field: 'troubleKeepingUp', label: 'Trouble Keeping Up' },
+                  { field: 'feelLonely', label: 'Feeling Lonely' },
+                  { field: 'wantEatLess', label: 'Wanting to Eat Less' }
+                ].map(({ field, label }) => (
+                  <p key={field}>
+                    <strong>{label}:</strong>{' '}
+                    {mentalHealth[field] === undefined 
+                      ? 'Not selected' 
+                      : frequencyOptions.find(opt => opt.value === mentalHealth[field])?.label || 'Not selected'}
+                  </p>
+                ))}
               </div>
             </div>
           </div>

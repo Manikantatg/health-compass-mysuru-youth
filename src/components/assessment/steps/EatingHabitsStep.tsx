@@ -16,7 +16,14 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('eatingHabits', { [field]: value });
   };
 
-  const scaleLabels = ['Never', 'Rarely', 'Sometimes', 'Often', 'Almost Always'];
+  const scaleLabels = [
+    { value: "none", label: "Select frequency" },
+    { value: 0, label: 'Never' },
+    { value: 1, label: 'Rarely' },
+    { value: 2, label: 'Sometimes' },
+    { value: 3, label: 'Often' },
+    { value: 4, label: 'Almost Always' }
+  ];
 
   const DropdownScale = ({ field, label }: { field: keyof EatingHabits; label: string }) => (
     <div className="space-y-4">
@@ -24,16 +31,16 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
         <Label className="text-sm font-medium text-foreground">{label}</Label>
       </div>
       <Select
-        value={eatingHabits[field]?.toString() || "0"}
-        onValueChange={(value) => handleChange(field, parseInt(value))}
+        value={eatingHabits[field]?.toString() || "none"}
+        onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value))}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select frequency" />
         </SelectTrigger>
         <SelectContent>
-          {scaleLabels.map((label, index) => (
-            <SelectItem key={index} value={index.toString()}>
-              {label}
+          {scaleLabels.map((option) => (
+            <SelectItem key={option.value} value={option.value.toString()}>
+              {option.label}
             </SelectItem>
           ))}
         </SelectContent>
@@ -112,12 +119,12 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
                 {['cereals', 'pulses', 'vegetables', 'fruits', 'milkProducts'].map((key) => (
                   <div key={key} className="flex justify-between text-sm">
                     <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                    <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]}</span>
+                    <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]?.label}</span>
                   </div>
                 ))}
                 <div className="flex justify-between text-sm">
                   <span>Non-Veg Foods:</span>
-                  <span>{scaleLabels[eatingHabits.nonVegConsumption]}</span>
+                  <span>{scaleLabels[eatingHabits.nonVegConsumption]?.label}</span>
                 </div>
               </div>
             </div>
@@ -127,7 +134,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
                 {['snacks', 'beverages', 'sweets'].map((key) => (
                   <div key={key} className="flex justify-between text-sm">
                     <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                    <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]}</span>
+                    <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]?.label}</span>
                   </div>
                 ))}
               </div>

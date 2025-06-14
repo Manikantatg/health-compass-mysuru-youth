@@ -14,9 +14,9 @@ interface StudentCardsViewProps {
 
 const StudentCardsView: React.FC<StudentCardsViewProps> = ({ assessments }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterRisk, setFilterRisk] = useState('all');
-  const [filterGender, setFilterGender] = useState('all');
-  const [filterClass, setFilterClass] = useState('all');
+  const [filterRisk, setFilterRisk] = useState('none');
+  const [filterGender, setFilterGender] = useState('none');
+  const [filterClass, setFilterClass] = useState('none');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   console.log("StudentCardsView - Initial Assessments:", assessments);
@@ -27,13 +27,13 @@ const StudentCardsView: React.FC<StudentCardsViewProps> = ({ assessments }) => {
         assessment.socioDemographic.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         assessment.socioDemographic.schoolName.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesRisk = filterRisk === 'all' || 
+      const matchesRisk = filterRisk === 'none' || filterRisk === 'all' || 
         assessment.aiPrediction?.riskLevel?.toLowerCase() === filterRisk.toLowerCase();
       
-      const matchesGender = filterGender === 'all' || 
+      const matchesGender = filterGender === 'none' || filterGender === 'all' || 
         assessment.socioDemographic.gender === filterGender;
         
-      const matchesClass = filterClass === 'all' || 
+      const matchesClass = filterClass === 'none' || filterClass === 'all' || 
         assessment.socioDemographic.class === filterClass;
 
       return matchesSearch && matchesRisk && matchesGender && matchesClass;
@@ -89,9 +89,10 @@ const StudentCardsView: React.FC<StudentCardsViewProps> = ({ assessments }) => {
 
             <Select value={filterRisk} onValueChange={setFilterRisk}>
               <SelectTrigger>
-                <SelectValue placeholder="Risk Level" />
+                <SelectValue placeholder="Select risk level" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select risk level</SelectItem>
                 <SelectItem value="all">All Risk Levels</SelectItem>
                 <SelectItem value="low">Low Risk</SelectItem>
                 <SelectItem value="medium">Medium Risk</SelectItem>
@@ -101,9 +102,10 @@ const StudentCardsView: React.FC<StudentCardsViewProps> = ({ assessments }) => {
 
             <Select value={filterGender} onValueChange={setFilterGender}>
               <SelectTrigger>
-                <SelectValue placeholder="Gender" />
+                <SelectValue placeholder="Select gender" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select gender</SelectItem>
                 <SelectItem value="all">All Genders</SelectItem>
                 <SelectItem value="male">Male</SelectItem>
                 <SelectItem value="female">Female</SelectItem>
@@ -113,9 +115,10 @@ const StudentCardsView: React.FC<StudentCardsViewProps> = ({ assessments }) => {
 
             <Select value={filterClass} onValueChange={setFilterClass}>
               <SelectTrigger>
-                <SelectValue placeholder="Class" />
+                <SelectValue placeholder="Select class" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none">Select class</SelectItem>
                 <SelectItem value="all">All Classes</SelectItem>
                 {uniqueClasses.map(cls => (
                   <SelectItem key={cls} value={cls}>Class {cls}</SelectItem>
@@ -125,9 +128,9 @@ const StudentCardsView: React.FC<StudentCardsViewProps> = ({ assessments }) => {
 
             <Button variant="outline" onClick={() => {
               setSearchTerm('');
-              setFilterRisk('all');
-              setFilterGender('all');
-              setFilterClass('all');
+              setFilterRisk('none');
+              setFilterGender('none');
+              setFilterClass('none');
             }}>
               <Filter className="h-4 w-4 mr-2" />
               Clear Filters
