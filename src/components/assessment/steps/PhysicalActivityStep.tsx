@@ -146,11 +146,11 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
                 <Label htmlFor="ptDuration" className="text-sm font-medium">Duration per Class (minutes)</Label>
                 <Input
                   type="number"
-                  min="10"
+                  min="0"
                   max="120"
-                  value={physicalActivity.ptDuration || 30}
-                  onChange={(e) => handleChange('ptDuration', parseInt(e.target.value) || 30)}
-                  placeholder="30"
+                  value={physicalActivity.ptDuration || 0}
+                  onChange={(e) => handleChange('ptDuration', parseInt(e.target.value) || 0)}
+                  placeholder="Enter duration"
                   className="mt-1"
                 />
               </div>
