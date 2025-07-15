@@ -17,6 +17,20 @@ import { generateObesityPrediction } from '../../config/gemini';
 import { useToast } from '../ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 
+// Utility function to deeply remove undefined values from an object
+function removeUndefinedDeep(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(removeUndefinedDeep);
+  } else if (obj && typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj)
+        .filter(([_, v]) => v !== undefined)
+        .map(([k, v]) => [k, removeUndefinedDeep(v)])
+    );
+  }
+  return obj;
+}
+
 const AssessmentForm: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -359,7 +373,7 @@ const AssessmentForm: React.FC = () => {
       }
 
       // Save comprehensive assessment to Firestore
-      const finalAssessment = {
+      let finalAssessment = {
         userId: user?.uid || '',
         ...assessmentData,
         bmi,
@@ -373,6 +387,9 @@ const AssessmentForm: React.FC = () => {
         },
         timestamp: serverTimestamp()
       };
+
+      // Remove all undefined values deeply before saving
+      finalAssessment = removeUndefinedDeep(finalAssessment);
 
       console.log('Saving assessment to Firestore:', finalAssessment);
       const assessmentRef = await addDoc(collection(db, 'assessments'), finalAssessment);
