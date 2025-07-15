@@ -64,6 +64,14 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
     </div>
   );
 
+  // Helper to ensure only valid time strings or empty string are passed to <input type="time" />
+  const getTimeValue = (val: string | undefined) => {
+    if (!val || val === 'none') return '';
+    // Basic validation: must match HH:mm
+    if (/^\d{2}:\d{2}$/.test(val)) return val;
+    return '';
+  };
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
@@ -83,7 +91,7 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
               <Input
                 id="bedtime"
                 type="time"
-                value={sleepQuality.bedtime || ''}
+                value={getTimeValue(sleepQuality.bedtime)}
                 onChange={(e) => handleChange('bedtime', e.target.value)}
                 className="mt-1"
               />
@@ -93,7 +101,7 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
               <Input
                 id="wakeupTime"
                 type="time"
-                value={sleepQuality.wakeupTime || ''}
+                value={getTimeValue(sleepQuality.wakeupTime)}
                 onChange={(e) => handleChange('wakeupTime', e.target.value)}
                 className="mt-1"
               />
