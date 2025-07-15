@@ -314,9 +314,9 @@ const AssessmentForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Only allow submission on the final step
     if (currentStep !== steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-      return;
+      return; // Do nothing, prevent form submission
     }
     setIsSubmitting(true);
     setError(null);
