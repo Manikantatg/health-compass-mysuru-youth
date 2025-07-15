@@ -179,8 +179,18 @@ const AssessmentForm: React.FC = () => {
   // Enhanced scoring system with better accuracy
   const getActivityValue = (value: any): number => {
     if (typeof value === 'number') return value;
+    if (typeof value === 'string') {
+      // Handle string values like 'none', 'less-than-1', etc.
+      if (value === 'none') return 0;
+      if (value === 'less-than-1') return 0.5;
+      if (value === '1-2') return 1.5;
+      if (value === '2-3') return 2.5;
+      if (value === 'more-than-3') return 3.5;
+      // fallback
+      return parseFloat(value) || 0;
+    }
     if (typeof value === 'object' && value !== null && 'days' in value && 'minutes' in value) {
-      return (value.days || 0) * (value.minutes || 0);
+      return ((value.days || 0) * getActivityValue(value.minutes));
     }
     return 0;
   };
@@ -201,8 +211,10 @@ const AssessmentForm: React.FC = () => {
     const eatingScore = Math.max(0, Math.min(10, (healthyFoods - unhealthyFoods + 20) / 4));
 
     // Enhanced physical activity score with PT participation
+    const ptFreq = data.physicalActivity?.ptFrequency ?? 0;
+    const ptDur = getActivityValue(data.physicalActivity?.ptDuration);
     const ptScore = data.physicalActivity?.participation ? 
-                   ((data.physicalActivity?.ptFrequency || 0) * (data.physicalActivity?.ptDuration || 0)) / 10 : 0;
+                   (ptFreq * ptDur) / 10 : 0;
     
     const totalActivity = ptScore + 
                          getActivityValue(data.physicalActivity?.yoga) / 100 + 
