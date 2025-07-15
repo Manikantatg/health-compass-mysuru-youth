@@ -488,7 +488,13 @@ const AssessmentForm: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4 p-4 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && currentStep !== steps.length - 1) {
+                e.preventDefault();
+              }
+            }}
+          >
             <CurrentStepComponent
               data={assessmentData}
               updateData={updateAssessmentData}
