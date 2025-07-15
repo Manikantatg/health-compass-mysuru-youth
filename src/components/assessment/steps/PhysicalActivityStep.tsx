@@ -21,9 +21,9 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
 
   const handleActivityChange = (activity: string, field: 'days' | 'minutes', value: any) => {
     updateData('physicalActivity', {
-      ...physicalActivity,
+      ...(physicalActivity || {}),
       [activity]: {
-        ...physicalActivity[activity as keyof PhysicalActivity],
+        ...(physicalActivity?.[activity as keyof PhysicalActivity] as object || {}),
         [field]: value
       }
     });
@@ -55,7 +55,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         <div className="text-sm font-medium col-span-1">{activity.label}</div>
         <div className="col-span-1">
           <Select
-            value={currentActivity.days?.toString() || "none"}
+            value={typeof currentActivity === 'object' && currentActivity?.days ? currentActivity.days.toString() : "none"}
             onValueChange={(value) => handleActivityChange(activity.key, 'days', value === "none" ? undefined : parseInt(value))}
           >
             <SelectTrigger className="w-full">
@@ -71,7 +71,7 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         </div>
         <div className="col-span-1">
           <Select
-            value={currentActivity.minutes || 'none'}
+            value={typeof currentActivity === 'object' && currentActivity?.minutes ? currentActivity.minutes : 'none'}
             onValueChange={(value) => handleActivityChange(activity.key, 'minutes', value)}
           >
             <SelectTrigger className="w-full">

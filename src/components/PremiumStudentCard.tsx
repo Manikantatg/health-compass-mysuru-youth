@@ -1,353 +1,207 @@
-import { AssessmentData } from '@/types/assessment';
-import { Card, CardContent, Typography, Box, Chip, List, ListItem, ListItemText, Grid, Divider, LinearProgress, Paper } from '@mui/material';
-import { format } from 'date-fns';
-import { Warning, CheckCircle, Error, Psychology, TrendingUp } from '@mui/icons-material';
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { Eye, Download, AlertTriangle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { AssessmentData } from '../types/assessment';
 
 interface PremiumStudentCardProps {
-  assessment: AssessmentData;
+  assessment: AssessmentData & { id: string };
+  onView: (id: string) => void;
+  onEdit: (assessment: AssessmentData & { id: string }) => void;
+  onDownload: (assessment: AssessmentData & { id: string }) => void;
 }
 
-export const PremiumStudentCard = ({ assessment }: PremiumStudentCardProps) => {
-  const { student, responses, completedAt, aiPrediction } = assessment;
+const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({
+  assessment,
+  onView,
+  onEdit,
+  onDownload
+}) => {
+  const bmi = assessment.bmi || 0;
+  const riskLevel = assessment.aiPrediction?.riskLevel || 'Low';
+  const riskPercentage = assessment.aiPrediction?.riskPercentage || 0;
 
-  const getRiskColor = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'Low':
-        return 'success';
-      case 'Medium':
-        return 'warning';
-      case 'High':
-        return 'error';
-      default:
-        return 'default';
+  const getBMICategory = (bmi: number) => {
+    if (bmi < 18.5) return { category: 'Underweight', color: 'text-blue-600' };
+    if (bmi < 25) return { category: 'Normal', color: 'text-green-600' };
+    if (bmi < 30) return { category: 'Overweight', color: 'text-yellow-600' };
+    return { category: 'Obese', color: 'text-red-600' };
+  };
+
+  const getRiskColor = (level: string) => {
+    switch (level?.toLowerCase()) {
+      case 'high': return 'text-red-600 bg-red-50 border-red-200';
+      case 'medium': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+      case 'low': return 'text-green-600 bg-green-50 border-green-200';
+      default: return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
 
-  const getRiskIcon = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'Low':
-        return <CheckCircle color="success" />;
-      case 'Medium':
-        return <Warning color="warning" />;
-      case 'High':
-        return <Error color="error" />;
-      default:
-        return null;
+  const getRiskIcon = (level: string) => {
+    switch (level?.toLowerCase()) {
+      case 'high': return <TrendingUp className="h-4 w-4" />;
+      case 'medium': return <Minus className="h-4 w-4" />;
+      case 'low': return <TrendingDown className="h-4 w-4" />;
+      default: return <AlertTriangle className="h-4 w-4" />;
     }
   };
 
-  const formatTime = (time: string) => {
-    return time === '00:00' ? 'Not reported' : time;
+  const bmiInfo = getBMICategory(bmi);
+
+  const formatDate = (date: any) => {
+    if (!date) return 'N/A';
+    try {
+      if (date.toDate && typeof date.toDate === 'function') {
+        return date.toDate().toLocaleDateString();
+      }
+      if (date instanceof Date) {
+        return date.toLocaleDateString();
+      }
+      if (typeof date === 'string') {
+        return new Date(date).toLocaleDateString();
+      }
+      return 'N/A';
+    } catch (error) {
+      return 'N/A';
+    }
   };
 
-  const formatActivity = (activity: { days: number; minutes: string }) => {
-    return `${activity.days} days, ${activity.minutes} hours`;
+  const getScoreColor = (score: number, maxScore: number = 10) => {
+    const percentage = (score / maxScore) * 100;
+    if (percentage >= 80) return 'text-green-600';
+    if (percentage >= 60) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   return (
-    <Card sx={{ maxWidth: 800, mx: 'auto', my: 2 }}>
-      <CardContent>
-        {/* Student Information */}
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h5" gutterBottom>
-            {student.name}
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Typography variant="body2" color="textSecondary">
-                Age: {student.age} years
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Gender: {student.gender}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                School: {student.schoolName}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant="body2" color="textSecondary">
-                Class: {student.class} {student.section}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Family Type: {student.familyType}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Hostel Resident: {student.hostelResident ? 'Yes' : 'No'}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
+    <Card className="hover:shadow-lg transition-shadow duration-200 border-2">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-bold text-gray-900">
+              {assessment.socioDemographic?.name || 'Student'}
+            </CardTitle>
+            <CardDescription className="text-sm text-gray-600">
+              {assessment.socioDemographic?.schoolName || 'School Name'} • 
+              Class {assessment.socioDemographic?.class || 'N/A'}-{assessment.socioDemographic?.section || 'N/A'}
+            </CardDescription>
+          </div>
+          <Badge variant="outline" className={`${getRiskColor(riskLevel)} font-semibold`}>
+            <div className="flex items-center gap-1">
+              {getRiskIcon(riskLevel)}
+              {riskLevel} Risk
+            </div>
+          </Badge>
+        </div>
+      </CardHeader>
 
-        <Divider sx={{ my: 2 }} />
+      <CardContent className="space-y-4">
+        {/* Student Details */}
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <span className="font-medium text-gray-700">Age:</span>
+            <span className="ml-2 text-gray-600">{assessment.socioDemographic?.age || 'N/A'} years</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Gender:</span>
+            <span className="ml-2 text-gray-600 capitalize">{assessment.socioDemographic?.gender || 'N/A'}</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">BMI:</span>
+            <span className={`ml-2 font-semibold ${bmiInfo.color}`}>
+              {bmi.toFixed(1)} ({bmiInfo.category})
+            </span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Assessment Date:</span>
+            <span className="ml-2 text-gray-600">{formatDate(assessment.completedAt)}</span>
+          </div>
+        </div>
 
-        {/* Risk Percentage Display */}
-        {aiPrediction && (
-          <Paper elevation={3} sx={{ p: 3, mb: 3, bgcolor: 'background.paper', borderRadius: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <TrendingUp sx={{ mr: 1, color: 'primary.main' }} />
-              <Typography variant="h6" component="div">
-                Obesity Risk Assessment
-              </Typography>
-            </Box>
-            
-            <Grid container spacing={3}>
-              {/* Risk Score */}
-              <Grid item xs={12}>
-                <Box sx={{ mb: 2 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      Risk Score
-                    </Typography>
-                    <Typography 
-                      variant="h4" 
-                      fontWeight="bold" 
-                      color={getRiskColor(aiPrediction.riskLevel)}
-                      sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center',
-                        gap: 1
-                      }}
-                    >
-                      {aiPrediction.riskPercentage}%
-                      {getRiskIcon(aiPrediction.riskLevel)}
-                    </Typography>
-                  </Box>
-                  <LinearProgress
-                    variant="determinate"
-                    value={aiPrediction.riskPercentage}
-                    color={getRiskColor(aiPrediction.riskLevel)}
-                    sx={{ 
-                      height: 10, 
-                      borderRadius: 5,
-                      backgroundColor: 'rgba(0,0,0,0.1)'
-                    }}
-                  />
-                  <Typography 
-                    variant="body2" 
-                    color="textSecondary" 
-                    sx={{ mt: 1, textAlign: 'center' }}
-                  >
-                    {aiPrediction.riskLevel} Risk Level
-                  </Typography>
-                </Box>
-              </Grid>
+        {/* Risk Assessment */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Obesity Risk Level</span>
+            <span className={`text-sm font-semibold ${getRiskColor(riskLevel).split(' ')[0]}`}>
+              {riskPercentage}%
+            </span>
+          </div>
+          <Progress value={riskPercentage} className="h-3" />
+        </div>
 
-              {/* AI Confidence */}
-              <Grid item xs={12}>
-                <Box sx={{ mb: 2 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      AI Confidence
-                    </Typography>
-                    <Typography variant="subtitle1" fontWeight="bold" color="primary">
-                      {aiPrediction.confidenceScore}%
-                    </Typography>
-                  </Box>
-                  <LinearProgress
-                    variant="determinate"
-                    value={aiPrediction.confidenceScore}
-                    color="primary"
-                    sx={{ height: 10, borderRadius: 5 }}
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
+        {/* Health Scores */}
+        <div className="grid grid-cols-2 gap-3 text-xs">
+          <div className="text-center p-2 bg-gray-50 rounded">
+            <div className={`font-semibold ${getScoreColor(assessment.scores?.eatingHabitsScore || 0)}`}>
+              {(assessment.scores?.eatingHabitsScore || 0).toFixed(1)}/10
+            </div>
+            <div className="text-gray-600">Eating</div>
+          </div>
+          <div className="text-center p-2 bg-gray-50 rounded">
+            <div className={`font-semibold ${getScoreColor(assessment.scores?.physicalActivityScore || 0)}`}>
+              {(assessment.scores?.physicalActivityScore || 0).toFixed(1)}/10
+            </div>
+            <div className="text-gray-600">Activity</div>
+          </div>
+          <div className="text-center p-2 bg-gray-50 rounded">
+            <div className={`font-semibold ${getScoreColor(assessment.scores?.sleepScore || 0)}`}>
+              {(assessment.scores?.sleepScore || 0).toFixed(1)}/10
+            </div>
+            <div className="text-gray-600">Sleep</div>
+          </div>
+          <div className="text-center p-2 bg-gray-50 rounded">
+            <div className={`font-semibold ${getScoreColor(assessment.scores?.mentalHealthScore || 0)}`}>
+              {(assessment.scores?.mentalHealthScore || 0).toFixed(1)}/10
+            </div>
+            <div className="text-gray-600">Mental</div>
+          </div>
+        </div>
+
+        {/* Key Risk Factors */}
+        {assessment.aiPrediction?.keyRiskFactors && assessment.aiPrediction.keyRiskFactors.length > 0 && (
+          <div>
+            <h4 className="text-sm font-medium text-gray-700 mb-2">Key Risk Factors</h4>
+            <div className="flex flex-wrap gap-1">
+              {assessment.aiPrediction.keyRiskFactors.slice(0, 3).map((factor, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {factor}
+                </Badge>
+              ))}
+              {assessment.aiPrediction.keyRiskFactors.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{assessment.aiPrediction.keyRiskFactors.length - 3} more
+                </Badge>
+              )}
+            </div>
+          </div>
         )}
 
-        {/* AI Prediction Details */}
-        {aiPrediction && (
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Risk Assessment Details
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {aiPrediction.explanation}
-            </Typography>
-
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                  Key Risk Factors:
-                </Typography>
-                <List dense>
-                  {aiPrediction.keyRiskFactors.map((factor, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={factor} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                  Recommendations:
-                </Typography>
-                <List dense>
-                  {aiPrediction.recommendations.map((recommendation, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={recommendation} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Grid>
-            </Grid>
-          </Box>
-        )}
-
-        <Divider sx={{ my: 2 }} />
-
-        {/* Detailed Assessment Data */}
-        <Box>
-          <Typography variant="h6" gutterBottom>
-            Detailed Assessment Data
-          </Typography>
-
-          {/* Physical Activity */}
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              Physical Activity
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  PT: {responses.physicalActivity.ptFrequency} times/week, {responses.physicalActivity.ptDuration} mins
-                </Typography>
-                <Typography variant="body2">
-                  Indoor Games: {formatActivity(responses.physicalActivity.indoorGames)}
-                </Typography>
-                <Typography variant="body2">
-                  Outdoor Games: {formatActivity(responses.physicalActivity.outdoorGames)}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  Yoga: {formatActivity(responses.physicalActivity.yoga)}
-                </Typography>
-                <Typography variant="body2">
-                  Cycling: {formatActivity(responses.physicalActivity.cycling)}
-                </Typography>
-                <Typography variant="body2">
-                  Walking: {formatActivity(responses.physicalActivity.walking)}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* Eating Habits */}
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              Eating Habits
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  Fruits: {responses.nutrition.fruits} servings/day
-                </Typography>
-                <Typography variant="body2">
-                  Vegetables: {responses.nutrition.vegetables} servings/day
-                </Typography>
-                <Typography variant="body2">
-                  Cereals: {responses.nutrition.cereals} servings/day
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  Junk Food: {responses.nutrition.junkFood} times/week
-                </Typography>
-                <Typography variant="body2">
-                  Soft Drinks: {responses.nutrition.softDrinks} times/week
-                </Typography>
-                <Typography variant="body2">
-                  Energy Drinks: {responses.nutrition.energyDrinks} times/week
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* Sleep Quality */}
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              Sleep Quality
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  Bedtime: {formatTime(responses.sleep.bedtime)}
-                </Typography>
-                <Typography variant="body2">
-                  Wake-up: {formatTime(responses.sleep.wakeupTime)}
-                </Typography>
-                <Typography variant="body2">
-                  Duration: {responses.sleep.sleepDuration} minutes
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  Sleep Quality Score: {responses.sleep.difficultyFallingAsleep}/10
-                </Typography>
-                <Typography variant="body2">
-                  Sleepiness in Class: {responses.sleep.sleepinessInClasses}/10
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* Mental Health */}
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              Mental Health
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  Body Image Satisfaction: {responses.mentalHealth.currentBodyImageSatisfaction}/10
-                </Typography>
-                <Typography variant="body2">
-                  Weight Goal: {responses.mentalHealth.weightGoal}
-                </Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="body2">
-                  Bullying Experience: {responses.mentalHealth.bullyingExperience ? 'Yes' : 'No'}
-                </Typography>
-                <Typography variant="body2">
-                  Emotional Wellbeing: {responses.mentalHealth.feelLonely}/10
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-
-          {/* Family History */}
-          <Box>
-            <Typography variant="subtitle1" fontWeight="bold">
-              Family History
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <Typography variant="body2">
-                  Obesity: {responses.familyHistory.obesity}
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="body2">
-                  Diabetes: {responses.familyHistory.diabetes}
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="body2">
-                  Hypertension: {responses.familyHistory.hypertension}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-
-        <Box sx={{ mt: 2, textAlign: 'right' }}>
-          <Typography variant="caption" color="textSecondary">
-            Assessment Date: {format(new Date(completedAt), 'PPP')}
-          </Typography>
-        </Box>
+        {/* Action Buttons */}
+        <div className="flex gap-2 pt-2">
+          <Button
+            onClick={() => onView(assessment.id)}
+            size="sm"
+            variant="outline"
+            className="flex-1"
+          >
+            <Eye className="h-4 w-4 mr-1" />
+            View
+          </Button>
+          <Button
+            onClick={() => onDownload(assessment)}
+            size="sm"
+            variant="outline"
+            className="flex-1"
+          >
+            <Download className="h-4 w-4 mr-1" />
+            Export
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
-}; 
+};
+
+export default PremiumStudentCard;

@@ -66,7 +66,7 @@ const AssessmentResult: React.FC = () => {
         toast({
           title: "Results Ready",
           description: "Your health assessment results are ready to view.",
-          variant: "success",
+        variant: "default",
           duration: 3000
         });
       } catch (error) {
@@ -124,7 +124,7 @@ const AssessmentResult: React.FC = () => {
       toast({
         title: "PDF Downloaded",
         description: "Your assessment report has been downloaded successfully.",
-        variant: "success",
+        variant: "default",
         duration: 3000
       });
     } catch (error) {

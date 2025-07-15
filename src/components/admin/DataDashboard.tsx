@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { collection, getDocs, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { AssessmentData } from '../../types/assessment';
-import { Search, Filter, Download, Grid, List, Users, FileText, BarChart3, Scale, School } from 'lucide-react';
+import { Search, Filter, Download, Grid, List, Users, FileText, BarChart3, Scale, School, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PremiumStudentCard from './PremiumStudentCard';
 import { toast } from '@/components/ui/use-toast';

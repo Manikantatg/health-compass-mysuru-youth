@@ -63,7 +63,6 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
       <Select
         value={sedentaryBehavior[activityKey]?.toString() || "none"}
         onValueChange={(value) => handleChange(activityKey, value === "none" ? undefined : parseInt(value))}
-        className="w-full sm:w-1/2"
       >
         <SelectTrigger>
           <SelectValue placeholder="Select hours" />

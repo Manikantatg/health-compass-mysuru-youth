@@ -114,6 +114,7 @@ const AssessmentForm: React.FC = () => {
     sedentaryBehavior: {
       tvTime: undefined,
       mobileTime: undefined,
+      computerTime: undefined,
       schoolReading: undefined,
       nonSchoolReading: undefined,
       indoorGamesTime: undefined,
@@ -295,7 +296,7 @@ const AssessmentForm: React.FC = () => {
       const currentStepData = prev[step as keyof typeof prev] || {};
       return {
         ...prev,
-        [step]: { ...currentStepData, ...data }
+        [step]: { ...(currentStepData as object), ...data }
       };
     });
   };
@@ -316,8 +317,7 @@ const AssessmentForm: React.FC = () => {
     e.preventDefault();
     // Only allow submission on the final step
     if (currentStep !== steps.length - 1) {
-      nextStep();
-      return;
+      return; // Don't advance step on submit, only on Next button
     }
     setIsSubmitting(true);
     setError(null);
@@ -416,7 +416,7 @@ const AssessmentForm: React.FC = () => {
       toast({
         title: "Assessment Complete",
         description: "Your health assessment has been successfully generated.",
-        variant: "success",
+        variant: "default",
         duration: 5000
       });
 

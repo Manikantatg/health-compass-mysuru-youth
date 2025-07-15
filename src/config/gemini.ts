@@ -166,7 +166,7 @@ function getMentalHealthScore(mentalHealth: any): number {
   return 0;
 }
 
-const generatePrompt = (assessment: HealthAssessment): string => {
+const generatePrompt = (assessment: any): string => {
   return `
 You are a pediatric health expert AI analyzing a student's health assessment to predict their risk of developing obesity and related health issues. 
 Analyze the following data and provide a detailed assessment:
