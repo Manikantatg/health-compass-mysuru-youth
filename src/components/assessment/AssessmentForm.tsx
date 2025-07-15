@@ -302,6 +302,10 @@ const AssessmentForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (currentStep !== steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+      return;
+    }
     setIsSubmitting(true);
     setError(null);
 
