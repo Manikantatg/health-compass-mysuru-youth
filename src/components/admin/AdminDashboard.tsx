@@ -24,11 +24,24 @@ const AdminDashboard: React.FC = () => {
           orderBy('completedAt', 'desc')
         );
         const assessmentsSnapshot = await getDocs(assessmentsQuery);
-        const assessmentsData = assessmentsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          completedAt: doc.data().completedAt?.toDate() || new Date()
-        })) as AssessmentData[];
+        const assessmentsData = assessmentsSnapshot.docs.map(doc => {
+          const rawCompletedAt = doc.data().completedAt;
+          let completedAt;
+          if (rawCompletedAt && typeof rawCompletedAt.toDate === 'function') {
+            completedAt = rawCompletedAt.toDate();
+          } else if (rawCompletedAt instanceof Date) {
+            completedAt = rawCompletedAt;
+          } else if (typeof rawCompletedAt === 'string' || typeof rawCompletedAt === 'number') {
+            completedAt = new Date(rawCompletedAt);
+          } else {
+            completedAt = new Date();
+          }
+          return {
+            id: doc.id,
+            ...doc.data(),
+            completedAt
+          };
+        }) as AssessmentData[];
 
         const usersQuery = query(collection(db, 'users'));
         const usersSnapshot = await getDocs(usersQuery);

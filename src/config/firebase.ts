@@ -12,8 +12,7 @@ const firebaseConfig = {
   projectId: "etmark-8c887",
   storageBucket: "etmark-8c887.firebasestorage.app",
   messagingSenderId: "623376687430",
-  appId: "1:623376687430:web:13f12f04c6af4fce314547",
-  measurementId: "G-XXXXXXXXXX" // Add your measurement ID if you have one
+  appId: "1:623376687430:web:13f12f04c6af4fce314547"
 };
 
 // Initialize Firebase
