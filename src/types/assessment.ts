@@ -86,6 +86,7 @@ export interface SedentaryBehavior {
   // Updated to use 0-4 scale (Never, < 1 Hr/day, 1–2 Hr/day, 2–3 Hr/day, > 3 Hr/day)
   tvTime?: number;
   mobileTime?: number;
+  computerTime?: number;
   schoolReading?: number;
   nonSchoolReading?: number;
   indoorGamesTime?: number;
@@ -169,112 +170,5 @@ export interface AssessmentData {
   bmi: number;
   completedAt: Date;
   scores?: HealthScores;
-  aiPrediction?: AIPrediction;
-}
-
-export interface Student {
-  name: string;
-  age: number;
-  gender: string;
-  height: number;
-  weight: number;
-  schoolName: string;
-  class: string;
-  section: string;
-  birthOrder: number;
-  brothers: number;
-  sisters: number;
-  familyType: string;
-  hostelResident: boolean;
-}
-
-export interface PhysicalActivity {
-  ptFrequency: number;
-  ptDuration: number;
-  participation: boolean;
-  indoorGames: { days: number; minutes: string };
-  outdoorGames: { days: number; minutes: string };
-  yoga: { days: number; minutes: string };
-  cycling: { days: number; minutes: string };
-  walking: { days: number; minutes: string };
-  playAfterSchool: { days: number; minutes: string };
-}
-
-export interface EatingHabits {
-  fruits: number;
-  vegetables: number;
-  cereals: number;
-  pulses: number;
-  milkProducts: number;
-  nonVegConsumption: number;
-  snacks: number;
-  beverages: number;
-  sweets: number;
-  junkFood: number;
-  softDrinks: number;
-  energyDrinks: number;
-}
-
-export interface SedentaryBehavior {
-  tvTime: number;
-  mobileTime: number;
-  computerTime: number;
-  schoolReading: number;
-  nonSchoolReading: number;
-  homeworkTime: number;
-  gamingTime: number;
-}
-
-export interface SleepQuality {
-  bedtime: string;
-  wakeupTime: string;
-  sleepDuration: number;
-  difficultyFallingAsleep: number;
-  wakeUpDuringSleep: number;
-  difficultyGettingBackToSleep: number;
-  sleepinessInClasses: number;
-  sleepHeadache: number;
-}
-
-export interface MentalHealth {
-  bodyPerception: number;
-  bullyingExperience: boolean;
-  weightGoal: string;
-  currentBodyImageSatisfaction: number;
-  desiredBodyImageSatisfaction: number;
-  difficultyAttention: number;
-  forgetThings: number;
-  feelLonely: number;
-  troubleKeepingUp: number;
-}
-
-export interface FamilyHistory {
-  obesity: string;
-  diabetes: string;
-  hypertension: string;
-}
-
-export interface AssessmentResponses {
-  physicalActivity: PhysicalActivity;
-  nutrition: EatingHabits;
-  sedentaryBehavior: SedentaryBehavior;
-  sleep: SleepQuality;
-  mentalHealth: MentalHealth;
-  familyHistory: FamilyHistory;
-}
-
-export interface AIPrediction {
-  riskLevel: "Low" | "Medium" | "High";
-  riskPercentage: number;
-  confidenceScore: number;
-  explanation: string;
-  keyRiskFactors: string[];
-  recommendations: string[];
-}
-
-export interface AssessmentData {
-  student: Student;
-  responses: AssessmentResponses;
-  completedAt: Date;
   aiPrediction?: AIPrediction;
 }

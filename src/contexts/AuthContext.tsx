@@ -11,12 +11,14 @@ import { auth, db } from '../config/firebase';
 
 interface AuthContextType {
   currentUser: User | null;
+  user: User | null;
   userProfile: any;
   loading: boolean;
   error: string | null;
   signup: (email: string, password: string, profileData: any) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  handleLogout: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -114,12 +116,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const value = {
     currentUser,
+    user: currentUser,
     userProfile,
     loading,
     error,
     signup,
     login,
     logout,
+    handleLogout: logout,
     clearError
   };
 

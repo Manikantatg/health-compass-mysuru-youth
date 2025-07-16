@@ -48,12 +48,12 @@ const EditAssessmentDrawer: React.FC<EditAssessmentDrawerProps> = ({
         socioDemographic: {
           ...assessment.socioDemographic,
           ...formData,
-          age: parseInt(formData.age as string) || 0, // Ensure age is number
-          height: parseInt(formData.height as string) || 0, // Ensure height is number
-          weight: parseInt(formData.weight as string) || 0, // Ensure weight is number
-          brothers: parseInt(formData.brothers as string) || 0,
-          sisters: parseInt(formData.sisters as string) || 0,
-          birthOrder: parseInt(formData.birthOrder as string) || 1,
+          age: parseInt(String(formData.age)) || 0,
+          height: parseInt(String(formData.height)) || 0,
+          weight: parseInt(String(formData.weight)) || 0,
+          brothers: parseInt(String(formData.brothers)) || 0,
+          sisters: parseInt(String(formData.sisters)) || 0,
+          birthOrder: parseInt(String(formData.birthOrder)) || 1,
         },
         updatedAt: new Date(),
       };

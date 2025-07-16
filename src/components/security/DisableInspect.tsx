@@ -31,10 +31,11 @@ export function DisableInspect() {
 
     // Disable DevTools
     const handleDevTools = () => {
-      const devtools = /./;
-      devtools.toString = function() {
-        window.location.href = '/';
-      };
+    const devtools = /./;
+    devtools.toString = function() {
+      window.location.href = '/';
+      return '';
+    };
     };
 
     // Add event listeners

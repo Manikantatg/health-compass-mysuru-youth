@@ -135,19 +135,19 @@ const StudentCard: React.FC<StudentCardProps> = ({ assessment }) => {
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
-              <CardTitle className="text-xl font-bold text-gray-900">{student.name || 'Unknown Student'}</CardTitle>
+              <CardTitle className="text-xl font-bold text-gray-900">{assessment.socioDemographic?.name || 'Unknown Student'}</CardTitle>
               <div className="text-sm text-gray-600 space-y-1">
                 <div className="flex items-center space-x-1">
                   <User className="h-3 w-3" />
-                  <span>{student.age ? `${student.age}y` : 'N/A'}, {student.gender || 'N/A'}</span>
+                  <span>{assessment.socioDemographic?.age ? `${assessment.socioDemographic.age}y` : 'N/A'}, {assessment.socioDemographic?.gender || 'N/A'}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <School className="h-3 w-3" />
-                  <span>{student.schoolName || 'Unknown School'}</span>
+                  <span>{assessment.socioDemographic?.schoolName || 'Unknown School'}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-3 w-3" />
-                  <span>Class {student.class || 'N/A'} {student.section || ''}</span>
+                  <span>Class {assessment.socioDemographic?.class || 'N/A'} {assessment.socioDemographic?.section || ''}</span>
                 </div>
               </div>
             </div>
@@ -171,7 +171,6 @@ const StudentCard: React.FC<StudentCardProps> = ({ assessment }) => {
             <Progress 
               value={riskPercentage} 
               className="h-2"
-              indicatorClassName={riskColors.progress}
             />
           </div>
 
