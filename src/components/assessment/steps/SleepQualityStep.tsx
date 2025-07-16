@@ -19,16 +19,19 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
 
   const calculateSleepDuration = () => {
     if (sleepQuality.bedtime && sleepQuality.wakeupTime) {
+      // Validate time format HH:mm
+      if (!/^\d{2}:\d{2}$/.test(sleepQuality.bedtime) || !/^\d{2}:\d{2}$/.test(sleepQuality.wakeupTime)) {
+        return 0;
+      }
       const bedtime = new Date(`2000-01-01 ${sleepQuality.bedtime}`);
       let wakeup = new Date(`2000-01-01 ${sleepQuality.wakeupTime}`);
-      
       // If wakeup time is earlier than bedtime, it means next day
       if (wakeup < bedtime) {
         wakeup = new Date(`2000-01-02 ${sleepQuality.wakeupTime}`);
       }
-      
       const durationMs = wakeup.getTime() - bedtime.getTime();
       const durationHours = durationMs / (1000 * 60 * 60);
+      if (isNaN(durationHours) || !isFinite(durationHours)) return 0;
       return Math.round(durationHours * 10) / 10; // Round to 1 decimal place
     }
     return 0;
@@ -45,8 +48,11 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
 
   const FrequencyDropdown = ({ field, label }: { field: keyof SleepQuality; label: string }) => (
     <div className="space-y-3">
-      <Label className="text-sm font-medium">{label}</Label>
+      <Label htmlFor={`sleepQuality-${field}`} className="text-sm font-medium">{label}</Label>
       <Select
+        id={`sleepQuality-${field}`}
+        name={field}
+        autoComplete="off"
         value={sleepQuality[field]?.toString() || "none"}
         onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value))}
       >
@@ -91,6 +97,8 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
               <Input
                 id="bedtime"
                 type="time"
+                name="bedtime"
+                autoComplete="off"
                 value={getTimeValue(sleepQuality.bedtime)}
                 onChange={(e) => handleChange('bedtime', e.target.value)}
                 className="mt-1"
@@ -101,6 +109,8 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
               <Input
                 id="wakeupTime"
                 type="time"
+                name="wakeupTime"
+                autoComplete="off"
                 value={getTimeValue(sleepQuality.wakeupTime)}
                 onChange={(e) => handleChange('wakeupTime', e.target.value)}
                 className="mt-1"

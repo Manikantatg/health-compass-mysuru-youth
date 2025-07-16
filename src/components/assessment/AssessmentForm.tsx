@@ -163,7 +163,7 @@ const AssessmentForm: React.FC = () => {
     { title: 'Personal Information', component: SocioDemographicStep },
     { title: 'Eating Habits', component: EatingHabitsStep },
     { title: 'Physical Activity', component: PhysicalActivityStep },
-    { title: ' Sedentary Behavior', component: SedentaryBehaviorStep },
+    { title: 'Sedentary Behavior', component: SedentaryBehaviorStep },
     { title: 'Mental Health & Body Image', component: MentalHealthStep },
     { title: 'Sleep Quality', component: SleepQualityStep },
   ];
@@ -313,6 +313,7 @@ const AssessmentForm: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('handleSubmit called on step', currentStep, 'of', steps.length);
     e.preventDefault();
     if (currentStep !== steps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -500,7 +501,7 @@ const AssessmentForm: React.FC = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4 p-4 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-6"
+          <div className="space-y-6"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && currentStep !== steps.length - 1) {
                 e.preventDefault();
@@ -526,9 +527,10 @@ const AssessmentForm: React.FC = () => {
 
               {currentStep === steps.length - 1 ? (
                 <Button
-                  type="submit"
+                  type="button"
                   className="flex-1 h-9 sm:h-10"
                   disabled={isSubmitting}
+                  onClick={handleSubmit}
                 >
                   {isSubmitting ? (
                     <>
@@ -548,6 +550,9 @@ const AssessmentForm: React.FC = () => {
                   type="button"
                   onClick={nextStep}
                   className="flex items-center gap-2 h-9 sm:h-10"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') e.preventDefault();
+                  }}
                 >
                   <span className="hidden sm:inline">Next</span>
                   <span className="sm:hidden">Next</span>
@@ -555,7 +560,7 @@ const AssessmentForm: React.FC = () => {
                 </Button>
               )}
             </div>
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>

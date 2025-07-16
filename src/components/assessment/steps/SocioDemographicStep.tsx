@@ -57,6 +57,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <Label htmlFor="schoolName" className="text-sm font-medium">School Name</Label>
             <Input
               id="schoolName"
+              name="schoolName"
+              autoComplete="organization"
               value={socioDemographic.schoolName}
               onChange={(e) => handleChange('schoolName', e.target.value)}
               placeholder="Enter school name"
@@ -68,6 +70,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
             <Input
               id="name"
+              name="name"
+              autoComplete="name"
               value={socioDemographic.name}
               onChange={(e) => handleChange('name', e.target.value)}
               placeholder="Enter full name"
@@ -79,6 +83,9 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <Label htmlFor="age" className="text-sm font-medium">Age</Label>
               <Select
+                id="age"
+                name="age"
+                autoComplete="bday"
                 value={socioDemographic.age?.toString() || "none"}
                 onValueChange={(value) => handleChange('age', value === "none" ? undefined : parseInt(value))}
               >
@@ -99,6 +106,9 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <Label htmlFor="gender" className="text-sm font-medium">Gender</Label>
               <Select 
+                id="gender"
+                name="gender"
+                autoComplete="sex"
                 value={socioDemographic.gender || "none"} 
                 onValueChange={(value) => handleChange('gender', value === "none" ? undefined : value)}
               >
@@ -120,6 +130,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Label htmlFor="class" className="text-sm font-medium">Class</Label>
               <Input
                 id="class"
+                name="class"
+                autoComplete="off"
                 value={socioDemographic.class}
                 onChange={(e) => handleChange('class', e.target.value)}
                 placeholder="e.g., 10th"
@@ -131,6 +143,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Label htmlFor="section" className="text-sm font-medium">Section</Label>
               <Input
                 id="section"
+                name="section"
+                autoComplete="off"
                 value={socioDemographic.section}
                 onChange={(e) => handleChange('section', e.target.value)}
                 placeholder="e.g., A"
@@ -144,6 +158,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Label htmlFor="height" className="text-sm font-medium">Height (cm)</Label>
               <Input
                 id="height"
+                name="height"
+                autoComplete="off"
                 type="number"
                 value={socioDemographic.height || ''}
                 onChange={(e) => {
@@ -164,6 +180,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Label htmlFor="weight" className="text-sm font-medium">Weight (kg)</Label>
               <Input
                 id="weight"
+                name="weight"
+                autoComplete="off"
                 type="number"
                 value={socioDemographic.weight || ''}
                 onChange={(e) => {
@@ -202,6 +220,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <Label htmlFor="address" className="text-sm font-medium">Address</Label>
             <Input
               id="address"
+              name="address"
+              autoComplete="street-address"
               value={socioDemographic.address}
               onChange={(e) => handleChange('address', e.target.value)}
               placeholder="Enter address"
@@ -212,6 +232,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="flex items-center space-x-2">
             <Switch
               id="hostelResident"
+              name="hostelResident"
               checked={socioDemographic.hostelResident}
               onCheckedChange={(checked) => handleChange('hostelResident', checked)}
             />
@@ -231,6 +252,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Label htmlFor="fatherName" className="text-sm font-medium">Father's Name</Label>
               <Input
                 id="fatherName"
+                name="fatherName"
+                autoComplete="off"
                 value={socioDemographic.fatherName}
                 onChange={(e) => handleChange('fatherName', e.target.value)}
                 placeholder="Enter father's name"
@@ -242,6 +265,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Label htmlFor="motherName" className="text-sm font-medium">Mother's Name</Label>
               <Input
                 id="motherName"
+                name="motherName"
+                autoComplete="off"
                 value={socioDemographic.motherName}
                 onChange={(e) => handleChange('motherName', e.target.value)}
                 placeholder="Enter mother's name"
@@ -253,6 +278,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Label htmlFor="fatherContact" className="text-sm font-medium">Father's Contact</Label>
               <Input
                 id="fatherContact"
+                name="fatherContact"
+                autoComplete="tel"
                 value={socioDemographic.fatherContact}
                 onChange={(e) => handleChange('fatherContact', e.target.value)}
                 placeholder="Enter contact number"
@@ -264,6 +291,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               <Label htmlFor="motherContact" className="text-sm font-medium">Mother's Contact</Label>
               <Input
                 id="motherContact"
+                name="motherContact"
+                autoComplete="tel"
                 value={socioDemographic.motherContact}
                 onChange={(e) => handleChange('motherContact', e.target.value)}
                 placeholder="Enter contact number"
@@ -296,6 +325,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                   <Label htmlFor="brothers" className="text-sm font-medium">Number of Brothers</Label>
                   <Input
                     id="brothers"
+                    name="brothers"
+                    autoComplete="off"
                     type="number"
                     min="0"
                     value={socioDemographic.brothers || 0}
@@ -307,6 +338,8 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
                   <Label htmlFor="sisters" className="text-sm font-medium">Number of Sisters</Label>
                   <Input
                     id="sisters"
+                    name="sisters"
+                    autoComplete="off"
                     type="number"
                     min="0"
                     value={socioDemographic.sisters || 0}
@@ -362,8 +395,11 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
         <CardContent className="px-0 space-y-6">
           {/* Q1: Does anybody in the family look fat? */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Does anybody in the family look fat?</Label>
+            <Label htmlFor="familyObesity" className="text-sm font-medium">Does anybody in the family look fat?</Label>
             <Select
+              id="familyObesity"
+              name="familyObesity"
+              autoComplete="off"
               value={socioDemographic.familyObesity || "none"}
               onValueChange={(value) => handleChange('familyObesity', value === "none" ? undefined : value)}
             >

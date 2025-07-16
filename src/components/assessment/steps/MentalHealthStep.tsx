@@ -20,6 +20,13 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
     updateData('mentalHealth', { [field]: value });
   };
 
+  // Helper to prevent Enter key from submitting the parent form
+  const preventEnterSubmit = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  };
+
   const bodyPerceptionLabels = ['Very underweight', 'Slightly underweight', 'About the right weight', 'Slightly overweight', 'Very overweight'];
   const frequencyOptions = [
     { value: "none", label: "Select frequency" },
@@ -32,10 +39,14 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
 
   const FrequencyDropdown = ({ field, label }: { field: keyof MentalHealth; label: string }) => (
     <div className="space-y-3">
-      <Label className="text-sm font-medium">{label}</Label>
+      <Label htmlFor={`mentalHealth-${field}`} className="text-sm font-medium">{label}</Label>
       <Select
+        id={`mentalHealth-${field}`}
+        name={field}
+        autoComplete="off"
         value={mentalHealth[field]?.toString() || "none"}
         onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
+        onKeyDown={preventEnterSubmit}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select frequency" />
@@ -65,9 +76,14 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
           <CardDescription>Please select the option that best describes how you view your current weight</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <Label htmlFor="mentalHealth-bodyPerceptionSelect" className="text-sm font-medium">Q1: How do you describe your weight?</Label>
           <Select
+            id="mentalHealth-bodyPerceptionSelect"
+            name="bodyPerception"
+            autoComplete="off"
             value={mentalHealth.bodyPerception?.toString() || "none"}
             onValueChange={(value) => handleChange('bodyPerception', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
+            onKeyDown={preventEnterSubmit}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select body perception" />
@@ -91,9 +107,14 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
           <CardDescription>Select your current weight goal</CardDescription>
         </CardHeader>
         <CardContent>
+          <Label htmlFor="mentalHealth-weightGoal" className="text-sm font-medium">Q2: What are you trying to do about your weight?</Label>
           <Select
+            id="mentalHealth-weightGoal"
+            name="weightGoal"
+            autoComplete="off"
             value={mentalHealth.weightGoal || "none"}
             onValueChange={(value) => handleChange('weightGoal', value === "none" ? undefined : value as MentalHealth[keyof MentalHealth])}
+            onKeyDown={preventEnterSubmit}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select weight goal" />
@@ -118,6 +139,7 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="flex items-center space-x-2">
             <Switch
               id="bullyingExperience"
+              name="bullyingExperience"
               checked={mentalHealth.bullyingExperience}
               onCheckedChange={(checked) => handleChange('bullyingExperience', checked as MentalHealth[keyof MentalHealth])}
             />
@@ -165,11 +187,15 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
             <div className="lg:col-span-7 space-y-6">
               {/* Current Body Image Perception */}
               <div className="space-y-4">
-                <Label className="text-base font-medium">1. How do you currently perceive your body image?</Label>
+                <Label htmlFor="mentalHealth-currentBodyImageSatisfaction" className="text-base font-medium">1. How do you currently perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
                 <Select
+                  id="mentalHealth-currentBodyImageSatisfaction"
+                  name="currentBodyImageSatisfaction"
+                  autoComplete="off"
                   value={mentalHealth.currentBodyImageSatisfaction?.toString() || "none"}
                   onValueChange={(value) => handleChange('currentBodyImageSatisfaction', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
+                  onKeyDown={preventEnterSubmit}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a number (1-9)" />
@@ -187,11 +213,15 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
 
               {/* Desired Body Image Perception */}
               <div className="space-y-4">
-                <Label className="text-base font-medium">2. How do you desire to perceive your body image?</Label>
+                <Label htmlFor="mentalHealth-desiredBodyImageSatisfaction" className="text-base font-medium">2. How do you desire to perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How would you ideally like to see your body?)</p>
                 <Select
+                  id="mentalHealth-desiredBodyImageSatisfaction"
+                  name="desiredBodyImageSatisfaction"
+                  autoComplete="off"
                   value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "none"}
                   onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
+                  onKeyDown={preventEnterSubmit}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a number (1-9)" />

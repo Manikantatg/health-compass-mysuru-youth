@@ -28,9 +28,12 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
   const DropdownScale = ({ field, label }: { field: keyof EatingHabits; label: string }) => (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <Label className="text-sm font-medium text-foreground">{label}</Label>
+        <Label htmlFor={`eatingHabits-${field}`} className="text-sm font-medium text-foreground">{label}</Label>
       </div>
       <Select
+        id={`eatingHabits-${field}`}
+        name={field}
+        autoComplete="off"
         value={eatingHabits[field]?.toString() || "none"}
         onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value))}
       >
