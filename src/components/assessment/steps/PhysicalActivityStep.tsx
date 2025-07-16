@@ -55,14 +55,10 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         <div className="text-sm font-medium col-span-1">{activity.label}</div>
         <div className="col-span-1">
           <Select
-<<<<<<< HEAD
             id={`activity-days-${activity.key}`}
             name={`${activity.key}-days`}
             autoComplete="off"
-            value={currentActivity.days?.toString() || "none"}
-=======
-            value={typeof currentActivity === 'object' && currentActivity?.days ? currentActivity.days.toString() : "none"}
->>>>>>> ac16d7b063b9a76d15aef81b804a45ff8e01dc40
+            value={typeof currentActivity === 'object' && currentActivity?.days !== undefined ? currentActivity.days.toString() : "none"}
             onValueChange={(value) => handleActivityChange(activity.key, 'days', value === "none" ? undefined : parseInt(value))}
           >
             <SelectTrigger className="w-full">
@@ -78,14 +74,10 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         </div>
         <div className="col-span-1">
           <Select
-<<<<<<< HEAD
             id={`activity-minutes-${activity.key}`}
             name={`${activity.key}-minutes`}
             autoComplete="off"
-            value={currentActivity.minutes || 'none'}
-=======
             value={typeof currentActivity === 'object' && currentActivity?.minutes ? currentActivity.minutes : 'none'}
->>>>>>> ac16d7b063b9a76d15aef81b804a45ff8e01dc40
             onValueChange={(value) => handleActivityChange(activity.key, 'minutes', value)}
           >
             <SelectTrigger className="w-full">
