@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { Heart, Shield, Brain, Users, Activity, CheckCircle, Zap, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -211,6 +211,29 @@ const AuthForm: React.FC = () => {
             <div className="flex flex-row items-center justify-center space-x-8">
               <img src="https://www.jssstuniv.in/assets/img/logo/jssstulogo.png" alt="JSS Science and Technology University Logo" className="h-16 w-auto object-contain" />
               <img src="https://jssaherstoragenew.blob.core.windows.net/jssuudstorage/sdimages/jssnewlogo.jpg" alt="JSS Academy of Higher Education & Research Logo" className="h-16 w-auto object-contain" />
+            </div>
+            
+            {/* Legal Footer Links */}
+            <div className="mt-8 pt-6 border-t border-border/30 w-full max-w-md">
+              <div className="text-center space-y-3">
+                <div className="flex flex-wrap justify-center gap-2 text-xs">
+                  <Link to="/legal/privacy" className="text-muted-foreground hover:text-primary">Privacy Policy</Link>
+                  <span className="text-muted-foreground">|</span>
+                  <Link to="/legal/terms" className="text-muted-foreground hover:text-primary">Terms of Service</Link>
+                  <span className="text-muted-foreground">|</span>
+                  <Link to="/legal/medical-disclaimer" className="text-muted-foreground hover:text-primary">Medical Disclaimer</Link>
+                </div>
+                <div className="flex flex-wrap justify-center gap-2 text-xs">
+                  <Link to="/legal/cookies" className="text-muted-foreground hover:text-primary">Cookie Policy</Link>
+                  <span className="text-muted-foreground">|</span>
+                  <Link to="/legal/data-deletion" className="text-muted-foreground hover:text-primary">Data Deletion</Link>
+                  <span className="text-muted-foreground">|</span>
+                  <Link to="/legal/contact" className="text-muted-foreground hover:text-primary">Contact & Support</Link>
+                </div>
+                <p className="text-xs text-muted-foreground mt-3">
+                  © 2024 PediaPredict by Doutly. Educational use only. Not medical advice.
+                </p>
+              </div>
             </div>
           </div>
         </div>

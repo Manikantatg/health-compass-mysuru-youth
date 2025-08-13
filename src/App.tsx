@@ -16,6 +16,11 @@ import Insights from "./pages/Insights";
 import Layout from "./components/Layout";
 import Splash from "./components/Splash";
 import AssessmentResult from './pages/AssessmentResult';
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import TermsOfService from './pages/legal/TermsOfService';
+import MedicalDisclaimer from './pages/legal/MedicalDisclaimer';
+import CookiePolicy from './pages/legal/CookiePolicy';
+import AboutUs from './pages/legal/AboutUs';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -183,6 +188,13 @@ const AppRoutes = () => {
           <Data />
         </ProtectedRoute>
       } />
+
+      {/* Legal Pages - Public Routes */}
+      <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+      <Route path="/legal/terms" element={<TermsOfService />} />
+      <Route path="/legal/medical-disclaimer" element={<MedicalDisclaimer />} />
+      <Route path="/legal/cookies" element={<CookiePolicy />} />
+      <Route path="/legal/about" element={<AboutUs />} />
       
       {/* Admin Only Routes */}
       <Route path="/profile" element={
