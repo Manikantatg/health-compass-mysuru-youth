@@ -113,7 +113,6 @@ const AuthForm: React.FC = () => {
                 <CardDescription className="text-muted-foreground text-lg">
                   {isLogin ? 'Sign in to access your health dashboard' : 'Create your account to start your health journey'}
                 </CardDescription>
-                <p className="text-sm font-medium text-[#7C3AED] mt-2">Provided by Doutly</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -161,6 +160,8 @@ const AuthForm: React.FC = () => {
                       </div> : isLogin ? 'Sign In' : 'Create Account'}
                   </Button>
                 </form>
+
+                <p className="text-sm font-medium text-[#7C3AED] mt-4 text-center">Provided by Doutly and SugarSaltMedia</p>
 
                 <div className="text-center pt-4">
                   <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm text-primary hover:text-primary/80 underline font-medium transition-colors">
