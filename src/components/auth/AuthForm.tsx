@@ -161,8 +161,6 @@ const AuthForm: React.FC = () => {
                   </Button>
                 </form>
 
-                <p className="text-sm font-medium text-[#7C3AED] mt-4 text-center">Provided by Doutly and SugarSaltMedia</p>
-
                 <div className="text-center pt-4">
                   <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm text-primary hover:text-primary/80 underline font-medium transition-colors">
                     {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
@@ -173,9 +171,11 @@ const AuthForm: React.FC = () => {
           </motion.div>
           <div className="flex flex-col items-center justify-center mt-6 space-y-4">
             <div className="flex flex-row items-center justify-center space-x-8">
-              <img src="https://www.jssstuniv.in/assets/img/logo/jssstulogo.png" alt="JSS Science and Technology University Logo" className="h-16 w-auto object-contain" />
               <img src="https://jssaherstoragenew.blob.core.windows.net/jssuudstorage/sdimages/jssnewlogo.jpg" alt="JSS Academy of Higher Education & Research Logo" className="h-16 w-auto object-contain" />
+              <img src="https://www.jssstuniv.in/assets/img/logo/jssstulogo.png" alt="JSS Science and Technology University Logo" className="h-16 w-auto object-contain" />
             </div>
+            
+            <p className="text-sm font-medium text-[#7C3AED] text-center">Provided by Doutly and SugarSaltMedia</p>
             
             {/* Legal Footer Links */}
             <div className="mt-8 pt-6 border-t border-border/30 w-full max-w-md">
