@@ -41,12 +41,8 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
     <div className="space-y-3">
       <Label htmlFor={`mentalHealth-${field}`} className="text-sm font-medium">{label}</Label>
       <Select
-        id={`mentalHealth-${field}`}
-        name={field}
-        autoComplete="off"
         value={mentalHealth[field]?.toString() || "none"}
         onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
-        onKeyDown={preventEnterSubmit}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select frequency" />
@@ -78,12 +74,8 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         <CardContent className="space-y-4">
           <Label htmlFor="mentalHealth-bodyPerceptionSelect" className="text-sm font-medium">Q1: How do you describe your weight?</Label>
           <Select
-            id="mentalHealth-bodyPerceptionSelect"
-            name="bodyPerception"
-            autoComplete="off"
             value={mentalHealth.bodyPerception?.toString() || "none"}
             onValueChange={(value) => handleChange('bodyPerception', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
-            onKeyDown={preventEnterSubmit}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select body perception" />
@@ -109,12 +101,8 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
         <CardContent>
           <Label htmlFor="mentalHealth-weightGoal" className="text-sm font-medium">Q2: What are you trying to do about your weight?</Label>
           <Select
-            id="mentalHealth-weightGoal"
-            name="weightGoal"
-            autoComplete="off"
             value={mentalHealth.weightGoal || "none"}
             onValueChange={(value) => handleChange('weightGoal', value === "none" ? undefined : value as MentalHealth[keyof MentalHealth])}
-            onKeyDown={preventEnterSubmit}
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select weight goal" />
@@ -189,14 +177,10 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               <div className="space-y-4">
                 <Label htmlFor="mentalHealth-currentBodyImageSatisfaction" className="text-base font-medium">1. How do you currently perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How do you see your body as it is right now?)</p>
-                <Select
-                  id="mentalHealth-currentBodyImageSatisfaction"
-                  name="currentBodyImageSatisfaction"
-                  autoComplete="off"
-                  value={mentalHealth.currentBodyImageSatisfaction?.toString() || "none"}
-                  onValueChange={(value) => handleChange('currentBodyImageSatisfaction', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
-                  onKeyDown={preventEnterSubmit}
-                >
+                  <Select
+                    value={mentalHealth.currentBodyImageSatisfaction?.toString() || "none"}
+                    onValueChange={(value) => handleChange('currentBodyImageSatisfaction', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
+                  >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a number (1-9)" />
                   </SelectTrigger>
@@ -215,14 +199,10 @@ const MentalHealthStep: React.FC<Props> = ({ data, updateData }) => {
               <div className="space-y-4">
                 <Label htmlFor="mentalHealth-desiredBodyImageSatisfaction" className="text-base font-medium">2. How do you desire to perceive your body image?</Label>
                 <p className="text-sm text-gray-600">(How would you ideally like to see your body?)</p>
-                <Select
-                  id="mentalHealth-desiredBodyImageSatisfaction"
-                  name="desiredBodyImageSatisfaction"
-                  autoComplete="off"
-                  value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "none"}
-                  onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
-                  onKeyDown={preventEnterSubmit}
-                >
+                  <Select
+                    value={mentalHealth.desiredBodyImageSatisfaction?.toString() || "none"}
+                    onValueChange={(value) => handleChange('desiredBodyImageSatisfaction', value === "none" ? undefined : parseInt(value) as MentalHealth[keyof MentalHealth])}
+                  >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a number (1-9)" />
                   </SelectTrigger>

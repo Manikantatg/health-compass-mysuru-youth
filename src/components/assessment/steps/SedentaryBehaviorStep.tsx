@@ -61,9 +61,6 @@ const SedentaryBehaviorStep: React.FC<Props> = ({ data, updateData }) => {
     <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b last:border-b-0">
       <Label htmlFor={`sedentary-${activityKey}`} className="text-sm font-medium mb-2 sm:mb-0 sm:w-1/2">{label}</Label>
       <Select
-        id={`sedentary-${activityKey}`}
-        name={activityKey}
-        autoComplete="off"
         value={sedentaryBehavior[activityKey]?.toString() || "none"}
         onValueChange={(value) => handleChange(activityKey, value === "none" ? undefined : parseInt(value))}
       >

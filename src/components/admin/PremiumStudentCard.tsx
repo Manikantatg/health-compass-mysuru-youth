@@ -80,7 +80,7 @@ const PremiumStudentCard: React.FC<PremiumStudentCardProps> = ({ assessment, onD
     return 'bg-green-500';
   };
 
-  const obesityRiskScore = assessment.physicalHealth?.obesityRisk || 0;
+  const obesityRiskScore = assessment.aiPrediction?.riskPercentage || 0;
 
   return (
     <motion.div

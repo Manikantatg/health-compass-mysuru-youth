@@ -106,42 +106,6 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
         </Card>
       ))}
 
-      {/* Summary Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg text-blue-900">Nutrition Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium text-green-700 mb-2">Healthy Foods</h4>
-              <div className="space-y-1">
-                {['cereals', 'pulses', 'vegetables', 'fruits', 'milkProducts'].map((key) => (
-                  <div key={key} className="flex justify-between text-sm">
-                    <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                    <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]?.label}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between text-sm">
-                  <span>Non-Veg Foods:</span>
-                  <span>{scaleLabels[eatingHabits.nonVegConsumption]?.label}</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-medium text-orange-700 mb-2">Processed Foods</h4>
-              <div className="space-y-1">
-                {['snacks', 'beverages', 'sweets'].map((key) => (
-                  <div key={key} className="flex justify-between text-sm">
-                    <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                    <span>{scaleLabels[eatingHabits[key as keyof EatingHabits]]?.label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

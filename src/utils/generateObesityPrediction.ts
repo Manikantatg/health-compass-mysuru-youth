@@ -16,100 +16,82 @@ export interface AIPrediction {
 
 // Helper function to format assessment data for AI
 const formatAssessmentData = (data: AssessmentData) => {
-  const { student, responses } = data;
+  const { socioDemographic, eatingHabits, physicalActivity, sedentaryBehavior, sleepQuality, mentalHealth } = data;
   
   // Extract and structure all relevant health assessment data
   const healthData = {
     socioDemographic: {
-      name: student.name,
-      age: student.age,
-      gender: student.gender,
-      height: student.height,
-      weight: student.weight,
-      schoolName: student.schoolName,
-      class: student.class,
-      section: student.section,
-      birthOrder: student.birthOrder,
-      brothers: student.brothers,
-      sisters: student.sisters,
-      familyType: student.familyType,
-      hostelResident: student.hostelResident,
-      familyObesity: responses.familyHistory?.obesity || 'Not reported',
-      familyDiabetes: responses.familyHistory?.diabetes || 'Not reported',
-      familyHypertension: responses.familyHistory?.hypertension || 'Not reported'
+      name: socioDemographic.name || 'Not provided',
+      age: socioDemographic.age || 0,
+      gender: socioDemographic.gender || 'none',
+      height: socioDemographic.height || 0,
+      weight: socioDemographic.weight || 0,
+      schoolName: socioDemographic.schoolName || 'Not provided',
+      class: socioDemographic.class || 'Not provided',
+      section: socioDemographic.section || 'Not provided',
+      birthOrder: socioDemographic.birthOrder || 0,
+      brothers: socioDemographic.brothers || 0,
+      sisters: socioDemographic.sisters || 0,
+      familyType: socioDemographic.familyType || 'none',
+      hostelResident: socioDemographic.hostelResident || false,
+      familyObesity: socioDemographic.familyObesity || 'none',
+      familyDiabetes: socioDemographic.familyDiabetes || 'none',
+      familyHypertension: socioDemographic.familyHypertension || 'none'
     },
     eatingHabits: {
-      fruits: responses.nutrition?.fruits || 0,
-      vegetables: responses.nutrition?.vegetables || 0,
-      cereals: responses.nutrition?.cereals || 0,
-      pulses: responses.nutrition?.pulses || 0,
-      milkProducts: responses.nutrition?.milkProducts || 0,
-      nonVegConsumption: responses.nutrition?.nonVegConsumption || 0,
-      snacks: responses.nutrition?.snacks || 0,
-      beverages: responses.nutrition?.beverages || 0,
-      sweets: responses.nutrition?.sweets || 0,
-      junkFood: responses.nutrition?.junkFood || 0,
-      softDrinks: responses.nutrition?.softDrinks || 0,
-      energyDrinks: responses.nutrition?.energyDrinks || 0
+      fruits: eatingHabits.fruits || 0,
+      vegetables: eatingHabits.vegetables || 0,
+      cereals: eatingHabits.cereals || 0,
+      pulses: eatingHabits.pulses || 0,
+      milkProducts: eatingHabits.milkProducts || 0,
+      nonVegConsumption: eatingHabits.nonVegConsumption || 0,
+      snacks: eatingHabits.snacks || 0,
+      beverages: eatingHabits.beverages || 0,
+      sweets: eatingHabits.sweets || 0,
+      junkFood: eatingHabits.junkFood || 0,
+      softDrinks: eatingHabits.softDrinks || 0,
+      energyDrinks: eatingHabits.energyDrinks || 0
     },
     physicalActivity: {
-      ptFrequency: responses.physicalActivity?.ptFrequency || 0,
-      ptDuration: responses.physicalActivity?.ptDuration || 0,
-      participation: responses.physicalActivity?.participation || false,
-      indoorGames: {
-        days: responses.physicalActivity?.indoorGames?.days || 0,
-        minutes: responses.physicalActivity?.indoorGames?.minutes || '0'
-      },
-      outdoorGames: {
-        days: responses.physicalActivity?.outdoorGames?.days || 0,
-        minutes: responses.physicalActivity?.outdoorGames?.minutes || '0'
-      },
-      yoga: {
-        days: responses.physicalActivity?.yoga?.days || 0,
-        minutes: responses.physicalActivity?.yoga?.minutes || '0'
-      },
-      cycling: {
-        days: responses.physicalActivity?.cycling?.days || 0,
-        minutes: responses.physicalActivity?.cycling?.minutes || '0'
-      },
-      walking: {
-        days: responses.physicalActivity?.walking?.days || 0,
-        minutes: responses.physicalActivity?.walking?.minutes || '0'
-      },
-      playAfterSchool: {
-        days: responses.physicalActivity?.playAfterSchool?.days || 0,
-        minutes: responses.physicalActivity?.playAfterSchool?.minutes || '0'
-      }
+      ptFrequency: physicalActivity.ptFrequency || 0,
+      ptDuration: physicalActivity.ptDuration || 0,
+      participation: physicalActivity.participation || false,
+      indoorGames: typeof physicalActivity.indoorGames === 'object' ? physicalActivity.indoorGames : { days: 0, minutes: '0' },
+      outdoorGames: typeof physicalActivity.outdoorGames === 'object' ? physicalActivity.outdoorGames : { days: 0, minutes: '0' },
+      yoga: typeof physicalActivity.yoga === 'object' ? physicalActivity.yoga : { days: 0, minutes: '0' },
+      cycling: typeof physicalActivity.cycling === 'object' ? physicalActivity.cycling : { days: 0, minutes: '0' },
+      walking: typeof physicalActivity.walking === 'object' ? physicalActivity.walking : { days: 0, minutes: '0' },
+      playAfterSchool: typeof physicalActivity.playAfterSchool === 'object' ? physicalActivity.playAfterSchool : { days: 0, minutes: '0' }
     },
     sedentaryBehavior: {
-      tvTime: responses.sedentaryBehavior?.tvTime || 0,
-      mobileTime: responses.sedentaryBehavior?.mobileTime || 0,
-      computerTime: responses.sedentaryBehavior?.computerTime || 0,
-      schoolReading: responses.sedentaryBehavior?.schoolReading || 0,
-      nonSchoolReading: responses.sedentaryBehavior?.nonSchoolReading || 0,
-      homeworkTime: responses.sedentaryBehavior?.homeworkTime || 0,
-      gamingTime: responses.sedentaryBehavior?.gamingTime || 0
+      tvTime: sedentaryBehavior.tvTime || 0,
+      mobileTime: sedentaryBehavior.mobileTime || 0,
+      computerTime: sedentaryBehavior.computerTime || 0,
+      schoolReading: sedentaryBehavior.schoolReading || 0,
+      nonSchoolReading: sedentaryBehavior.nonSchoolReading || 0,
+      homeworkTime: sedentaryBehavior.homeworkTime || 0,
+      gamingTime: sedentaryBehavior.gamingTime || 0
     },
     sleepQuality: {
-      bedtime: responses.sleep?.bedtime || '00:00',
-      wakeupTime: responses.sleep?.wakeupTime || '00:00',
-      sleepDuration: responses.sleep?.sleepDuration || 0,
-      difficultyFallingAsleep: responses.sleep?.difficultyFallingAsleep || 0,
-      wakeUpDuringSleep: responses.sleep?.wakeUpDuringSleep || 0,
-      difficultyGettingBackToSleep: responses.sleep?.difficultyGettingBackToSleep || 0,
-      sleepinessInClasses: responses.sleep?.sleepinessInClasses || 0,
-      sleepHeadache: responses.sleep?.sleepHeadache || 0
+      bedtime: sleepQuality.bedtime || '00:00',
+      wakeupTime: sleepQuality.wakeupTime || '00:00',
+      sleepDuration: sleepQuality.sleepDuration || 0,
+      difficultyFallingAsleep: sleepQuality.difficultyFallingAsleep || 0,
+      wakeUpDuringSleep: sleepQuality.wakeUpDuringSleep || 0,
+      difficultyGettingBackToSleep: sleepQuality.difficultyGettingBackToSleep || 0,
+      sleepinessInClasses: sleepQuality.sleepinessInClasses || 0,
+      sleepHeadache: sleepQuality.sleepHeadache || 0
     },
     mentalHealth: {
-      bodyPerception: responses.mentalHealth?.bodyPerception || 0,
-      bullyingExperience: responses.mentalHealth?.bullyingExperience || false,
-      weightGoal: responses.mentalHealth?.weightGoal || 'Not reported',
-      currentBodyImageSatisfaction: responses.mentalHealth?.currentBodyImageSatisfaction || 0,
-      desiredBodyImageSatisfaction: responses.mentalHealth?.desiredBodyImageSatisfaction || 0,
-      difficultyAttention: responses.mentalHealth?.difficultyAttention || 0,
-      forgetThings: responses.mentalHealth?.forgetThings || 0,
-      feelLonely: responses.mentalHealth?.feelLonely || 0,
-      troubleKeepingUp: responses.mentalHealth?.troubleKeepingUp || 0
+      bodyPerception: mentalHealth.bodyPerception || 0,
+      bullyingExperience: mentalHealth.bullyingExperience || false,
+      weightGoal: mentalHealth.weightGoal || 'none',
+      currentBodyImageSatisfaction: mentalHealth.currentBodyImageSatisfaction || 0,
+      desiredBodyImageSatisfaction: mentalHealth.desiredBodyImageSatisfaction || 0,
+      difficultyAttention: mentalHealth.difficultyAttention || 0,
+      forgetThings: mentalHealth.forgetThings || 0,
+      feelLonely: mentalHealth.feelLonely || 0,
+      troubleKeepingUp: mentalHealth.troubleKeepingUp || 0
     }
   };
 

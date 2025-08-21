@@ -50,9 +50,6 @@ const SleepQualityStep: React.FC<Props> = ({ data, updateData }) => {
     <div className="space-y-3">
       <Label htmlFor={`sleepQuality-${field}`} className="text-sm font-medium">{label}</Label>
       <Select
-        id={`sleepQuality-${field}`}
-        name={field}
-        autoComplete="off"
         value={sleepQuality[field]?.toString() || "none"}
         onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value))}
       >

@@ -55,9 +55,6 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         <div className="text-sm font-medium col-span-1">{activity.label}</div>
         <div className="col-span-1">
           <Select
-            id={`activity-days-${activity.key}`}
-            name={`${activity.key}-days`}
-            autoComplete="off"
             value={typeof currentActivity === 'object' && currentActivity?.days !== undefined ? currentActivity.days.toString() : "none"}
             onValueChange={(value) => handleActivityChange(activity.key, 'days', value === "none" ? undefined : parseInt(value))}
           >
@@ -74,9 +71,6 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
         </div>
         <div className="col-span-1">
           <Select
-            id={`activity-minutes-${activity.key}`}
-            name={`${activity.key}-minutes`}
-            autoComplete="off"
             value={typeof currentActivity === 'object' && currentActivity?.minutes ? currentActivity.minutes : 'none'}
             onValueChange={(value) => handleActivityChange(activity.key, 'minutes', value)}
           >
@@ -135,9 +129,6 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
               <div>
                 <Label htmlFor="ptFrequency" className="text-sm font-medium">PT Classes per Week</Label>
                 <Select
-                  id="ptFrequency"
-                  name="ptFrequency"
-                  autoComplete="off"
                   value={physicalActivity.ptFrequency?.toString() || "0"}
                   onValueChange={(value) => handleChange('ptFrequency', parseInt(value) || 0)}
                 >
@@ -169,9 +160,6 @@ const PhysicalActivityStep: React.FC<Props> = ({ data, updateData }) => {
               <div>
                 <Label htmlFor="ptActivityType" className="text-sm font-medium">Activity Type</Label>
                 <Select
-                  id="ptActivityType"
-                  name="ptActivityType"
-                  autoComplete="off"
                   value={physicalActivity.ptActivityType || "outdoor"}
                   onValueChange={(value) => handleChange('ptActivityType', value)}
                 >

@@ -83,9 +83,6 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <Label htmlFor="age" className="text-sm font-medium">Age</Label>
               <Select
-                id="age"
-                name="age"
-                autoComplete="bday"
                 value={socioDemographic.age?.toString() || "none"}
                 onValueChange={(value) => handleChange('age', value === "none" ? undefined : parseInt(value))}
               >
@@ -106,9 +103,6 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
             <div>
               <Label htmlFor="gender" className="text-sm font-medium">Gender</Label>
               <Select 
-                id="gender"
-                name="gender"
-                autoComplete="sex"
                 value={socioDemographic.gender || "none"} 
                 onValueChange={(value) => handleChange('gender', value === "none" ? undefined : value)}
               >
@@ -206,7 +200,7 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
               </p>
               <p className="text-xs text-blue-700 mt-1">
                 {(() => {
-                  const bmi = calculateBMI();
+                  const bmi = parseFloat(calculateBMI());
                   if (bmi < 18.5) return 'Underweight';
                   if (bmi < 25) return 'Normal weight';
                   if (bmi < 30) return 'Overweight';
@@ -397,9 +391,6 @@ const SocioDemographicStep: React.FC<Props> = ({ data, updateData }) => {
           <div className="space-y-3">
             <Label htmlFor="familyObesity" className="text-sm font-medium">Does anybody in the family look fat?</Label>
             <Select
-              id="familyObesity"
-              name="familyObesity"
-              autoComplete="off"
               value={socioDemographic.familyObesity || "none"}
               onValueChange={(value) => handleChange('familyObesity', value === "none" ? undefined : value)}
             >
