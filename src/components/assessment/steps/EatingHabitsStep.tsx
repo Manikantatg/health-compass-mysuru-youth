@@ -31,9 +31,6 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
         <Label htmlFor={`eatingHabits-${field}`} className="text-sm font-medium text-foreground">{label}</Label>
       </div>
       <Select
-        id={`eatingHabits-${field}`}
-        name={field}
-        autoComplete="off"
         value={eatingHabits[field]?.toString() || "none"}
         onValueChange={(value) => handleChange(field, value === "none" ? undefined : parseInt(value))}
       >
@@ -77,7 +74,7 @@ const EatingHabitsStep: React.FC<Props> = ({ data, updateData }) => {
   return (
     <div className="space-y-6 font-['Inter']">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold">Nutrition Habits Assessment (Last 15 Days)</h3>
+        <h3 className="text-lg font-semibold">Nutrition Habits Assessment</h3>
         <p className="text-gray-600">Select how often you consume these foods</p>
       </div>
 
