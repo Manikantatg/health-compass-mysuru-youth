@@ -108,7 +108,7 @@ const AuthForm: React.FC = () => {
                   <img src="/lovable-uploads/logo.jpg" alt="PediaPredict Logo" className="h-10 w-10 text-primary" />
                 </div>
                 <CardTitle className="text-3xl font-bold text-foreground tracking-tight">
-                  {isLogin ? 'Welcome Back' : 'Join PediaPredict'}
+                  {isLogin ? 'Welcome' : 'Join PediaPredict'}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground text-lg">
                   {isLogin ? 'Sign in to access your health dashboard' : 'Create your account to start your health journey'}
